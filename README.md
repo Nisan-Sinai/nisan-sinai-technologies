@@ -12,6 +12,7 @@
 - Next.js 16 ו־React 19
 - TypeScript
 - Supabase לטופס הפניות
+- עברית ואנגלית, כל שפה עם root layout משלה
 - Vinext / Sites לפריסת ChatGPT Sites
 - Vercel לפריסת ה־Next.js הראשית
 - Vitest ו־Playwright לבדיקות
@@ -49,10 +50,30 @@ npm run build:sites     # build מאומת עבור Sites
 npm run test:rendered   # בדיקת ארטיפקט Sites
 npm run test:e2e        # Playwright בדסקטופ, מובייל ונגישות
 npm run qa              # כל הבדיקות ברצף
+npm run scan:secrets    # סריקת מפתחות בקבצים במעקב
+npm run test:migrations # מיגרציות וחוזה ה־RLS מול Postgres
+npm run smoke           # בדיקת סביבה פרוסה
+npm run check:data-api  # אימות שהמפתח של Supabase עדיין מתקבל
 ```
+
+כיסוי הבדיקות נאכף על 100% בכל ארבעת המדדים — שורות, הצהרות, ענפים
+ופונקציות. ירידה מתחת לכך מפילה את הבנייה.
 
 GitHub Actions מריץ את אותם שערי איכות בכל push ל־`main` או `dev` ובכל Pull
 Request. דוח Playwright נשמר כ־artifact גם כאשר בדיקת E2E נכשלת.
+
+## שפות
+
+האתר מוגש בשתי שפות. עברית יושבת בשורש (`/`, `/privacy`) ואנגלית תחת `/en`
+(`/en`, `/en/privacy`). לכל שפה יש root layout נפרד, כך ש־`lang` ו־`dir`
+נכונים כבר במסמך עצמו ולא מתוקנים בדיעבד.
+
+כל מחרוזת באתר נמצאת ב־`lib/content.ts` תחת הטיפוס `SiteContent`. שתי השפות
+חייבות לספק את אותו טיפוס, ולכן תרגום חסר נכשל בקומפילציה ולא מגיע לאוויר
+כשדה ריק. בדיקת יחידה משווה גם את מבנה שני המילונים בזמן ריצה.
+
+`lib/i18n.ts` מחזיק את הכיווניות, את בניית הנתיבים ואת החץ שמצביע לכיוון
+הקריאה של השפה.
 
 ## Supabase
 

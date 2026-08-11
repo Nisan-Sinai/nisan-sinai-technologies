@@ -1,5 +1,7 @@
+import { Fragment } from "react";
 import Link from "next/link";
-import { getContent } from "@/lib/content";
+import { contact, getContent } from "@/lib/content";
+import { splitOnEmailToken } from "@/lib/rich-text";
 import { forwardArrow, localePath, type Locale } from "@/lib/i18n";
 
 export default function PrivacyContent({ locale }: { locale: Locale }) {
@@ -18,7 +20,17 @@ export default function PrivacyContent({ locale }: { locale: Locale }) {
         {t.sections.map((section) => (
           <section key={section.title}>
             <h2>{section.title}</h2>
-            <p>{section.body}</p>
+            <p>
+              {splitOnEmailToken(section.body).map((segment, index) =>
+                segment.type === "email" ? (
+                  <a href={`mailto:${contact.email}`} key={index}>
+                    {contact.email}
+                  </a>
+                ) : (
+                  <Fragment key={index}>{segment.value}</Fragment>
+                ),
+              )}
+            </p>
           </section>
         ))}
       </article>

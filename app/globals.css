@@ -10,6 +10,12 @@
   --cyan: #53e4ff;
   --cyan-soft: #9af1ff;
   --violet: #8c6cff;
+  /* Champagne carries the editorial marks — kickers, numerals, rules — so the
+     cyan is left to mean one thing only: a live system. */
+  --accent: #d7c4a0;
+  --accent-dim: rgba(215, 196, 160, 0.5);
+  --line-soft: rgba(166, 199, 228, 0.09);
+  --elevation: 0 26px 70px rgba(0, 0, 0, 0.5);
   --font-hebrew: Arial, "Noto Sans Hebrew", var(--font-geist-sans), sans-serif;
 }
 
@@ -49,7 +55,7 @@ a {
   position: fixed;
   z-index: 100;
   top: 1rem;
-  right: 1rem;
+  inset-inline-end: 1rem;
   padding: 0.8rem 1rem;
   border-radius: 0.7rem;
   background: var(--foreground);
@@ -305,9 +311,18 @@ a {
 }
 
 .button-primary {
-  background: var(--cyan);
+  position: relative;
+  background: linear-gradient(180deg, #7cecff 0%, var(--cyan) 45%, #35c9e6 100%);
   color: #00151b;
-  box-shadow: 0 12px 40px rgba(83, 228, 255, 0.15);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.45) inset,
+    0 18px 44px rgba(83, 228, 255, 0.18);
+}
+
+.button-primary:hover {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 22px 56px rgba(83, 228, 255, 0.26);
 }
 
 .button-primary:hover,
@@ -672,10 +687,11 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 0.7rem;
-  color: var(--cyan);
-  font-size: 0.72rem;
+  color: var(--accent);
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
 .section-kicker::before {
@@ -791,7 +807,7 @@ a {
 .service-card ul {
   position: absolute;
   z-index: 1;
-  right: clamp(1.6rem, 3vw, 2.6rem);
+  inset-inline-start: clamp(1.6rem, 3vw, 2.6rem);
   bottom: 2rem;
   display: flex;
   flex-wrap: wrap;
@@ -901,7 +917,7 @@ a {
   align-items: center;
   gap: 0.7rem;
   width: fit-content;
-  color: var(--cyan);
+  color: var(--accent);
   font-family: var(--font-geist-sans), sans-serif;
   font-size: 0.68rem;
   font-weight: 700;
@@ -1746,6 +1762,123 @@ a.case-study-label:focus-visible {
   100% { transform: translate(-50%, 0.75rem); opacity: 0; }
 }
 
+
+/* ---------------------------------------------------------------------------
+   Finish layer. Everything here is texture and restraint: a grain that keeps
+   the large dark fields from banding, hairlines that fade instead of stopping
+   flat, and hover states that lift rather than light up.
+   --------------------------------------------------------------------------- */
+
+/* Wide gradients over near-black band badly on 8-bit panels. A faint grain
+   breaks the banding and gives the surface a printed rather than digital feel. */
+body::after {
+  content: "";
+  position: fixed;
+  z-index: 200;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* A rule that runs edge to edge draws attention to its own ends. These fade
+   out instead, so sections separate without being fenced. */
+.content-section,
+.services-intro,
+.tech-strip {
+  border-bottom: 0;
+  position: relative;
+}
+
+.content-section::after,
+.services-intro::after,
+.tech-strip::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--line) 18%,
+    var(--line) 82%,
+    transparent
+  );
+}
+
+/* Latin sets tighter than Hebrew at display sizes; Hebrew loses its counters
+   when tracked in. So the tightening is scoped to the locale that wants it. */
+[dir="ltr"] h1,
+[dir="ltr"] h2 {
+  letter-spacing: -0.025em;
+}
+
+[dir="ltr"] .hero-copy h1 {
+  letter-spacing: -0.035em;
+}
+
+/* Cards lift on a shadow rather than brightening, which keeps the field dark
+   and lets the hovered card be the only thing that moved. */
+.service-card::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent-dim), transparent);
+  opacity: 0;
+  transition: opacity 260ms ease;
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--elevation);
+}
+
+.service-card:hover::before {
+  opacity: 1;
+}
+
+.service-card:hover li {
+  border-color: rgba(215, 196, 160, 0.28);
+}
+
+.service-card li {
+  transition: border-color 240ms ease;
+}
+
+/* The numeral is the one place a serif-scale flourish is affordable: it is
+   short, non-translated, and repeats down the page as a rhythm. */
+.service-card-top span {
+  color: var(--accent);
+}
+
+.process-grid li > span {
+  color: var(--accent);
+}
+
+.about-values span {
+  color: var(--accent);
+}
+
+.hero-proof dt {
+  color: var(--accent);
+}
+
+/* Respect the system setting: everything above is decoration, and none of it
+   is worth triggering motion sickness for. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @media (max-width: 1100px) {
   .site-header {
     grid-template-columns: 1fr auto;
@@ -1929,7 +2062,7 @@ a.case-study-label:focus-visible {
   }
 
   .service-card ul {
-    right: 1.5rem;
+    inset-inline-start: 1.5rem;
   }
 
   .project-card {

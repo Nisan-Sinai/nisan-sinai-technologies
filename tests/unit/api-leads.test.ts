@@ -50,6 +50,16 @@ describe("POST /api/leads", () => {
     expect(response.status).toBe(415);
   });
 
+  it("rejects a request that declares no content type at all", async () => {
+    // A bare POST carries no content-type header; the route must treat the
+    // missing header the same as a wrong one rather than reading the body.
+    const request = new Request("https://example.com/api/leads", {
+      method: "POST",
+    });
+    expect(request.headers.get("content-type")).toBeNull();
+    expect((await POST(request)).status).toBe(415);
+  });
+
   it("rejects malformed and non-object JSON", async () => {
     expect((await POST(jsonRequest("{"))).status).toBe(400);
     expect((await POST(jsonRequest([]))).status).toBe(400);

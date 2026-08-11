@@ -423,7 +423,7 @@ const he: SiteContent = {
       },
       {
         title: "יצירת קשר",
-        body: `לכל שאלה בנושא פרטיות אפשר לפנות ישירות ל־${EMAIL}.`,
+        body: "לכל שאלה או בקשה בנוגע למידע אפשר לפנות אליי בכתובת {email}.",
       },
     ],
   },
@@ -721,7 +721,7 @@ const en: SiteContent = {
       },
       {
         title: "Contact",
-        body: `For any privacy question you can write directly to ${EMAIL}.`,
+        body: "For any question or request about your data, write to me at {email}.",
       },
     ],
   },

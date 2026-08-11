@@ -13,12 +13,18 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "json-summary"],
-      include: ["lib/lead-validation.ts", "app/api/leads/route.ts"],
+      include: [
+        "lib/lead-validation.ts",
+        "lib/i18n.ts",
+        "lib/content.ts",
+        "lib/rich-text.ts",
+        "app/api/leads/route.ts",
+      ],
       thresholds: {
-        branches: 90,
-        functions: 90,
-        lines: 90,
-        statements: 90,
+        branches: 100,
+        functions: 100,
+        lines: 100,
+        statements: 100,
       },
     },
   },
