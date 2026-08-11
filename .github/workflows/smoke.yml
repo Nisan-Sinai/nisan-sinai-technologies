@@ -1,0 +1,37 @@
+name: Smoke
+
+# CI proves the code builds. This proves the deployment users actually reach is
+# serving, and that the credentials it runs on are still accepted.
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      site_url:
+        description: Deployment to check (defaults to production)
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  deployment:
+    name: Deployed site · Data API
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check the deployed site
+        env:
+          SITE_URL: ${{ inputs.site_url || vars.SITE_URL || 'https://nisan-sinai-technologies.vercel.app' }}
+        run: npm run smoke
+
+      # Optional: add SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY as repository
+      # secrets to catch a rotated or mistyped key before the form starts
+      # dropping leads. Without them this step reports a skip and passes.
+      - name: Check the Supabase Data API key
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+        run: npm run check:data-api

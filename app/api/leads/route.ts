@@ -68,7 +68,14 @@ export async function POST(request: Request) {
   }
 
   if (!supabaseResponse.ok) {
-    console.error("Supabase lead insert failed", supabaseResponse.status);
+    // The status alone cannot distinguish a rejected key from a rejected row.
+    // Supabase explains which in the body, and that body never echoes the key.
+    const detail = await supabaseResponse.text().catch(() => "");
+    console.error(
+      "Supabase lead insert failed",
+      supabaseResponse.status,
+      detail.slice(0, 500),
+    );
     return Response.json({ error: "storage_failed" }, { status: 502 });
   }
 

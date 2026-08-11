@@ -51,3 +51,38 @@ jobs:
           path: playwright-report
           if-no-files-found: ignore
           retention-days: 14
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: npm run scan:secrets
+
+  migrations:
+    name: Supabase migrations · RLS contract
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v7
+      - name: Ensure psql is available
+        run: |
+          psql --version >/dev/null 2>&1 || {
+            sudo apt-get update
+            sudo apt-get install -y --no-install-recommends postgresql-client
+          }
+      - name: Apply migrations and assert the RLS contract
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+        run: npm run test:migrations

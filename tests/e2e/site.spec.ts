@@ -27,6 +27,137 @@ test("homepage presents the studio, services, and portfolio", async ({ page }) =
   expect(hasHorizontalOverflow).toBe(false);
 });
 
+test("mobile layout keeps key content and controls inside the viewport", async ({
+  page,
+}, testInfo) => {
+  test.skip(!testInfo.project.name.startsWith("mobile"));
+
+  await page.goto("/");
+
+  const homeLayout = await page.evaluate(() => {
+    const isInsideViewport = (element: Element | null) => {
+      if (!element) return false;
+      const rect = element.getBoundingClientRect();
+      return rect.left >= -1 && rect.right <= window.innerWidth + 1;
+    };
+    const hasTouchHeight = (element: Element | null) =>
+      Boolean(element && element.getBoundingClientRect().height >= 44);
+
+    const heroButtons = Array.from(
+      document.querySelectorAll(".hero-actions .button"),
+    );
+    const projectCards = Array.from(document.querySelectorAll(".project-card"));
+
+    return {
+      viewportWidth: window.innerWidth,
+      hasHorizontalOverflow:
+        document.documentElement.scrollWidth > window.innerWidth + 2,
+      headerFits: isInsideViewport(document.querySelector(".site-header")),
+      headerCtaFits: isInsideViewport(document.querySelector(".header-cta")),
+      headerCtaHasTouchHeight: hasTouchHeight(
+        document.querySelector(".header-cta"),
+      ),
+      heroButtonsFit:
+        heroButtons.length === 2 && heroButtons.every(isInsideViewport),
+      heroButtonsHaveTouchHeight: heroButtons.every(hasTouchHeight),
+      projectCardsFit:
+        projectCards.length === 3 && projectCards.every(isInsideViewport),
+    };
+  });
+
+  expect(homeLayout.viewportWidth).toBeLessThanOrEqual(500);
+  expect(homeLayout.hasHorizontalOverflow).toBe(false);
+  expect(homeLayout.headerFits).toBe(true);
+  expect(homeLayout.headerCtaFits).toBe(true);
+  expect(homeLayout.headerCtaHasTouchHeight).toBe(true);
+  expect(homeLayout.heroButtonsFit).toBe(true);
+  expect(homeLayout.heroButtonsHaveTouchHeight).toBe(true);
+  expect(homeLayout.projectCardsFit).toBe(true);
+
+  await page.goto("/#contact");
+
+  const contactLayout = await page.evaluate(() => {
+    const controls = Array.from(
+      document.querySelectorAll(
+        '.contact-form input:not([type="checkbox"]):not([name="website"]), .contact-form select, .contact-form textarea, .contact-form .submit-button',
+      ),
+    );
+
+    return {
+      controlCount: controls.length,
+      allControlsFit: controls.every((element) => {
+        const rect = element.getBoundingClientRect();
+        return rect.left >= -1 && rect.right <= window.innerWidth + 1;
+      }),
+      allControlsHaveTouchHeight: controls.every(
+        (element) => element.getBoundingClientRect().height >= 44,
+      ),
+    };
+  });
+
+  expect(contactLayout.controlCount).toBeGreaterThanOrEqual(7);
+  expect(contactLayout.allControlsFit).toBe(true);
+  expect(contactLayout.allControlsHaveTouchHeight).toBe(true);
+});
+
+
+test("the system diagram stays readable on a phone", async ({
+  page,
+}, testInfo) => {
+  test.skip(!testInfo.project.name.startsWith("mobile"));
+
+  await page.goto("/");
+
+  // The diagram used to be laid out wider than the screen, which silently
+  // sliced the satellite cards off the left edge: the page reported no
+  // horizontal overflow because the excess was clipped rather than scrollable.
+  const diagram = await page.evaluate(() => {
+    const rect = (selector: string) =>
+      document.querySelector(selector)?.getBoundingClientRect() ?? null;
+    const overlap = (a: DOMRect, b: DOMRect) => {
+      const x = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+      const y = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+      return x > 0 && y > 0 ? x * y : 0;
+    };
+
+    const satellites = Array.from(
+      document.querySelectorAll(".capability, .signal-card"),
+    ).map((element) => element.getBoundingClientRect());
+
+    const coreParts = [".system-core strong", ".core-kicker", ".core-status"]
+      .map(rect)
+      .filter((part): part is DOMRect => part !== null);
+
+    let collisions = 0;
+    for (let i = 0; i < satellites.length; i += 1) {
+      for (let j = i + 1; j < satellites.length; j += 1) {
+        collisions += overlap(satellites[i], satellites[j]);
+      }
+    }
+
+    return {
+      satelliteCount: satellites.length,
+      allSatellitesFit: satellites.every(
+        (r) => r.left >= -1 && r.right <= window.innerWidth + 1,
+      ),
+      coreLabelsFound: coreParts.length,
+      coreCoveredPx: coreParts.reduce(
+        (total, part) =>
+          total + satellites.reduce((sum, s) => sum + overlap(part, s), 0),
+        0,
+      ),
+      collisionPx: collisions,
+    };
+  });
+
+  expect(diagram.satelliteCount).toBe(5);
+  expect(diagram.coreLabelsFound).toBe(3);
+  expect(diagram.allSatellitesFit).toBe(true);
+  // The core names the product; nothing may sit on top of it.
+  expect(diagram.coreCoveredPx).toBe(0);
+  expect(diagram.collisionPx).toBe(0);
+});
+
 test("contact form reports a successful submission without a real write", async ({
   page,
 }) => {

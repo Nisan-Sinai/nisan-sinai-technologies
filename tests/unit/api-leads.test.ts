@@ -107,6 +107,65 @@ describe("POST /api/leads", () => {
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(null, { status: 500 })));
     expect((await POST(jsonRequest(validPayload))).status).toBe(502);
-    expect(consoleSpy).toHaveBeenCalledWith("Supabase lead insert failed", 500);
+    expect(consoleSpy).toHaveBeenCalledWith("Supabase lead insert failed", 500, "");
+  });
+
+  it("logs why Supabase refused the insert, not just the status", async () => {
+    // A rejected key and a rejected row both surface as 502 to the caller, so
+    // the reason has to reach the logs or the next outage is unreadable.
+    const consoleSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response('{"message":"Invalid API key"}', { status: 401 }),
+      ),
+    );
+
+    expect((await POST(jsonRequest(validPayload))).status).toBe(502);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      "Supabase lead insert failed",
+      401,
+      '{"message":"Invalid API key"}',
+    );
+  });
+
+  it("still reports the failure when the error body cannot be read", async () => {
+    const consoleSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 503,
+        text: () => Promise.reject(new Error("stream closed")),
+      }),
+    );
+
+    expect((await POST(jsonRequest(validPayload))).status).toBe(502);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      "Supabase lead insert failed",
+      503,
+      "",
+    );
+  });
+
+  it("truncates an oversized Supabase error body", async () => {
+    const consoleSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(new Response("x".repeat(900), { status: 500 })),
+    );
+
+    expect((await POST(jsonRequest(validPayload))).status).toBe(502);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      "Supabase lead insert failed",
+      500,
+      "x".repeat(500),
+    );
   });
 });

@@ -1785,7 +1785,7 @@ a.case-study-label:focus-visible {
   }
 
   .header-cta {
-    min-height: 42px;
+    min-height: 44px;
     padding: 0 0.8rem;
     border: 1px solid var(--line);
     border-radius: 0.65rem;
@@ -1797,30 +1797,56 @@ a.case-study-label:focus-visible {
     padding: 118px 1.15rem 80px;
   }
 
+  .hero-copy {
+    width: calc(100vw - 2.3rem);
+    min-width: 0;
+    max-width: calc(100vw - 2.3rem);
+  }
+
   .hero h1 {
     margin-top: 1.35rem;
-    font-size: clamp(3rem, 16vw, 4.7rem);
+    font-size: clamp(2.65rem, 14vw, 4.7rem);
+  }
+
+  .hero-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .hero-actions .button {
+    width: 100%;
+    min-width: 0;
   }
 
   .hero-proof {
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.5rem;
   }
 
   .hero-proof div {
+    min-width: 0;
     grid-template-columns: 1fr;
     gap: 0.3rem;
   }
 
+  .hero-proof dd {
+    font-size: clamp(0.66rem, 2.8vw, 0.78rem);
+  }
+
   .system-visual {
-    width: 112vw;
+    /* The satellite cards are anchored to this box, so anything wider than the
+       screen clips them: at 112vw the CRM, live-chart and automation cards were
+       sliced off the left edge. */
+    width: 100%;
     min-width: 0;
-    transform: translateX(5%);
+    transform: none;
   }
 
   .capability {
-    min-width: 104px;
-    padding: 0.65rem 0.75rem;
+    /* Kept small enough that the ring of cards never crowds the core label. */
+    min-width: 88px;
+    padding: 0.5rem 0.6rem;
   }
 
   .capability::after {
@@ -1828,8 +1854,12 @@ a.case-study-label:focus-visible {
   }
 
   .signal-card {
-    left: 7%;
-    width: 116px;
+    /* Hard against the left edge so it clears the core label, and lifted above
+       the automation card so the two no longer stack. */
+    left: 0;
+    bottom: 34%;
+    width: 96px;
+    padding: 0.55rem;
   }
 
   .scroll-cue {
