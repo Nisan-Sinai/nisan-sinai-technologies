@@ -154,8 +154,8 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 2.6rem;
-  min-height: 2.2rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   padding: 0 0.6rem;
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -698,8 +698,8 @@ a {
   content: "";
   width: 1.8rem;
   height: 1px;
-  background: var(--cyan);
-  box-shadow: 0 0 10px rgba(83, 228, 255, 0.6);
+  background: var(--accent);
+  box-shadow: 0 0 10px rgba(215, 196, 160, 0.35);
 }
 
 .section-heading h2,
@@ -1599,7 +1599,6 @@ a.case-study-label:focus-visible {
 }
 
 .consent-field a {
-  margin: 0 0.25rem;
   color: var(--cyan);
   text-decoration: underline;
   text-underline-offset: 0.18rem;
@@ -1805,6 +1804,17 @@ body::after {
     var(--line) 82%,
     transparent
   );
+}
+
+h1,
+h2 {
+  text-wrap: balance;
+}
+
+.hero-copy p,
+.section-heading > p,
+.contact-copy p {
+  text-wrap: pretty;
 }
 
 /* Latin sets tighter than Hebrew at display sizes; Hebrew loses its counters

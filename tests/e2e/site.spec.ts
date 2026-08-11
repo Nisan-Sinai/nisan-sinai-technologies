@@ -57,6 +57,9 @@ test("mobile layout keeps key content and controls inside the viewport", async (
       headerCtaHasTouchHeight: hasTouchHeight(
         document.querySelector(".header-cta"),
       ),
+      languageSwitchHasTouchHeight: hasTouchHeight(
+        document.querySelector(".language-switch"),
+      ),
       heroButtonsFit:
         heroButtons.length === 2 && heroButtons.every(isInsideViewport),
       heroButtonsHaveTouchHeight: heroButtons.every(hasTouchHeight),
@@ -70,6 +73,7 @@ test("mobile layout keeps key content and controls inside the viewport", async (
   expect(homeLayout.headerFits).toBe(true);
   expect(homeLayout.headerCtaFits).toBe(true);
   expect(homeLayout.headerCtaHasTouchHeight).toBe(true);
+  expect(homeLayout.languageSwitchHasTouchHeight).toBe(true);
   expect(homeLayout.heroButtonsFit).toBe(true);
   expect(homeLayout.heroButtonsHaveTouchHeight).toBe(true);
   expect(homeLayout.projectCardsFit).toBe(true);
