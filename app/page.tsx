@@ -195,7 +195,12 @@ export default function Home() {
         </a>
       </section>
 
-      <section className="services-intro" id="services" aria-label="השירותים שלי">
+      <section
+        className="services-intro"
+        id="services"
+        aria-label="השירותים שלי"
+        tabIndex={0}
+      >
         <span>פתרונות שנבנים סביב העסק שלך</span>
         <strong>WEB</strong>
         <i aria-hidden="true" />
@@ -403,7 +408,7 @@ return makeItWork(solution);`}</code></pre>
         </div>
       </section>
 
-      <section className="tech-strip" aria-label="טכנולוגיות">
+      <section className="tech-strip" aria-label="טכנולוגיות" tabIndex={0}>
         <span>TECH STACK</span>
         <strong>TypeScript</strong><i />
         <strong>React</strong><i />

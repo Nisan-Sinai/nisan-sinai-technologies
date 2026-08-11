@@ -1,5 +1,9 @@
 # ניסן סיני טכנולוגיות
 
+[![CI](https://github.com/Nisan-Sinai/nisan-sinai-technologies/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Nisan-Sinai/nisan-sinai-technologies/actions/workflows/ci.yml)
+
+[אתר Production](https://nisan-sinai-technologies.vercel.app) · [GitHub Actions](https://github.com/Nisan-Sinai/nisan-sinai-technologies/actions)
+
 אתר תדמית בעברית וב־RTL עבור ניסן סיני טכנולוגיות: אתרים, מערכות CRM ו־ERP,
 אוטומציות ופיתוח Web בהתאמה אישית לעסקים קטנים ובינוניים.
 

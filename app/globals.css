@@ -1628,7 +1628,7 @@ a.case-study-label:focus-visible {
   grid-column: 1 / -1;
   padding-top: 1.8rem;
   border-top: 1px solid var(--line);
-  color: #667181;
+  color: var(--muted);
   font-size: 0.62rem;
 }
 
