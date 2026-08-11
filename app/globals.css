@@ -1785,7 +1785,7 @@ a.case-study-label:focus-visible {
   }
 
   .header-cta {
-    min-height: 42px;
+    min-height: 44px;
     padding: 0 0.8rem;
     border: 1px solid var(--line);
     border-radius: 0.65rem;
