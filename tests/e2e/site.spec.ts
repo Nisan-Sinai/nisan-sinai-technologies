@@ -196,6 +196,62 @@ test("privacy page is reachable", async ({ page }) => {
   );
 });
 
+test("serves Hebrew at the root and English at /en", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("html")).toHaveAttribute("lang", "he");
+  await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
+
+  await page.goto("/en");
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  await expect(page.locator("html")).toHaveAttribute("dir", "ltr");
+  await expect(
+    page.getByRole("heading", { level: 1, name: /your business needs/i }),
+  ).toBeVisible();
+});
+
+test("the language switch moves between the two locales", async ({ page }) => {
+  await page.goto("/");
+  await page.locator(".language-switch").click();
+  await expect(page).toHaveURL(/\/en$/);
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
+
+  await page.locator(".language-switch").click();
+  await expect(page.locator("html")).toHaveAttribute("lang", "he");
+});
+
+test("both privacy pages are reachable and cross-linked", async ({ page }) => {
+  await page.goto("/en/privacy");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Privacy policy" }),
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: /nisan.sinai5@gmail.com/ })).toHaveAttribute(
+    "href",
+    "mailto:nisan.sinai5@gmail.com",
+  );
+});
+
+test("the English page reads left to right without overflowing", async ({
+  page,
+}) => {
+  await page.goto("/en");
+
+  const layout = await page.evaluate(() => ({
+    overflows: document.documentElement.scrollWidth > window.innerWidth + 2,
+    // The tags sit at the reading start of each card, which flips with dir.
+    tagsStartAtReadingEdge: (() => {
+      const card = document.querySelector(".service-card");
+      const tags = card?.querySelector("ul");
+      if (!card || !tags) return false;
+      const cardBox = card.getBoundingClientRect();
+      const tagBox = tags.getBoundingClientRect();
+      return tagBox.left - cardBox.left < cardBox.right - tagBox.right;
+    })(),
+  }));
+
+  expect(layout.overflows).toBe(false);
+  expect(layout.tagsStartAtReadingEdge).toBe(true);
+});
+
 test("has no serious or critical automated accessibility violations", async ({
   page,
 }) => {
