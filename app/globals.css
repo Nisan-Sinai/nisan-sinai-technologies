@@ -1798,8 +1798,9 @@ a.case-study-label:focus-visible {
   }
 
   .hero-copy {
+    width: calc(100vw - 2.3rem);
     min-width: 0;
-    max-width: 100%;
+    max-width: calc(100vw - 2.3rem);
   }
 
   .hero h1 {
