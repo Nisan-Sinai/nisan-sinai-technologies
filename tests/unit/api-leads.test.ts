@@ -131,6 +131,27 @@ describe("POST /api/leads", () => {
     );
   });
 
+  it("still reports the failure when the error body cannot be read", async () => {
+    const consoleSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 503,
+        text: () => Promise.reject(new Error("stream closed")),
+      }),
+    );
+
+    expect((await POST(jsonRequest(validPayload))).status).toBe(502);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      "Supabase lead insert failed",
+      503,
+      "",
+    );
+  });
+
   it("truncates an oversized Supabase error body", async () => {
     const consoleSpy = vi
       .spyOn(console, "error")
