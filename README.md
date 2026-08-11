@@ -66,5 +66,6 @@ Request. דוח Playwright נשמר כ־artifact גם כאשר בדיקת E2E נ
 ## פריסה
 
 - Vercel משתמש ב־`vercel.json` ובפקודה `npm run build:vercel`.
+- Vercel Git Integration מפרסם אוטומטית כל מיזוג ל־`main` ל־Production.
 - Sites משתמש ב־`npm run build:sites` ובקובץ `.openai/hosting.json` המקומי.
 - את משתני Supabase מגדירים בממשק הסביבה של כל פלטפורמה ולא בקוד או ב־Git.
