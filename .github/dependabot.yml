@@ -1,16 +1,33 @@
 version: 2
+
 updates:
+  # Tuesday catches what shipped over the weekend and at the start of the week,
+  # misses Monday's own rush, and still leaves three working days to deal with
+  # anything a bump breaks. 06:00 Israel time is the quiet end of the day.
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
+      day: tuesday
+      time: "06:00"
+      timezone: Asia/Jerusalem
     open-pull-requests-limit: 5
+    rebase-strategy: auto
+    commit-message:
+      prefix: chore(deps)
     groups:
-      development:
-        dependency-type: development
-      production:
+      # Minor and patch travel together; a major stays on its own so it is read
+      # by a person rather than swept along by the group it sat in.
+      production-minor-patch:
         dependency-type: production
-        update-types: [minor, patch]
+        update-types:
+          - minor
+          - patch
+      development-minor-patch:
+        dependency-type: development
+        update-types:
+          - minor
+          - patch
     ignore:
       # typescript-eslint has no TypeScript 7 support yet, so a major TypeScript
       # bump takes lint down with it. eslint-config-next's plugin stack breaks
@@ -21,7 +38,23 @@ updates:
       - dependency-name: eslint
         update-types: [version-update:semver-major]
 
+  # Half an hour later, so the two ecosystems do not queue CI and Vercel
+  # against each other.
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+      day: tuesday
+      time: "06:30"
+      timezone: Asia/Jerusalem
+    open-pull-requests-limit: 2
+    rebase-strategy: auto
+    commit-message:
+      prefix: chore(actions)
+    groups:
+      github-actions-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch

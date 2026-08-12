@@ -1,0 +1,208 @@
+name: Dependabot Auto-Merge
+
+# Runs on pull_request_target so it holds a token that can merge. Dependabot
+# PRs on a base ref Dependabot did not create are the one case GitHub grants
+# that, which is why the trigger is not plain pull_request.
+#
+# The safety of pull_request_target rests on one rule, and this file keeps it:
+# nothing from the pull request is ever checked out or executed here. There is
+# no actions/checkout, no npm install, no script from the branch. The job reads
+# metadata, reads check results, and calls the merge API. The code itself is
+# tested by the CI workflow, which runs under the ordinary read-only token.
+on:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+
+permissions:
+  actions: read
+  checks: read
+  contents: write
+  pull-requests: write
+  statuses: read
+
+concurrency:
+  # A rebase replaces the head SHA; the run watching the old one is worthless.
+  group: dependabot-automerge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  automerge:
+    name: Dependabot Auto-Merge
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    if: >-
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.base.ref == 'main' &&
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.state == 'open'
+
+    steps:
+      - name: Read Dependabot metadata
+        id: metadata
+        # Pinned to the commit behind v3.1.0, verified against the upstream tag
+        # refs rather than a release page: a floating tag can be moved, a SHA
+        # cannot.
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
+
+      - name: Decide whether this update may merge itself
+        id: eligibility
+        env:
+          UPDATE_TYPE: ${{ steps.metadata.outputs.update-type }}
+          DEPENDENCY_NAMES: ${{ steps.metadata.outputs.dependency-names }}
+        run: |
+          set -euo pipefail
+          echo "Dependencies: ${DEPENDENCY_NAMES:-unknown}"
+          echo "Update type:  ${UPDATE_TYPE:-unknown}"
+
+          # For a grouped pull request this is the highest bump in the group,
+          # so a group holding one major is held back whole.
+          case "${UPDATE_TYPE:-}" in
+            version-update:semver-patch|version-update:semver-minor)
+              echo "eligible=true" >> "$GITHUB_OUTPUT"
+              echo "Patch or minor: eligible once every gate is green."
+              ;;
+            *)
+              echo "eligible=false" >> "$GITHUB_OUTPUT"
+              echo "Major or unknown update type. Manual review required."
+              ;;
+          esac
+
+      - name: Wait for every gate, then merge
+        if: steps.eligibility.outputs.eligible == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          TRIGGER_SHA: ${{ github.event.pull_request.head.sha }}
+          # This job's own check run, which would otherwise wait on itself.
+          SELF_CHECK: Dependabot Auto-Merge
+        run: |
+          set -euo pipefail
+
+          # The exact job names from ci.yml and the exact commit status context
+          # Vercel posts. Read from the API on a real pull request, not guessed:
+          # a required gate whose name drifts must fail the merge, not vanish
+          # from it.
+          REQUIRED_CHECKS='[
+            "Audit · Lint · Type-check · Unit · Dual build",
+            "Playwright · Desktop & mobile · Accessibility",
+            "Secret scan",
+            "Supabase migrations · RLS contract"
+          ]'
+          REQUIRED_STATUSES='["Vercel"]'
+
+          INTERVAL=20
+          MAX_ATTEMPTS=90
+
+          for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
+            pull=$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER")
+            state=$(jq -r '.state' <<<"$pull")
+            draft=$(jq -r '.draft' <<<"$pull")
+            head_sha=$(jq -r '.head.sha' <<<"$pull")
+            mergeable=$(jq -r '.mergeable // "unknown"' <<<"$pull")
+
+            if [ "$state" != "open" ]; then
+              echo "Pull request is $state. Nothing to merge."
+              exit 0
+            fi
+            if [ "$draft" != "false" ]; then
+              echo "Pull request went back to draft. Leaving it alone."
+              exit 0
+            fi
+            if [ "$head_sha" != "$TRIGGER_SHA" ]; then
+              echo "Head moved from $TRIGGER_SHA to $head_sha."
+              echo "The synchronize event for the new SHA starts its own run."
+              exit 0
+            fi
+
+            checks=$(gh api --paginate \
+              "repos/$REPOSITORY/commits/$head_sha/check-runs" \
+              -q '.check_runs[]' | jq -s '.')
+
+            # One name can have several runs after a re-run; only the newest
+            # one describes the commit as it stands now.
+            latest_checks=$(jq --arg self "$SELF_CHECK" '
+              map(select(.name != $self))
+              | group_by(.name)
+              | map(max_by(.started_at // ""))
+            ' <<<"$checks")
+
+            pending_checks=$(jq '[.[] | select(.status != "completed")] | length' <<<"$latest_checks")
+            failed_checks=$(jq '
+              [.[] | select(.status == "completed")
+                   | select((.conclusion // "") as $c
+                            | ["success", "neutral", "skipped"] | index($c) | not)]
+              | map(.name)
+            ' <<<"$latest_checks")
+
+            statuses=$(gh api "repos/$REPOSITORY/commits/$head_sha/status" -q '.statuses' | jq '.')
+            latest_statuses=$(jq '
+              group_by(.context) | map(max_by(.updated_at // ""))
+            ' <<<"$statuses")
+
+            pending_statuses=$(jq '[.[] | select(.state == "pending")] | length' <<<"$latest_statuses")
+            failed_statuses=$(jq '
+              [.[] | select(.state == "failure" or .state == "error")] | map(.context)
+            ' <<<"$latest_statuses")
+
+            missing_checks=$(jq -n \
+              --argjson required "$REQUIRED_CHECKS" --argjson have "$latest_checks" '
+              $required - ($have | map(select(.conclusion == "success") | .name))
+            ')
+            missing_statuses=$(jq -n \
+              --argjson required "$REQUIRED_STATUSES" --argjson have "$latest_statuses" '
+              $required - ($have | map(select(.state == "success") | .context))
+            ')
+
+            echo "── attempt $attempt/$MAX_ATTEMPTS ──────────────────────────"
+            jq -r '.[] | "  check   \(.name): \(.status)/\(.conclusion // "—")"' <<<"$latest_checks"
+            jq -r '.[] | "  status  \(.context): \(.state)"' <<<"$latest_statuses"
+            echo "  pending: $pending_checks checks, $pending_statuses statuses"
+            echo "  not yet green: $(jq -c '.' <<<"$missing_checks") $(jq -c '.' <<<"$missing_statuses")"
+
+            if [ "$(jq 'length' <<<"$failed_checks")" != "0" ] \
+               || [ "$(jq 'length' <<<"$failed_statuses")" != "0" ]; then
+              echo "::error::A gate failed: $(jq -c '.' <<<"$failed_checks") $(jq -c '.' <<<"$failed_statuses")"
+              echo "Leaving the pull request open for a person to look at."
+              exit 1
+            fi
+
+            if [ "$pending_checks" = "0" ] && [ "$pending_statuses" = "0" ] \
+               && [ "$(jq 'length' <<<"$missing_checks")" = "0" ] \
+               && [ "$(jq 'length' <<<"$missing_statuses")" = "0" ]; then
+
+              if [ "$mergeable" = "false" ]; then
+                echo "::error::Pull request has a conflict with the base branch."
+                exit 1
+              fi
+
+              echo "Every gate is green on $head_sha. Merging."
+              # sha= is the whole point: GitHub refuses the merge if the head
+              # moved between the last poll and this call, so what merges is
+              # exactly what was tested.
+              response=$(gh api --method PUT \
+                "repos/$REPOSITORY/pulls/$PR_NUMBER/merge" \
+                -f merge_method=squash \
+                -f sha="$head_sha" 2>&1) || {
+                  echo "::error::GitHub refused the merge: $response"
+                  exit 1
+                }
+
+              if [ "$(jq -r '.merged // false' <<<"$response")" != "true" ]; then
+                echo "::error::Merge did not take: $response"
+                exit 1
+              fi
+
+              echo "Merged $head_sha as a squash."
+              exit 0
+            fi
+
+            sleep "$INTERVAL"
+          done
+
+          echo "::error::Gates did not finish within $((MAX_ATTEMPTS * INTERVAL / 60)) minutes."
+          exit 1
