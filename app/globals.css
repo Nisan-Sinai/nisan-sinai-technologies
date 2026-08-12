@@ -982,9 +982,6 @@ a.case-study-label:focus-visible {
 }
 
 .project-card:hover .mock-browser,
-.project-card:hover .dashboard-mock {
-  transform: perspective(1200px) rotateY(0deg) rotateX(0deg) translateY(-6px);
-}
 
 .mock-browser-bar {
   direction: ltr;
@@ -1019,36 +1016,9 @@ a.case-study-label:focus-visible {
   font-size: 0.45rem;
 }
 
-.ld-canvas {
-  min-height: 250px;
-  padding: 1.6rem;
-  background: linear-gradient(135deg, #f7f2ea, #efe4d6);
-  color: #2c2027;
-}
 
-.ld-hero-mini span {
-  font-size: 0.58rem;
-  letter-spacing: 0.08em;
-}
 
-.ld-hero-mini strong {
-  display: block;
-  max-width: 420px;
-  margin-top: 0.7rem;
-  font-family: Georgia, serif;
-  font-size: clamp(2rem, 4vw, 4.2rem);
-  font-weight: 400;
-  line-height: 0.95;
-}
 
-.ld-hero-mini > i {
-  display: block;
-  width: 5rem;
-  height: 1.6rem;
-  margin-top: 1.2rem;
-  border-radius: 99px;
-  background: #2c2027;
-}
 
 .ld-products-mini {
   display: grid;
@@ -1063,160 +1033,27 @@ a.case-study-label:focus-visible {
   background: linear-gradient(145deg, rgba(102, 71, 84, 0.16), rgba(255, 255, 255, 0.65));
 }
 
-.shel-canvas {
-  min-height: 250px;
-  padding: 1rem;
-  background: #f7f1e8;
-  color: #352a20;
-}
 
-.shel-nav-mini {
-  direction: ltr;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.4rem 0.4rem 1.2rem;
-  border-bottom: 1px solid rgba(53, 42, 32, 0.15);
-}
 
-.shel-nav-mini strong {
-  font-family: Georgia, serif;
-  letter-spacing: 0.16em;
-}
 
-.shel-nav-mini span {
-  font-size: 0.48rem;
-  letter-spacing: 0.14em;
-}
 
-.shel-products-mini {
-  direction: ltr;
-  display: grid;
-  grid-template-columns: 1.15fr 0.85fr 0.85fr;
-  gap: 0.9rem;
-  margin-top: 1.5rem;
-}
 
-.shel-products-mini i {
-  min-height: 325px;
-  background: linear-gradient(160deg, #d8b892, #80654d);
-}
 
-.shel-products-mini i:nth-child(2) {
-  background: linear-gradient(160deg, #ded6c7, #9c8d78);
-}
 
-.shel-products-mini i:nth-child(3) {
-  background: linear-gradient(160deg, #c8a37b, #4c3829);
-}
 
-.dashboard-mock {
-  position: relative;
-  z-index: 2;
-  direction: ltr;
-  display: grid;
-  grid-template-columns: 72px 1fr;
-  width: min(100%, 760px);
-  min-height: 430px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 1rem;
-  background: #f5f7fa;
-  box-shadow: 0 45px 100px rgba(0, 0, 0, 0.45);
-  transform: perspective(1200px) rotateY(5deg) rotateX(2deg);
-  transition: transform 350ms ease;
-}
 
-.dashboard-side {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.4rem 0.7rem;
-  background: #07131b;
-}
 
-.dashboard-side strong {
-  margin-bottom: 1.2rem;
-  color: var(--cyan);
-  font-family: var(--font-geist-sans), sans-serif;
-  font-size: 0.7rem;
-}
 
-.dashboard-side i {
-  width: 1.7rem;
-  height: 1.7rem;
-  border-radius: 0.45rem;
-  background: rgba(255, 255, 255, 0.08);
-}
 
-.dashboard-side i:first-of-type {
-  background: rgba(83, 228, 255, 0.2);
-  box-shadow: inset 2px 0 0 var(--cyan);
-}
 
-.dashboard-main {
-  padding: 2rem;
-  color: #16212a;
-}
 
-.dashboard-title {
-  direction: rtl;
-  display: flex;
-  flex-direction: column;
-}
 
-.dashboard-title span {
-  color: #80909e;
-  font-size: 0.58rem;
-}
 
-.dashboard-title strong {
-  margin-top: 0.35rem;
-  font-size: 1.35rem;
-}
 
-.dashboard-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.7rem;
-  margin-top: 1.5rem;
-}
 
-.dashboard-stats i {
-  display: block;
-  min-height: 78px;
-  border: 1px solid #e5e9ed;
-  border-radius: 0.65rem;
-  background: white;
-  box-shadow: 0 8px 20px rgba(23, 43, 55, 0.04);
-}
 
-.dashboard-chart {
-  display: flex;
-  align-items: flex-end;
-  gap: 0.65rem;
-  height: 210px;
-  margin-top: 1rem;
-  padding: 1.2rem;
-  border: 1px solid #e5e9ed;
-  border-radius: 0.8rem;
-  background: white;
-}
 
-.dashboard-chart span {
-  width: 100%;
-  border-radius: 0.3rem 0.3rem 0 0;
-  background: linear-gradient(#22c9e8, #a7eef9);
-}
 
-.dashboard-chart span:nth-child(1) { height: 44%; }
-.dashboard-chart span:nth-child(2) { height: 68%; }
-.dashboard-chart span:nth-child(3) { height: 57%; }
-.dashboard-chart span:nth-child(4) { height: 82%; }
-.dashboard-chart span:nth-child(5) { height: 65%; }
-.dashboard-chart span:nth-child(6) { height: 92%; }
-.dashboard-chart span:nth-child(7) { height: 76%; }
 
 .process-section {
   background:
@@ -1817,106 +1654,28 @@ h2 {
   text-wrap: pretty;
 }
 
+/* A photograph of the running site, framed like a browser window. */
+.mock-shot {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
 /* The project previews illustrate the work; they are not the work. Each one
    borrows its real site's palette so the card says something true about it:
    LD's brass on cream, Shel-Yah's charcoal-and-brass studio, the RSVP
    dashboard. */
-.ld-canvas {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 1.1rem;
-}
 
-.ld-hero-mini span {
-  display: block;
-  color: #b29259;
-  font-size: 0.5rem;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-}
 
-.ld-hero-mini strong {
-  display: block;
-  margin-top: 0.5rem;
-  font-size: 1.15rem;
-  font-weight: 700;
-  line-height: 1.25;
-}
 
-.ld-hero-mini em {
-  display: inline-block;
-  margin-top: 0.7rem;
-  padding: 0.3rem 0.7rem;
-  border-radius: 0.4rem;
-  background: #b29259;
-  color: #fff;
-  font-size: 0.5rem;
-  font-style: normal;
-  font-weight: 700;
-}
 
-.ld-packages {
-  display: flex;
-  gap: 0.4rem;
-}
 
-.ld-packages i {
-  flex: 1;
-  padding: 0.55rem 0.3rem;
-  border: 1px solid rgba(178, 146, 89, 0.35);
-  border-radius: 0.45rem;
-  background: rgba(255, 255, 255, 0.6);
-  font-size: 0.48rem;
-  font-style: normal;
-  font-weight: 700;
-  text-align: center;
-}
 
-.shel-canvas {
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-}
 
-.shel-hero-mini span {
-  display: block;
-  color: #9a8467;
-  font-size: 0.44rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-}
 
-.shel-hero-mini strong {
-  display: block;
-  margin-top: 0.3rem;
-  font-size: 1rem;
-  line-height: 1.25;
-}
 
-.shel-marquee {
-  margin-top: auto;
-  padding: 0.4rem 0.5rem;
-  border-radius: 0.35rem;
-  background: #2b2620;
-  color: rgba(247, 241, 232, 0.8);
-  font-size: 0.4rem;
-  letter-spacing: 0.18em;
-  text-align: center;
-  text-transform: uppercase;
-}
 
-.dashboard-stats i {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.46rem;
-  font-style: normal;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-}
 
 /* Latin sets tighter than Hebrew at display sizes; Hebrew loses its counters
    when tracked in. So the tightening is scoped to the locale that wants it. */
@@ -2198,31 +1957,11 @@ h2 {
   }
 
   .mock-browser,
-  .dashboard-mock {
-    width: 100%;
-    transform: none;
-  }
 
-  .ld-canvas {
-    min-height: 330px;
-    padding: 2rem;
-  }
 
-  .shel-products-mini i {
-    min-height: 275px;
-  }
 
-  .dashboard-mock {
-    min-height: 370px;
-  }
 
-  .dashboard-main {
-    padding: 1.2rem;
-  }
 
-  .dashboard-chart {
-    height: 170px;
-  }
 
   .process-grid {
     grid-template-columns: 1fr;

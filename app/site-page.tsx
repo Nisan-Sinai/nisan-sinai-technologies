@@ -5,6 +5,17 @@ import StructuredData from "./structured-data";
 import { contact, getContent } from "@/lib/content";
 import { forwardArrow, localePath, type Locale } from "@/lib/i18n";
 
+/**
+ * The previews are photographs of the live sites, refreshed by the
+ * project-shots workflow. Hosts are not translated, so they live here rather
+ * than in the content dictionary.
+ */
+const PROJECT_SITES = [
+  { slug: "ld-event-design", host: "ld-event-design.vercel.app" },
+  { slug: "shel-yah", host: "shel-yah-web.vercel.app" },
+  { slug: "rsvp", host: "arrival-confirmations.vercel.app" },
+] as const;
+
 export default function SitePage({ locale }: { locale: Locale }) {
   const t = getContent(locale);
   const arrow = forwardArrow(locale);
@@ -212,87 +223,23 @@ export default function SitePage({ locale }: { locale: Locale }) {
                   )}
                 </div>
                 <div className={`project-preview ${previewClass}`} aria-label={project.previewLabel}>
-                  {index === 0 && (
-                    <div className="mock-browser">
-                      <div className="mock-browser-bar">
-                        <i />
-                        <i />
-                        <i />
-                        <span>LD EVENT DESIGN</span>
-                      </div>
-                      <div className="ld-canvas">
-                        <div className="ld-hero-mini">
-                          <span>{project.preview.kicker}</span>
-                          <strong>{project.preview.headline}</strong>
-                          <em>{project.preview.cta}</em>
-                        </div>
-                        <div className="ld-packages">
-                          {project.preview.tags.map((tag) => (
-                            <i key={tag}>{tag}</i>
-                          ))}
-                        </div>
-                      </div>
+                  <div className="mock-browser">
+                    <div className="mock-browser-bar">
+                      <i />
+                      <i />
+                      <i />
+                      <span>{PROJECT_SITES[index].host}</span>
                     </div>
-                  )}
-                  {index === 1 && (
-                    <div className="mock-browser">
-                      <div className="mock-browser-bar">
-                        <i />
-                        <i />
-                        <i />
-                        <span>SHEL‑YAH</span>
-                      </div>
-                      <div className="shel-canvas">
-                        <div className="shel-nav-mini">
-                          <strong>SHEL‑YAH</strong>
-                          <span>{project.preview.tags.join(" · ")}</span>
-                        </div>
-                        <div className="shel-hero-mini">
-                          <span>{project.preview.kicker}</span>
-                          <strong>{project.preview.headline}</strong>
-                        </div>
-                        <div className="shel-products-mini">
-                          <i />
-                          <i />
-                          <i />
-                        </div>
-                        <div className="shel-marquee">
-                          handmade in israel · made to order · studio shel-yah
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  {index === 2 && (
-                    <div className="dashboard-mock">
-                      <div className="dashboard-side">
-                        <strong>RSVP</strong>
-                        <i />
-                        <i />
-                        <i />
-                        <i />
-                      </div>
-                      <div className="dashboard-main">
-                        <div className="dashboard-title">
-                          <span>{project.preview.kicker}</span>
-                          <strong>{project.preview.headline}</strong>
-                        </div>
-                        <div className="dashboard-stats">
-                          {project.preview.tags.map((tag) => (
-                            <i key={tag}>{tag}</i>
-                          ))}
-                        </div>
-                        <div className="dashboard-chart">
-                          <span />
-                          <span />
-                          <span />
-                          <span />
-                          <span />
-                          <span />
-                          <span />
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                    <img
+                      className="mock-shot"
+                      src={`/projects/${PROJECT_SITES[index].slug}.jpg`}
+                      alt={project.previewLabel}
+                      width={1440}
+                      height={900}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
                 </div>
               </article>
             );
