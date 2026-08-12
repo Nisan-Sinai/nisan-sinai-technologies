@@ -15,10 +15,45 @@ import { forwardArrow, localePath, type Locale } from "@/lib/i18n";
  * than in the content dictionary.
  */
 const PROJECT_SITES = [
-  { slug: "ld-event-design", host: "ld-event-design.vercel.app" },
-  { slug: "shel-yah", host: "shel-yah-web.vercel.app" },
-  { slug: "rsvp", host: "arrival-confirmations.vercel.app" },
+  {
+    slug: "ld-event-design",
+    host: "ld-event-design.vercel.app",
+    href: "https://ld-event-design.vercel.app/",
+  },
+  {
+    slug: "shel-yah",
+    host: "shel-yah-web.vercel.app",
+    href: "https://shel-yah-web.vercel.app/",
+  },
+  {
+    slug: "rsvp",
+    host: "arrival-confirmations.vercel.app",
+    href: "https://arrival-confirmations.vercel.app/",
+  },
 ] as const;
+
+const LD_PROJECT_COPY = {
+  he: {
+    description:
+      "אתר ומערכת הזמנות ל־LD Event Design — סטודיו לעיצוב אירועים. הלקוחות בוחרים חבילת עיצוב, מוסיפים פריטים, חותמים על הסכם דיגיטלי ושולחים הזמנה — והכול מנוהל מאזור ניהול אחד.",
+    points: [
+      "חבילות ומוצרים בהתאמה אישית",
+      "סל, הסכם והזמנה דיגיטליים",
+      "ניהול הזמנות, תמונות ותוכן",
+    ],
+    linkLabel: "לאתר הפעיל",
+  },
+  en: {
+    description:
+      "Website and ordering system for LD Event Design, an event-design studio. Clients choose a design package, add items, sign a digital agreement and submit the order — all managed from one admin area.",
+    points: [
+      "Custom packages and add-ons",
+      "Cart, digital agreement and ordering",
+      "Orders, images and content management",
+    ],
+    linkLabel: "Live site",
+  },
+} as const;
 
 export default function SitePage({ locale }: { locale: Locale }) {
   const t = getContent(locale);
@@ -188,6 +223,12 @@ export default function SitePage({ locale }: { locale: Locale }) {
           {t.projects.items.map((project, index) => {
             const modifier = ["project-ld", "project-shel", "project-rsvp"][index];
             const previewClass = ["ld-preview", "shel-preview", "rsvp-preview"][index];
+            const ldCopy = index === 0 ? LD_PROJECT_COPY[locale] : null;
+            const description = ldCopy?.description ?? project.description;
+            const points = ldCopy?.points ?? project.points;
+            const linkLabel = ldCopy?.linkLabel ?? project.linkLabel;
+            const href = project.href ?? PROJECT_SITES[index].href;
+
             return (
               <article className={`project-card ${modifier}`} key={project.title}>
                 <div className="project-copy">
@@ -200,27 +241,20 @@ export default function SitePage({ locale }: { locale: Locale }) {
                   <h3>
                     <LatinText text={project.title} />
                   </h3>
-                  <p>{project.description}</p>
+                  <p>{description}</p>
                   <ul>
-                    {project.points.map((point) => (
+                    {points.map((point) => (
                       <li key={point}>{point}</li>
                     ))}
                   </ul>
-                  {project.href ? (
-                    <ExternalLink
-                      className="case-study-label"
-                      href={project.href}
-                      hint={t.newTabHint}
-                    >
-                      <LatinText text={project.linkLabel} />{" "}
-                      <i aria-hidden="true">↗</i>
-                    </ExternalLink>
-                  ) : (
-                    <span className="case-study-label">
-                      <LatinText text={project.linkLabel} />{" "}
-                      <i aria-hidden="true">{arrow}</i>
-                    </span>
-                  )}
+                  <ExternalLink
+                    className="case-study-label"
+                    href={href}
+                    hint={t.newTabHint}
+                  >
+                    <LatinText text={linkLabel} />{" "}
+                    <i aria-hidden="true">↗</i>
+                  </ExternalLink>
                 </div>
                 <div className={`project-preview ${previewClass}`}>
                   <div className="mock-browser">
