@@ -256,6 +256,78 @@ test("the English page reads left to right without overflowing", async ({
   expect(layout.tagsStartAtReadingEdge).toBe(true);
 });
 
+test("every page carries what a crawler needs", async ({ page }) => {
+  for (const [path, expectedCard] of [
+    ["/", "/og.png"],
+    ["/en", "/og-en.png"],
+  ] as const) {
+    await page.goto(path);
+
+    const head = await page.evaluate(() => {
+      const meta = (selector: string) =>
+        document.querySelector(selector)?.getAttribute("content") ?? null;
+      const structured = document.querySelector(
+        'script[type="application/ld+json"]',
+      );
+
+      return {
+        canonical: document
+          .querySelector('link[rel="canonical"]')
+          ?.getAttribute("href"),
+        alternates: Array.from(
+          document.querySelectorAll('link[rel="alternate"][hreflang]'),
+        ).map((link) => link.getAttribute("hreflang")),
+        robots: meta('meta[name="robots"]'),
+        googleBot: meta('meta[name="googlebot"]'),
+        title: meta('meta[property="og:title"]'),
+        description: meta('meta[name="description"]'),
+        image: meta('meta[property="og:image"]'),
+        twitterCard: meta('meta[name="twitter:card"]'),
+        structured: structured?.textContent ?? null,
+      };
+    });
+
+    // A page with no canonical competes with itself; one with no share card
+    // posts as a bare link.
+    expect(head.canonical).toBeTruthy();
+    expect(head.description).toBeTruthy();
+    expect(head.title).toBeTruthy();
+    expect(head.alternates?.sort()).toEqual(["en", "he"]);
+    expect(head.robots).toContain("index");
+    expect(head.robots).not.toContain("noindex");
+    expect(head.googleBot).toContain("max-image-preview:large");
+    expect(head.image).toContain(expectedCard);
+    expect(head.twitterCard).toBe("summary_large_image");
+
+    const graph = JSON.parse(head.structured ?? "{}")["@graph"];
+    expect(graph.map((node: { "@type": string }) => node["@type"])).toEqual([
+      "ProfessionalService",
+      "WebSite",
+    ]);
+  }
+});
+
+test("the share cards and manifest are actually served", async ({ request }) => {
+  for (const asset of ["/og.png", "/og-en.png", "/site.webmanifest", "/favicon.svg"]) {
+    const response = await request.get(asset);
+    expect(response.status(), asset).toBe(200);
+  }
+});
+
+test("robots.txt invites crawlers and names the sitemap", async ({ request }) => {
+  const robots = await (await request.get("/robots.txt")).text();
+  expect(robots).toContain("Allow: /");
+  expect(robots).not.toContain("Disallow: /\n");
+  expect(robots).toMatch(/Sitemap: https?:\/\/\S+\/sitemap\.xml/);
+
+  const sitemap = await (await request.get("/sitemap.xml")).text();
+  // Both languages, both pages, cross-referenced.
+  for (const path of ["/", "/en", "/privacy", "/en/privacy"]) {
+    expect(sitemap).toContain(`${path}<`.replace("/<", "/<"));
+  }
+  expect(sitemap).toContain("hreflang");
+});
+
 test("has no serious or critical automated accessibility violations", async ({
   page,
 }) => {

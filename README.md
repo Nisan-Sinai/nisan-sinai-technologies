@@ -84,6 +84,27 @@ Request. דוח Playwright נשמר כ־artifact גם כאשר בדיקת E2E נ
 - מדיניות ה־RLS מאפשרת רק פניות במצב `new` וממקור האתר.
 - ה־API המקומי בודק גודל payload, סוג תוכן, honeypot, אורכים ופורמטים לפני כתיבה.
 
+## פרסום ואינדוקס
+
+האתר מוכן לסריקה: `robots.txt` פותח את כל הנתיבים ומצביע על ה־sitemap,
+`sitemap.xml` מונה את שני העמודים בשתי השפות עם `hreflang` הדדי, לכל עמוד יש
+`canonical` משלו, ו־`googlebot` מקבל `max-image-preview:large` כדי שתמונת
+השיתוף תופיע בתוצאות.
+
+נתונים מובנים (JSON-LD) נבנים ב־`lib/structured-data.ts` מאותו מילון תוכן של
+העמוד, כך ש־`ProfessionalService` ו־`WebSite` לא יכולים להתפצל מהטקסט שמוצג.
+
+כרטיסי השיתוף הם `public/og.png` ו־`public/og-en.png` בגודל 1200×630.
+
+### מה שנשאר לעשות ידנית
+
+1. **אימות ב־Google Search Console** — הוסיפו את
+   `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` עם הטוקן שגוגל נותן, ופרסו מחדש.
+   בלי המשתנה התגית פשוט לא נוצרת.
+2. **הגשת ה־sitemap** ב־Search Console: `/sitemap.xml`.
+3. **דומיין** — כל הכתובות הקנוניות נגזרות מ־`NEXT_PUBLIC_SITE_URL`. מעבר
+   לדומיין קבוע דורש עדכון של המשתנה בלבד.
+
 ## פריסה
 
 - Vercel משתמש ב־`vercel.json` ובפקודה `npm run build:vercel`.

@@ -1,6 +1,7 @@
 import { Fragment } from "react";
 import ContactForm from "./contact-form";
 import LanguageSwitch from "./language-switch";
+import StructuredData from "./structured-data";
 import { contact, getContent } from "@/lib/content";
 import { forwardArrow, localePath, type Locale } from "@/lib/i18n";
 
@@ -24,6 +25,7 @@ export default function SitePage({ locale }: { locale: Locale }) {
 
   return (
     <main>
+      <StructuredData locale={locale} />
       <a className="skip-link" href="#main-content">
         {t.skipLink}
       </a>
