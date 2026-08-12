@@ -11,6 +11,15 @@ updates:
       production:
         dependency-type: production
         update-types: [minor, patch]
+    ignore:
+      # typescript-eslint has no TypeScript 7 support yet, so a major TypeScript
+      # bump takes lint down with it. eslint-config-next's plugin stack breaks
+      # on ESLint 10 for the same reason. Both hold until upstream catches up.
+      # See https://github.com/typescript-eslint/typescript-eslint/issues/10940
+      - dependency-name: typescript
+        update-types: [version-update:semver-major]
+      - dependency-name: eslint
+        update-types: [version-update:semver-major]
 
   - package-ecosystem: github-actions
     directory: /
