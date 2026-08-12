@@ -30,7 +30,7 @@ test("only the two text strips animate horizontally", async ({ page }) => {
   expect(motion.overflows).toBe(false);
 });
 
-test("mobile business core is not covered by satellite cards", async ({
+test("mobile business core has visible clearance from satellite cards", async ({
   page,
 }, testInfo) => {
   test.skip(!testInfo.project.name.startsWith("mobile"));
@@ -42,19 +42,41 @@ test("mobile business core is not covered by satellite cards", async ({
       document.querySelectorAll(".capability, .signal-card"),
     ).map((element) => element.getBoundingClientRect());
 
-    if (!core) return { found: false, covered: true };
+    if (!core) return { found: false, covered: true, minClearance: 0 };
 
-    const covered = satellites.some((satellite) => {
-      const x = Math.min(core.right, satellite.right) - Math.max(core.left, satellite.left);
-      const y = Math.min(core.bottom, satellite.bottom) - Math.max(core.top, satellite.top);
-      return x > 0 && y > 0;
+    let covered = false;
+    let minClearance = Number.POSITIVE_INFINITY;
+
+    satellites.forEach((satellite) => {
+      const overlapX =
+        Math.min(core.right, satellite.right) - Math.max(core.left, satellite.left);
+      const overlapY =
+        Math.min(core.bottom, satellite.bottom) - Math.max(core.top, satellite.top);
+
+      if (overlapX > 0 && overlapY > 0) {
+        covered = true;
+      }
+
+      const horizontalGap = Math.max(
+        satellite.left - core.right,
+        core.left - satellite.right,
+        0,
+      );
+      const verticalGap = Math.max(
+        satellite.top - core.bottom,
+        core.top - satellite.bottom,
+        0,
+      );
+      const clearance = Math.hypot(horizontalGap, verticalGap);
+      minClearance = Math.min(minClearance, clearance);
     });
 
-    return { found: true, covered };
+    return { found: true, covered, minClearance };
   });
 
   expect(result.found).toBe(true);
   expect(result.covered).toBe(false);
+  expect(result.minClearance).toBeGreaterThanOrEqual(12);
 });
 
 test("admin page is private before authentication", async ({ page }) => {
