@@ -144,6 +144,27 @@ tests/e2e/         Playwright
 | `ci.yml` | כל push ל־`main` או `dev`, וכל Pull Request | ארבע משרות: איכות ובנייה כפולה, Playwright, סריקת מפתחות, מיגרציות ו־RLS |
 | `smoke.yml` | כל 6 שעות, ובהרצה ידנית | האתר הפרוס עונה ומפתח ה־Data API עדיין מתקבל |
 | `project-shots.yml` | כל יום שני, ובהרצה ידנית | מצלם מחדש את שלושת האתרים ומעדכן את התמונות |
+| `dependabot-automerge.yml` | על כל PR של Dependabot | ממתין לכל השערים וממזג לבד patch ו־minor |
+
+## עדכוני תלויות
+
+Dependabot פותח PR-ים בימי שלישי לפי שעון ישראל — חבילות ב־06:00 ופעולות
+GitHub ב־06:30, כדי ששני ה־ecosystems לא יעמיסו יחד על CI ועל Vercel.
+
+| מה | מקובץ ל־PR אחד | מיזוג אוטומטי |
+| --- | --- | --- |
+| production, minor ו־patch | כן | כן |
+| development, minor ו־patch | כן | כן |
+| GitHub Actions, minor ו־patch | כן | כן |
+| כל major | לא, PR נפרד | **לא** — קריאה אנושית |
+
+`dependabot-automerge.yml` ממזג רק כאשר כל ארבע משרות ה־CI וגם סטטוס הפריסה
+`Vercel` ירוקים, ורק ב־squash עם אימות ה־SHA, כך שמה שמתמזג הוא בדיוק מה
+שנבדק. אם ה־SHA השתנה בין הבדיקה למיזוג — GitHub דוחה את המיזוג.
+
+ה־workflow רץ על `pull_request_target` כדי לקבל טוקן שיכול למזג, ולכן הוא
+**לעולם לא מבצע checkout ולא מריץ קוד מתוך ה־PR** — הוא קורא metadata, קורא
+תוצאות בדיקות, וקורא ל־API. הקוד עצמו נבדק ב־`ci.yml` תחת טוקן קריאה בלבד.
 
 דוח Playwright נשמר כ־artifact גם כאשר בדיקת E2E נכשלת.
 
