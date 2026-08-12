@@ -1,0 +1,72 @@
+/* Keep footer links readable and separated, especially on narrow RTL screens. */
+.site-footer > nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.55rem 0.8rem;
+  color: #bdc7d1;
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+
+.site-footer > nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: 0.65rem;
+  white-space: nowrap;
+  transition: color 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.site-footer > nav a:hover,
+.site-footer > nav a:focus-visible {
+  border-color: rgba(83, 228, 255, 0.3);
+  background: rgba(83, 228, 255, 0.05);
+  color: var(--cyan);
+}
+
+.site-footer > nav a span[lang="en"] {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+@media (max-width: 680px) {
+  .site-footer {
+    gap: 1.35rem;
+  }
+
+  .site-footer p {
+    width: 100%;
+    margin: 0;
+    line-height: 1.75;
+  }
+
+  .site-footer > nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    gap: 0.65rem;
+  }
+
+  .site-footer > nav a {
+    width: 100%;
+    min-width: 0;
+    padding: 0.7rem 0.55rem;
+    border-color: var(--line-soft);
+    background: rgba(255, 255, 255, 0.018);
+    font-size: 0.78rem;
+  }
+
+  .site-footer > nav a:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .site-footer > small {
+    width: 100%;
+    line-height: 1.75;
+  }
+}
