@@ -193,7 +193,7 @@ test("public site exposes a clear admin entry button", async ({ page }) => {
   await expect(adminLink).toHaveAttribute("href", "/admin");
 });
 
-test("admin page is private and exposes secure sign-in options", async ({ page }) => {
+test("admin page only exposes password or Google login", async ({ page }) => {
   await page.goto("/admin");
 
   await expect(
@@ -207,10 +207,13 @@ test("admin page is private and exposes secure sign-in options", async ({ page }
   await expect(page.getByLabel("סיסמה")).toBeVisible();
   await expect(page.getByRole("button", { name: "כניסה עם סיסמה" })).toBeVisible();
   await expect(page.getByRole("button", { name: "התחברות עם Google" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "איפוס סיסמה" })).toBeVisible();
+
+  await expect(page.getByRole("button", { name: "איפוס סיסמה" })).toHaveCount(0);
   await expect(
     page.getByRole("button", { name: "כניסה ראשונה / קישור למייל" }),
-  ).toBeVisible();
+  ).toHaveCount(0);
+  await expect(page.locator(".admin-login-options")).toHaveCount(0);
+  await expect(page.locator(".admin-provider-note")).toHaveCount(0);
 
   await expect(page.locator(".admin-lead-card")).toHaveCount(0);
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
