@@ -1,0 +1,46 @@
+@media (max-width: 680px) {
+  /* The service strip above "מה אני בונה" is intentionally static on phones. */
+  .services-intro.marquee-strip {
+    overflow: hidden;
+  }
+
+  .services-intro .marquee-track {
+    width: 100%;
+    transform: none !important;
+    animation: none !important;
+    will-change: auto;
+  }
+
+  .services-intro .marquee-group {
+    direction: ltr;
+    width: 100%;
+    min-height: 68px;
+    justify-content: center;
+    gap: clamp(0.45rem, 2.3vw, 0.72rem);
+    padding: 0.8rem 0.75rem;
+    white-space: nowrap;
+  }
+
+  .services-intro .marquee-group[aria-hidden="true"] {
+    display: none;
+  }
+
+  .services-intro .marquee-group > span:first-child {
+    display: none;
+  }
+
+  .services-intro .marquee-item {
+    gap: clamp(0.45rem, 2.3vw, 0.72rem);
+  }
+
+  .services-intro .marquee-item strong {
+    font-size: clamp(0.68rem, 3vw, 0.82rem);
+    letter-spacing: -0.01em;
+  }
+
+  .services-intro .marquee-item i {
+    width: 0.24rem;
+    height: 0.24rem;
+    flex: 0 0 0.24rem;
+  }
+}
