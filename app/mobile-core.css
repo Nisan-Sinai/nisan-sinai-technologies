@@ -1,0 +1,9 @@
+@media (max-width: 680px) {
+  .system-core {
+    width: 9rem;
+  }
+
+  .signal-card {
+    width: 88px;
+  }
+}
