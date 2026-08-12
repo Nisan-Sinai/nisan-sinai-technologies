@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 
 type Lead = {
@@ -38,15 +39,14 @@ export default function AdminDashboard({
   supabaseUrl: string;
   publishableKey: string;
 }) {
+  const configured = Boolean(supabaseUrl && publishableKey);
   const [email, setEmail] = useState(adminEmail);
   const [session, setSession] = useState<Session | null>(null);
   const [leads, setLeads] = useState<Lead[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(configured);
   const [sendingLink, setSendingLink] = useState(false);
   const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
-
-  const configured = Boolean(supabaseUrl && publishableKey);
+  const [error, setError] = useState(configured ? "" : "שירות הניהול אינו מוגדר כרגע.");
 
   async function fetchUser(accessToken: string) {
     return fetch(new URL("/auth/v1/user", supabaseUrl), {
@@ -132,45 +132,49 @@ export default function AdminDashboard({
   }
 
   useEffect(() => {
-    if (!configured) {
-      setError("שירות הניהול אינו מוגדר כרגע.");
-      setLoading(false);
-      return;
+    if (!configured) return;
+
+    async function initializeSession() {
+      // Defer state changes out of the synchronous effect body. The browser
+      // hash/localStorage are external session sources that only exist client-side.
+      await Promise.resolve();
+
+      const hash = new URLSearchParams(window.location.hash.slice(1));
+      const authError = hash.get("error_description");
+      if (authError) {
+        setError("קישור הכניסה אינו תקין או שפג תוקפו. אפשר לשלוח קישור חדש.");
+        window.history.replaceState({}, document.title, "/admin");
+        setLoading(false);
+        return;
+      }
+
+      const accessToken = hash.get("access_token");
+      if (accessToken) {
+        const incoming: Session = {
+          access_token: accessToken,
+          refresh_token: hash.get("refresh_token") ?? undefined,
+          expires_at: Number(hash.get("expires_at") ?? 0) || undefined,
+        };
+        window.history.replaceState({}, document.title, "/admin");
+        await loadLeads(incoming);
+        return;
+      }
+
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (!stored) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        await loadLeads(JSON.parse(stored) as Session);
+      } catch {
+        localStorage.removeItem(STORAGE_KEY);
+        setLoading(false);
+      }
     }
 
-    const hash = new URLSearchParams(window.location.hash.slice(1));
-    const authError = hash.get("error_description");
-    if (authError) {
-      setError("קישור הכניסה אינו תקין או שפג תוקפו. אפשר לשלוח קישור חדש.");
-      window.history.replaceState({}, document.title, "/admin");
-      setLoading(false);
-      return;
-    }
-
-    const accessToken = hash.get("access_token");
-    if (accessToken) {
-      const incoming: Session = {
-        access_token: accessToken,
-        refresh_token: hash.get("refresh_token") ?? undefined,
-        expires_at: Number(hash.get("expires_at") ?? 0) || undefined,
-      };
-      window.history.replaceState({}, document.title, "/admin");
-      void loadLeads(incoming);
-      return;
-    }
-
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (!stored) {
-      setLoading(false);
-      return;
-    }
-
-    try {
-      void loadLeads(JSON.parse(stored) as Session);
-    } catch {
-      localStorage.removeItem(STORAGE_KEY);
-      setLoading(false);
-    }
+    void initializeSession();
     // The project credentials are stable for the lifetime of this page.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [configured]);
@@ -227,20 +231,20 @@ export default function AdminDashboard({
     }
   }
 
-  const stats = useMemo(() => {
-    const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-    return {
+  const stats = useMemo(
+    () => ({
       total: leads.length,
       newCount: leads.filter((lead) => lead.status === "new").length,
-      week: leads.filter((lead) => new Date(lead.created_at).getTime() >= weekAgo).length,
-    };
-  }, [leads]);
+      withEmail: leads.filter((lead) => Boolean(lead.email)).length,
+    }),
+    [leads],
+  );
 
   if (!session) {
     return (
       <main className="admin-login-shell">
         <section className="admin-login-card" aria-labelledby="admin-login-title">
-          <a className="admin-back-link" href="/">← חזרה לאתר</a>
+          <Link className="admin-back-link" href="/">← חזרה לאתר</Link>
           <span className="section-kicker">ADMIN</span>
           <h1 id="admin-login-title">כניסה לניהול</h1>
           <p>הכניסה מאובטחת ומותרת רק למייל המנהל.</p>
@@ -288,7 +292,7 @@ export default function AdminDashboard({
       <section className="admin-stats" aria-label="סיכום פניות">
         <article><span>סה״כ פניות</span><strong>{stats.total}</strong></article>
         <article><span>חדשות</span><strong>{stats.newCount}</strong></article>
-        <article><span>7 ימים אחרונים</span><strong>{stats.week}</strong></article>
+        <article><span>עם אימייל</span><strong>{stats.withEmail}</strong></article>
       </section>
 
       {error && <p className="admin-notice admin-notice-error">{error}</p>}
