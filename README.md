@@ -44,8 +44,9 @@ npm run dev
 ## מבנה הפרויקט
 
 ```
-app/(he)/          עברית בשורש: /, /privacy — root layout משלה
-app/(en)/en/       אנגלית: /en, /en/privacy — root layout משלה
+app/(he)/          עברית בשורש: /, /privacy, /accessibility — root layout משלה
+app/(en)/en/       אנגלית תחת /en — root layout משלה
+app/legal-content  מרנדר את שני עמודי המדיניות מאותו טיפוס
 app/site-page.tsx  עמוד הבית המשותף, מוזרק תוכן לפי שפה
 app/api/leads/     ה־API של טופס הפניות
 lib/content.ts     כל מחרוזות האתר, שתי השפות
@@ -90,6 +91,21 @@ tests/e2e/         Playwright
 `project-shots.yml` מריץ אותו כל יום שני ובהרצה ידנית ומעדכן את `public/projects/`.
 אתר שנכשל בטעינה שומר על הצילום הקודם שלו.
 
+## נגישות ופרטיות
+
+שני עמודי מדיניות מוגשים בשתי השפות ומקושרים מהכותרת התחתונה של **כל** עמוד:
+`/accessibility` (הצהרת נגישות) ו־`/privacy` (מדיניות פרטיות). שניהם נבנים
+מאותו טיפוס `LegalDocument` ב־`lib/content.ts`, כך שסעיף שקיים בשפה אחת ולא
+בשנייה נכשל בקומפילציה.
+
+- **נגישות** — האתר נבנה לת״י 5568 ברמה AA (מבוסס WCAG 2.0). `npm run test:e2e`
+  מריץ axe-core על כל שישה העמודים בשלושה גדלי מסך, ובנוסף נבדקים ניווט
+  במקלדת, סימון פוקוס, זרימה ב־320px, שינוי מרווחי טקסט וסימון שפה של מילים
+  לועזיות בתוך טקסט עברי (WCAG 3.1.2).
+- **פרטיות** — נוסח המדיניות נבדק ביחידה מול רשימת הגילויים שחוק הגנת הפרטיות
+  ותיקון 13 דורשים: זהות בעל המאגר, התנדבות המסירה, ספקי העיבוד, העברה לחו״ל,
+  וזכויות העיון, התיקון והמחיקה. מחיקת סעיף כזה בעריכה מפילה את הבדיקה.
+
 ## SEO ואינדוקס
 
 - `robots.txt` פותח את כל הנתיבים ומצביע על ה־sitemap.
@@ -113,7 +129,7 @@ tests/e2e/         Playwright
 | `npm run build:vercel` | build של Next.js עבור Vercel |
 | `npm run build:sites` | build מאומת עבור Sites |
 | `npm run test:rendered` | בדיקת ארטיפקט Sites |
-| `npm run test:e2e` | Playwright בדסקטופ, בשני מובייל ובנגישות |
+| `npm run test:e2e` | Playwright בדסקטופ, בשני מובייל, ו־axe-core בכל עמוד |
 | `npm run test:migrations` | מיגרציות וחוזה ה־RLS מול Postgres |
 | `npm run smoke` | בדיקת סביבה פרוסה |
 | `npm run check:data-api` | אימות שהמפתח של Supabase עדיין מתקבל |

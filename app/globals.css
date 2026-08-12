@@ -51,6 +51,20 @@ a {
   color: var(--foreground);
 }
 
+/* Present to a screen reader, absent to the eye. Not display:none, which
+   removes it from the accessibility tree along with everything else. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
 .skip-link {
   position: fixed;
   z-index: 100;
@@ -982,6 +996,9 @@ a.case-study-label:focus-visible {
 }
 
 .project-card:hover .mock-browser,
+.project-card:focus-within .mock-browser {
+  transform: perspective(1200px) rotateY(0deg) rotateX(0deg) translateY(-6px);
+}
 
 .mock-browser-bar {
   direction: ltr;
@@ -1518,7 +1535,7 @@ a.case-study-label:focus-visible {
 }
 
 .legal-page {
-  min-height: 100svh;
+  min-height: 70svh;
   padding: clamp(2rem, 6vw, 5rem) 1.2rem clamp(5rem, 10vw, 9rem);
   background:
     radial-gradient(circle at 80% 8%, rgba(83, 228, 255, 0.09), transparent 28%),
@@ -1558,9 +1575,48 @@ a.case-study-label:focus-visible {
   font-size: 0.72rem;
 }
 
+.legal-intro {
+  max-width: 62ch;
+  margin: 2.4rem 0 0;
+  color: var(--foreground);
+  font-size: clamp(1rem, 1.5vw, 1.15rem);
+  line-height: 1.85;
+  text-wrap: pretty;
+}
+
 .legal-page section {
   padding: 2rem 0;
   border-top: 1px solid var(--line);
+}
+
+/* Rights and adjustments are enumerated claims; the list has to read as a
+   list, not as a run of sentences that happen to sit under a heading. */
+.legal-list {
+  margin: 1.1rem 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--muted);
+  line-height: 1.9;
+}
+
+.legal-list li {
+  position: relative;
+  padding-inline-start: 1.35rem;
+}
+
+.legal-list li + li {
+  margin-top: 0.75rem;
+}
+
+.legal-list li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.85em;
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 50%;
+  background: var(--accent);
 }
 
 .legal-page h2 {
@@ -1956,12 +2012,10 @@ h2 {
     padding: 1.25rem;
   }
 
-  .mock-browser,
-
-
-
-
-
+  /* A phone is looked at straight on; the desktop tilt only costs sharpness. */
+  .mock-browser {
+    transform: none;
+  }
 
   .process-grid {
     grid-template-columns: 1fr;

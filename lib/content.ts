@@ -23,6 +23,24 @@ export type Project = {
 export type AboutValue = { number: string; title: string; text: string };
 export type ServiceOption = { value: string; label: string };
 
+/**
+ * Both policy pages are the same shape: a heading, a date, an opening
+ * paragraph and numbered sections that carry prose, a list, or both. Sharing
+ * the type keeps the two documents renderable by one component and keeps a
+ * missing translation a compile error rather than an empty page.
+ */
+export type LegalSection = { title: string; body?: string; items?: string[] };
+export type LegalDocument = {
+  metaTitle: string;
+  metaDescription: string;
+  back: string;
+  kicker: string;
+  title: string;
+  updated: string;
+  intro: string;
+  sections: LegalSection[];
+};
+
 export type SiteContent = {
   meta: {
     title: string;
@@ -35,6 +53,8 @@ export type SiteContent = {
   };
   brand: { name: string; suffix: string; homeAria: string; topAria: string };
   skipLink: string;
+  /** Read out after a link that leaves the site, so the jump is not a surprise. */
+  newTabHint: string;
   nav: {
     aria: string;
     services: string;
@@ -118,16 +138,17 @@ export type SiteContent = {
     errorBefore: string;
     errorAfter: string;
   };
-  footer: { tagline: string; email: string; phone: string; privacy: string; rights: string };
-  privacy: {
-    metaTitle: string;
-    metaDescription: string;
-    back: string;
-    kicker: string;
-    title: string;
-    updated: string;
-    sections: { title: string; body: string }[];
+  footer: {
+    tagline: string;
+    email: string;
+    phone: string;
+    privacy: string;
+    accessibility: string;
+    rights: string;
+    navAria: string;
   };
+  privacy: LegalDocument;
+  accessibility: LegalDocument;
 };
 
 const EMAIL = "nisan.sinai5@gmail.com";
@@ -159,6 +180,7 @@ const he: SiteContent = {
     topAria: "חזרה לראש העמוד",
   },
   skipLink: "דילוג לתוכן המרכזי",
+  newTabHint: "(נפתח בכרטיסייה חדשה)",
   nav: {
     aria: "ניווט ראשי",
     services: "שירותים",
@@ -415,35 +437,117 @@ const he: SiteContent = {
     email: "אימייל",
     phone: "טלפון",
     privacy: "פרטיות",
+    accessibility: "נגישות",
     rights: "© 2026 ניסן סיני טכנולוגיות. כל הזכויות שמורות.",
+    navAria: "קישורים בתחתית העמוד",
   },
   privacy: {
     metaTitle: "מדיניות פרטיות",
-    metaDescription: "מדיניות הפרטיות של אתר ניסן סיני טכנולוגיות.",
+    metaDescription:
+      "איזה מידע נאסף באתר ניסן סיני טכנולוגיות, למה הוא משמש, למי הוא מועבר ואילו זכויות עומדות לך לפי חוק הגנת הפרטיות.",
     back: "חזרה לאתר",
     kicker: "פרטיות",
     title: "מדיניות פרטיות",
-    updated: "עודכן לאחרונה: אוגוסט 2026",
+    updated: "עודכן לאחרונה: 12 באוגוסט 2026",
+    intro:
+      "העמוד הזה מסביר איזה מידע אישי נאסף באתר, למה הוא משמש, למי הוא מועבר, כמה זמן הוא נשמר ואילו זכויות עומדות לך לפי חוק הגנת הפרטיות, התשמ״א-1981 ותקנותיו.",
     sections: [
       {
-        title: "איזה מידע נאסף?",
-        body: "כאשר משאירים פרטים בטופס יצירת הקשר, נשמרים הפרטים שנמסרו מרצון: שם, שם עסק, טלפון, אימייל, סוג השירות ותוכן הפנייה.",
+        title: "מי אחראי למידע",
+        body: "בעל המאגר והאחראי על המידע הוא ניסן סיני, ניסן סיני טכנולוגיות, ישראל. לכל פנייה בנושא פרטיות אפשר לפנות ישירות בכתובת {email} או בטלפון 058-7170978.",
       },
       {
-        title: "למה המידע משמש?",
-        body: "המידע משמש רק לצורך חזרה לפונה, בירור הצורך ומתן מידע או הצעה. אין שימוש בפרטים לדיוור המוני ואין העברה שלהם לצד שלישי למטרות שיווק.",
+        title: "איזה מידע נאסף",
+        body: "רק מה שנמסר מרצון בטופס יצירת הקשר: שם מלא, שם העסק, טלפון, כתובת אימייל, סוג השירות המבוקש ותוכן הפנייה, יחד עם מועד השליחה. אין חובה חוקית למסור את הפרטים והמסירה נעשית מרצון בלבד, אך בלי שם וטלפון לא ניתן לחזור אליך. האתר אינו אוסף מידע נוסף עליך ואינו רוכש מידע מגורמים אחרים.",
       },
       {
-        title: "איפה המידע נשמר?",
-        body: "הפניות נשמרות בבסיס נתונים מאובטח בענן, עם הרשאות מוגבלות שמאפשרות כתיבה בלבד מהאתר. אין גישה ציבורית לקריאת הפניות.",
+        title: "למה המידע משמש",
+        body: "אך ורק כדי לחזור אל הפונה, להבין את הצורך ולהציע מענה או הצעת מחיר. אין דיוור פרסומי, אין ניתוח פרופיל, ואין מכירה, השכרה או העברה של הפרטים לצד שלישי למטרות שיווק.",
       },
       {
-        title: "כמה זמן?",
-        body: "הפרטים נשמרים כל עוד הם נדרשים לצורך הקשר העסקי. אפשר לבקש מחיקה בכל רגע ופנייה כזו תטופל.",
+        title: "למי המידע מועבר",
+        body: "האתר מתארח אצל חברת Vercel Inc, והפניות נשמרות אצל חברת Supabase Inc. שתי החברות משמשות כספקיות תשתית בלבד, מעבדות את המידע לפי הוראותיי ואינן רשאיות לעשות בו שימוש עצמאי. השרתים נמצאים מחוץ לישראל, במדינות שרמת ההגנה בהן על מידע אישי אינה נופלת מזו הנהוגה בישראל, בהתאם לתקנות הגנת הפרטיות (העברת מידע אל מאגרי מידע שמחוץ לגבולות המדינה), התשס״א-2001. מעבר לכך המידע לא מועבר לאיש, למעט אם הדבר יידרש על פי דין או צו של רשות מוסמכת.",
+      },
+      {
+        title: "איך המידע מאובטח",
+        body: "הפניות נשמרות בבסיס נתונים שמופעלת עליו הגנת Row Level Security: לאתר יש הרשאת כתיבה בלבד, ואין שום אפשרות ציבורית לקרוא, לשנות או למחוק פניות. כל התעבורה מוצפנת ב־HTTPS, והמפתח שהאתר עושה בו שימוש הוא מפתח ציבורי שאינו מאפשר קריאת מידע. תקינות ההרשאות האלה נבדקת אוטומטית בכל שינוי בקוד.",
+      },
+      {
+        title: "עוגיות ומעקב",
+        body: "האתר אינו משתמש בעוגיות מעקב, אינו מריץ כלי אנליטיקה של צד שלישי ואינו משתף מידע עם רשתות פרסום או רשתות חברתיות. השרת רושם נתוני גישה טכניים בסיסיים, כמו כתובת IP ומועד הבקשה, לצורכי אבטחה ותפעול בלבד.",
+      },
+      {
+        title: "כמה זמן המידע נשמר",
+        body: "פנייה נשמרת עד 24 חודשים ממועד הקשר האחרון, או עד לקבלת בקשת מחיקה — המוקדם מביניהם. פנייה שהבשילה להתקשרות עסקית נשמרת למשך התקופה שהדין מחייב לשמור בה מסמכי עסקה.",
+      },
+      {
+        title: "הזכויות שלך",
+        body: "לפי חוק הגנת הפרטיות עומדות לך הזכויות הבאות, וכל בקשה תיענה בתוך 30 יום ממועד קבלתה. לפנייה: {email}.",
+        items: [
+          "זכות עיון — לבקש לקבל את המידע שמוחזק עליך (סעיף 13 לחוק).",
+          "זכות תיקון — לבקש לתקן מידע שאינו נכון, שלם, ברור או מעודכן (סעיף 14 לחוק).",
+          "זכות מחיקה — לבקש למחוק מידע שאינו נדרש עוד למטרה שלשמה נאסף.",
+          "ביטול הסכמה — לחזור בך מההסכמה בכל עת, בלי שהדבר יפגע בחוקיות השימוש שנעשה עד אותו מועד.",
+          "זכות תלונה — לפנות לרשות להגנת הפרטיות במשרד המשפטים אם לדעתך המידע לא טופל כראוי.",
+        ],
+      },
+      {
+        title: "קטינים",
+        body: "האתר מיועד לפניות עסקיות ואינו מיועד לשימוש מתחת לגיל 16. אם יתברר שנאסף מידע על קטין ללא הסכמת אחראי, המידע יימחק מיד עם היוודע הדבר.",
+      },
+      {
+        title: "שינויים במדיניות",
+        body: "כל עדכון יפורסם בעמוד הזה יחד עם תאריך עדכון חדש בראשו. שימוש באתר לאחר פרסום עדכון מהווה הסכמה לנוסח המעודכן.",
       },
       {
         title: "יצירת קשר",
-        body: "לכל שאלה או בקשה בנוגע למידע אפשר לפנות אליי בכתובת {email}.",
+        body: "לכל שאלה, בקשה או תלונה בנושא פרטיות אפשר לפנות אליי בכתובת {email}.",
+      },
+    ],
+  },
+  accessibility: {
+    metaTitle: "הצהרת נגישות",
+    metaDescription:
+      "הצהרת הנגישות של אתר ניסן סיני טכנולוגיות: התקן שלפיו האתר נבנה, ההתאמות שבוצעו ופרטי רכז הנגישות.",
+    back: "חזרה לאתר",
+    kicker: "נגישות",
+    title: "הצהרת נגישות",
+    updated: "עודכן לאחרונה: 12 באוגוסט 2026",
+    intro:
+      "אני רואה בנגישות האתר חלק מהמקצוע ולא תוספת לו. האתר תוכנן ונבנה כדי לאפשר שימוש מלא ונוח גם לאנשים עם מוגבלות, והוא נבדק מחדש בכל שינוי בקוד.",
+    sections: [
+      {
+        title: "התקן שלפיו האתר נבנה",
+        body: "האתר נבנה ונבדק לעמידה בתקן הישראלי ת״י 5568 ברמה AA, המבוסס על הנחיות WCAG 2.0 של ארגון W3C, בהתאם לתקנות שוויון זכויות לאנשים עם מוגבלות (התאמות נגישות לשירות), התשע״ג-2013.",
+      },
+      {
+        title: "מה נעשה באתר",
+        items: [
+          "מבנה סמנטי מלא: היררכיית כותרות תקינה, ואזורי ניווט, תוכן וכותרת תחתונה מסומנים לקורא מסך.",
+          "ניווט מלא במקלדת בלבד, עם סימון ברור של הרכיב שבפוקוס וקישור דילוג ישיר אל התוכן.",
+          "יחסי ניגודיות העומדים בדרישות רמה AA בכל טקסט ובכל רכיב ממשק, בשתי השפות.",
+          "טקסט חלופי לכל תמונה, תווית ברורה לכל שדה בטופס והשלמה אוטומטית של פרטי קשר.",
+          "תמיכה בהגדלת טקסט עד 200% ובשינוי מרווחי טקסט, בלי אובדן תוכן ובלי גלילה אופקית.",
+          "התאמה מלאה לכל גודל מסך, מרוחב 320 פיקסלים ועד מסך רחב.",
+          "כיבוד העדפת המערכת להפחתת אנימציות, למי שתנועה על המסך מפריעה לו.",
+          "סימון שפה של מילים בלועזית בתוך טקסט עברי, כדי שקורא מסך יבטא אותן נכון.",
+        ],
+      },
+      {
+        title: "איך הנגישות נבדקת",
+        body: "כל שינוי בקוד עובר בדיקת נגישות אוטומטית בכלי axe-core בכל עמודי האתר, בשתי השפות ובשלושה גדלי מסך, כחלק מתהליך הבנייה — שינוי שמפר את התקן אינו יכול לעלות לאוויר. בנוסף מתבצעת בדיקה ידנית של ניווט במקלדת ושל סדר הקריאה.",
+      },
+      {
+        title: "מגבלות ידועות",
+        body: "האתר מפנה לאתרים חיצוניים של לקוחות. אתרים אלה אינם בשליטתי ורמת הנגישות שלהם היא באחריות בעליהם. אם נתקלת בעמוד או ברכיב באתר הזה שאינו נגיש, אשמח מאוד לשמוע — כל פנייה כזו מטופלת.",
+      },
+      {
+        title: "אופן מתן השירות",
+        body: "השירות ניתן מרחוק, בטלפון, באימייל ובפגישות מקוונות, ואין מקום פיזי לקבלת קהל. אפשר לתאם פגישה באמצעי שנוח לך, כולל שיחה בלבד או התכתבות בלבד.",
+      },
+      {
+        title: "רכז הנגישות",
+        body: "רכז הנגישות הוא ניסן סיני. לפניות בנושא נגישות האתר: {email} או בטלפון 058-7170978. אשיב לכל פנייה בנושא נגישות בתוך 7 ימי עבודה לכל היותר, ואם נדרש תיקון — אבצע אותו בהקדם האפשרי ואעדכן אותך כשהושלם.",
       },
     ],
   },
@@ -475,6 +579,7 @@ const en: SiteContent = {
     topAria: "Back to top",
   },
   skipLink: "Skip to main content",
+  newTabHint: "(opens in a new tab)",
   nav: {
     aria: "Main navigation",
     services: "Services",
@@ -731,35 +836,117 @@ const en: SiteContent = {
     email: "Email",
     phone: "Phone",
     privacy: "Privacy",
+    accessibility: "Accessibility",
     rights: "© 2026 Nisan Sinai Technologies. All rights reserved.",
+    navAria: "Footer links",
   },
   privacy: {
     metaTitle: "Privacy policy",
-    metaDescription: "The privacy policy of the Nisan Sinai Technologies website.",
+    metaDescription:
+      "What the Nisan Sinai Technologies site collects, what it is used for, who it is shared with, and the rights you hold under Israeli privacy law.",
     back: "Back to the site",
     kicker: "Privacy",
     title: "Privacy policy",
-    updated: "Last updated: August 2026",
+    updated: "Last updated: 12 August 2026",
+    intro:
+      "This page explains what personal data the site collects, what it is used for, who it is passed to, how long it is kept and the rights you hold under the Israeli Protection of Privacy Law, 5741-1981 and its regulations.",
     sections: [
       {
-        title: "What is collected?",
-        body: "When you leave details in the contact form, the details you volunteer are stored: name, business name, phone, email, service type and the content of your message.",
+        title: "Who is responsible for the data",
+        body: "The database owner and controller is Nisan Sinai, Nisan Sinai Technologies, Israel. For anything to do with privacy, write to {email} or call 058-7170978.",
       },
       {
-        title: "What is it used for?",
-        body: "The information is used only to get back to you, understand the need and provide information or a proposal. It is not used for bulk mailing and is not passed to third parties for marketing.",
+        title: "What is collected",
+        body: "Only what you volunteer in the contact form: full name, business name, phone, email address, the type of service you are asking about and the content of your message, together with the time it was sent. You are under no legal obligation to provide any of it and doing so is entirely voluntary, but without a name and a phone number there is no way to get back to you. The site collects nothing else about you and buys no data from anyone.",
       },
       {
-        title: "Where is it stored?",
-        body: "Enquiries are stored in a secured cloud database with restricted permissions that allow writes from the site only. There is no public read access to enquiries.",
+        title: "What it is used for",
+        body: "Only to get back to you, understand what you need and offer an answer or a quote. There is no marketing mail, no profiling, and no sale, rental or transfer of your details to third parties for marketing.",
       },
       {
-        title: "For how long?",
-        body: "Details are kept for as long as they are needed for the business conversation. You can request deletion at any time and such a request will be honoured.",
+        title: "Who it is shared with",
+        body: "The site is hosted by Vercel Inc. and enquiries are stored with Supabase Inc. Both act purely as infrastructure providers, process the data on my instructions and may not use it for their own purposes. Their servers are outside Israel, in countries whose level of protection for personal data is no lower than Israel's, in line with the Protection of Privacy Regulations (Transfer of Data to Databases Abroad), 5761-2001. Beyond that the data goes to no one, unless disclosure is required by law or by order of a competent authority.",
+      },
+      {
+        title: "How it is secured",
+        body: "Enquiries are stored in a database with Row Level Security enabled: the site holds insert permission only, and there is no public way to read, change or delete an enquiry. All traffic is encrypted over HTTPS, and the key the site uses is a publishable key that cannot read data. These permissions are verified automatically on every code change.",
+      },
+      {
+        title: "Cookies and tracking",
+        body: "The site sets no tracking cookies, runs no third-party analytics and shares nothing with advertising or social networks. The server keeps basic technical access records, such as IP address and request time, for security and operations only.",
+      },
+      {
+        title: "How long it is kept",
+        body: "An enquiry is kept for up to 24 months from the last contact, or until you ask for it to be deleted, whichever comes first. An enquiry that turned into a business engagement is kept for as long as the law requires transaction records to be kept.",
+      },
+      {
+        title: "Your rights",
+        body: "Israeli privacy law gives you the rights below. Every request is answered within 30 days of receipt. To exercise any of them, write to {email}.",
+        items: [
+          "Access — to ask for the data held about you (section 13 of the Law).",
+          "Correction — to ask that data which is inaccurate, incomplete, unclear or out of date be corrected (section 14).",
+          "Erasure — to ask that data no longer needed for the purpose it was collected for be deleted.",
+          "Withdrawal of consent — to withdraw at any time, without affecting the lawfulness of use made before you did.",
+          "Complaint — to approach the Privacy Protection Authority at the Ministry of Justice if you believe your data was mishandled.",
+        ],
+      },
+      {
+        title: "Minors",
+        body: "The site is aimed at business enquiries and is not intended for use by anyone under 16. If it turns out that data about a minor was collected without a guardian's consent, it will be deleted as soon as that becomes known.",
+      },
+      {
+        title: "Changes to this policy",
+        body: "Any update is published on this page with a new date at the top. Continuing to use the site after an update means accepting the updated text.",
       },
       {
         title: "Contact",
-        body: "For any question or request about your data, write to me at {email}.",
+        body: "For any question, request or complaint about privacy, write to me at {email}.",
+      },
+    ],
+  },
+  accessibility: {
+    metaTitle: "Accessibility statement",
+    metaDescription:
+      "The accessibility statement for the Nisan Sinai Technologies site: the standard it was built to, the adjustments made, and the accessibility coordinator's details.",
+    back: "Back to the site",
+    kicker: "Accessibility",
+    title: "Accessibility statement",
+    updated: "Last updated: 12 August 2026",
+    intro:
+      "I treat accessibility as part of the craft rather than something bolted on afterwards. This site was designed and built so that people with disabilities can use all of it comfortably, and it is re-tested on every code change.",
+    sections: [
+      {
+        title: "The standard it was built to",
+        body: "The site is built and tested against Israeli Standard 5568 at level AA, which is based on the W3C's WCAG 2.0 guidelines, in line with the Equal Rights for Persons with Disabilities Regulations (Service Accessibility Adjustments), 5773-2013.",
+      },
+      {
+        title: "What was done",
+        items: [
+          "Full semantic structure: a correct heading hierarchy, with navigation, main content and footer marked up for screen readers.",
+          "Complete keyboard-only navigation, a clearly marked focus indicator and a skip link straight to the content.",
+          "Contrast ratios that meet level AA on every piece of text and every interface element, in both languages.",
+          "Alternative text on every image, a clear label on every form field, and autocomplete on contact details.",
+          "Support for text enlarged to 200% and for altered text spacing, with no loss of content and no horizontal scrolling.",
+          "A layout that holds at every screen size, from 320 pixels wide to a wide desktop.",
+          "The system preference for reduced motion is respected, for anyone who finds movement on screen difficult.",
+          "Latin words inside Hebrew text are marked with their own language so a screen reader pronounces them correctly.",
+        ],
+      },
+      {
+        title: "How accessibility is tested",
+        body: "Every code change runs an automated accessibility check with axe-core across every page of the site, both languages and three screen sizes, as part of the build — a change that breaks the standard cannot reach production. Keyboard navigation and reading order are also checked by hand.",
+      },
+      {
+        title: "Known limitations",
+        body: "The site links out to clients' own sites. Those are not under my control and their accessibility is their owners' responsibility. If you run into a page or an element on this site that is not accessible, I would genuinely like to hear about it — every such report is acted on.",
+      },
+      {
+        title: "How the service is provided",
+        body: "The service is delivered remotely, by phone, email and online meetings; there is no physical office receiving visitors. You are welcome to arrange a meeting in whatever form suits you, including voice only or text only.",
+      },
+      {
+        title: "Accessibility coordinator",
+        body: "The accessibility coordinator is Nisan Sinai. For anything to do with the accessibility of this site: {email} or 058-7170978. I answer accessibility enquiries within 7 working days at the latest, and where a fix is needed I make it as soon as I can and let you know once it is done.",
       },
     ],
   },

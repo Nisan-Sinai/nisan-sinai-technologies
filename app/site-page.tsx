@@ -1,6 +1,10 @@
 import { Fragment } from "react";
+import Brand from "./brand";
 import ContactForm from "./contact-form";
+import ExternalLink from "./external-link";
 import LanguageSwitch from "./language-switch";
+import LatinText from "./latin-text";
+import SiteFooter from "./site-footer";
 import StructuredData from "./structured-data";
 import { contact, getContent } from "@/lib/content";
 import { forwardArrow, localePath, type Locale } from "@/lib/i18n";
@@ -19,20 +23,7 @@ const PROJECT_SITES = [
 export default function SitePage({ locale }: { locale: Locale }) {
   const t = getContent(locale);
   const arrow = forwardArrow(locale);
-  const home = localePath(locale, "/");
   const privacyHref = localePath(locale, "/privacy");
-
-  const brand = (
-    <>
-      <span className="brand-mark" aria-hidden="true">
-        NS<span>.</span>
-      </span>
-      <span className="brand-copy">
-        <strong>{t.brand.name}</strong>
-        <small>{t.brand.suffix}</small>
-      </span>
-    </>
-  );
 
   return (
     <main>
@@ -43,7 +34,7 @@ export default function SitePage({ locale }: { locale: Locale }) {
 
       <header className="site-header">
         <a className="brand" href="#top" aria-label={t.brand.homeAria}>
-          {brand}
+          <Brand locale={locale} />
         </a>
 
         <nav className="desktop-nav" aria-label={t.nav.aria}>
@@ -106,7 +97,9 @@ export default function SitePage({ locale }: { locale: Locale }) {
           <div className="orbit orbit-two" aria-hidden="true" />
 
           <div className="system-core">
-            <span className="core-kicker">{t.hero.coreKicker}</span>
+            <span className="core-kicker">
+              <LatinText text={t.hero.coreKicker} />
+            </span>
             <strong>{t.hero.coreTitle}</strong>
             <span className="core-status">
               <i aria-hidden="true" /> {t.hero.coreStatus}
@@ -115,7 +108,9 @@ export default function SitePage({ locale }: { locale: Locale }) {
 
           {t.hero.capabilities.map((capability, index) => (
             <div className={`capability capability-${index + 1}`} key={capability.value}>
-              <span>{capability.value}</span>
+              <span>
+                <LatinText text={capability.value} />
+              </span>
               <strong>{capability.label}</strong>
             </div>
           ))}
@@ -147,7 +142,9 @@ export default function SitePage({ locale }: { locale: Locale }) {
         {t.strip.items.map((item, index) => (
           <Fragment key={item}>
             {index > 0 && <i aria-hidden="true" />}
-            <strong>{item}</strong>
+            <strong>
+              <LatinText text={item} />
+            </strong>
           </Fragment>
         ))}
       </section>
@@ -172,7 +169,9 @@ export default function SitePage({ locale }: { locale: Locale }) {
               <p>{service.description}</p>
               <ul aria-label={t.services.tagsAria(service.title)}>
                 {service.tags.map((tag) => (
-                  <li key={tag}>{tag}</li>
+                  <li key={tag}>
+                    <LatinText text={tag} />
+                  </li>
                 ))}
               </ul>
             </article>
@@ -197,10 +196,14 @@ export default function SitePage({ locale }: { locale: Locale }) {
               <article className={`project-card ${modifier}`} key={project.title}>
                 <div className="project-copy">
                   <div className="project-meta">
-                    <span>{project.meta}</span>
+                    <span>
+                      <LatinText text={project.meta} />
+                    </span>
                     <span>{project.year}</span>
                   </div>
-                  <h3>{project.title}</h3>
+                  <h3>
+                    <LatinText text={project.title} />
+                  </h3>
                   <p>{project.description}</p>
                   <ul>
                     {project.points.map((point) => (
@@ -208,23 +211,24 @@ export default function SitePage({ locale }: { locale: Locale }) {
                     ))}
                   </ul>
                   {project.href ? (
-                    <a
+                    <ExternalLink
                       className="case-study-label"
                       href={project.href}
-                      target="_blank"
-                      rel="noreferrer"
+                      hint={t.newTabHint}
                     >
-                      {project.linkLabel} <i aria-hidden="true">↗</i>
-                    </a>
+                      <LatinText text={project.linkLabel} />{" "}
+                      <i aria-hidden="true">↗</i>
+                    </ExternalLink>
                   ) : (
                     <span className="case-study-label">
-                      {project.linkLabel} <i aria-hidden="true">{arrow}</i>
+                      <LatinText text={project.linkLabel} />{" "}
+                      <i aria-hidden="true">{arrow}</i>
                     </span>
                   )}
                 </div>
-                <div className={`project-preview ${previewClass}`} aria-label={project.previewLabel}>
+                <div className={`project-preview ${previewClass}`}>
                   <div className="mock-browser">
-                    <div className="mock-browser-bar">
+                    <div className="mock-browser-bar" aria-hidden="true">
                       <i />
                       <i />
                       <i />
@@ -307,11 +311,15 @@ return makeItWork(solution);`}</code>
       </section>
 
       <section className="tech-strip" aria-label={t.tech.aria} tabIndex={0}>
-        <span>{t.tech.label}</span>
+        <span>
+          <LatinText text={t.tech.label} />
+        </span>
         {t.tech.items.map((item, index) => (
           <Fragment key={item}>
             {index > 0 && <i />}
-            <strong>{item}</strong>
+            <strong>
+              <LatinText text={item} />
+            </strong>
           </Fragment>
         ))}
       </section>
@@ -324,7 +332,7 @@ return makeItWork(solution);`}</code>
           <div className="contact-channels">
             <a className="contact-direct" href={`mailto:${contact.email}`}>
               <span>{t.contact.emailLabel}</span>
-              <strong>{contact.email}</strong>
+              <strong lang="en">{contact.email}</strong>
             </a>
             <a className="contact-direct" href={`tel:${contact.phoneHref}`}>
               <span>{t.contact.phoneLabel}</span>
@@ -335,21 +343,7 @@ return makeItWork(solution);`}</code>
         <ContactForm copy={t.form} arrow={arrow} privacyHref={privacyHref} />
       </section>
 
-      <footer className="site-footer">
-        <a className="brand footer-brand" href={home} aria-label={t.brand.topAria}>
-          {brand}
-        </a>
-        <p>{t.footer.tagline}</p>
-        <div>
-          <a href={`mailto:${contact.email}`}>{t.footer.email}</a>
-          <a href={`tel:${contact.phoneHref}`}>{t.footer.phone}</a>
-          <a href="https://www.linkedin.com/in/nisansinai" target="_blank" rel="noreferrer">
-            LinkedIn
-          </a>
-          <a href={privacyHref}>{t.footer.privacy}</a>
-        </div>
-        <small>{t.footer.rights}</small>
-      </footer>
+      <SiteFooter locale={locale} />
     </main>
   );
 }
