@@ -34,6 +34,13 @@
   unicode-bidi: isolate;
 }
 
+.site-footer > nav .admin-entry-link {
+  border-color: rgba(83, 228, 255, 0.32);
+  background: rgba(83, 228, 255, 0.075);
+  color: var(--cyan);
+  font-weight: 700;
+}
+
 @media (max-width: 680px) {
   .site-footer {
     gap: 1.35rem;
@@ -61,8 +68,10 @@
     font-size: 0.78rem;
   }
 
-  .site-footer > nav a:last-child {
+  .site-footer > nav .admin-entry-link {
     grid-column: 1 / -1;
+    border-color: rgba(83, 228, 255, 0.34);
+    background: rgba(83, 228, 255, 0.075);
   }
 
   .site-footer > small {

@@ -1,0 +1,107 @@
+.admin-auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin: 1.25rem 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.admin-auth-divider::before,
+.admin-auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.admin-google-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 52px;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--foreground);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.admin-google-button:hover:not(:disabled),
+.admin-google-button:focus-visible:not(:disabled) {
+  border-color: rgba(83, 228, 255, 0.45);
+  background: rgba(83, 228, 255, 0.07);
+  transform: translateY(-1px);
+}
+
+.admin-google-button:disabled,
+.admin-login-options button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.admin-google-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: #fff;
+  color: #111827;
+  font-family: Arial, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.admin-login-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 0.85rem;
+}
+
+.admin-login-options button {
+  min-height: 44px;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--line-soft);
+  border-radius: 0.7rem;
+  background: transparent;
+  color: #c8d2dd;
+  font: inherit;
+  font-size: 0.76rem;
+  cursor: pointer;
+}
+
+.admin-login-options button:hover:not(:disabled),
+.admin-login-options button:focus-visible:not(:disabled) {
+  border-color: rgba(83, 228, 255, 0.35);
+  color: var(--cyan);
+}
+
+.admin-provider-note {
+  margin: 1rem 0 0;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid rgba(255, 199, 102, 0.18);
+  border-radius: 0.7rem;
+  background: rgba(255, 199, 102, 0.04);
+  color: #c8b98f;
+  font-size: 0.7rem;
+  line-height: 1.7;
+}
+
+.admin-login-card input[readonly] {
+  color: #a9b7c6;
+  cursor: default;
+}
+
+@media (max-width: 520px) {
+  .admin-login-options {
+    grid-template-columns: 1fr;
+  }
+}

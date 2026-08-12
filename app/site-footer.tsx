@@ -9,6 +9,7 @@ import { localePath, type Locale } from "@/lib/i18n";
  */
 export default function SiteFooter({ locale }: { locale: Locale }) {
   const t = getContent(locale);
+  const adminLabel = locale === "he" ? "כניסה לניהול" : "Admin login";
 
   return (
     <footer className="site-footer">
@@ -28,6 +29,9 @@ export default function SiteFooter({ locale }: { locale: Locale }) {
         </ExternalLink>
         <a href={localePath(locale, "/privacy")}>{t.footer.privacy}</a>
         <a href={localePath(locale, "/accessibility")}>{t.footer.accessibility}</a>
+        <a className="admin-entry-link" href="/admin" aria-label={adminLabel}>
+          {adminLabel}
+        </a>
       </nav>
       <small>{t.footer.rights}</small>
     </footer>
