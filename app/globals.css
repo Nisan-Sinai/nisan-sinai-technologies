@@ -662,11 +662,6 @@ a {
   white-space: nowrap;
 }
 
-.services-intro > span {
-  color: var(--muted);
-  font-size: 0.8rem;
-}
-
 .services-intro strong {
   direction: ltr;
   font-family: var(--font-geist-sans), sans-serif;
@@ -1294,13 +1289,6 @@ a.case-study-label:focus-visible {
   white-space: nowrap;
 }
 
-.tech-strip > span {
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-}
-
 .tech-strip strong {
   font-family: var(--font-geist-sans), sans-serif;
   font-size: clamp(1rem, 1.6vw, 1.3rem);
@@ -1515,18 +1503,6 @@ a.case-study-label:focus-visible {
   justify-self: center;
   color: var(--muted);
   font-size: 0.72rem;
-}
-
-.site-footer > div {
-  display: flex;
-  gap: 1.2rem;
-  color: #bdc7d1;
-  font-size: 0.72rem;
-}
-
-.site-footer > div a:hover,
-.site-footer > div a:focus-visible {
-  color: var(--cyan);
 }
 
 .site-footer > small {
