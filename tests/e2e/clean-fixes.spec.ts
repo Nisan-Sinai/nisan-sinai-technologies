@@ -1,13 +1,18 @@
 import { expect, test } from "@playwright/test";
 
-test("only the two text strips animate horizontally", async ({ page }) => {
+test("only intended strips animate horizontally", async ({ page }, testInfo) => {
   await page.goto("/");
 
   await expect(page.locator(".marquee-track")).toHaveCount(2);
   await expect(page.locator(".marquee-group")).toHaveCount(4);
 
   const motion = await page.evaluate(() => {
-    const tracks = Array.from(document.querySelectorAll<HTMLElement>(".marquee-track"));
+    const serviceTrack = document.querySelector<HTMLElement>(
+      ".services-intro .marquee-track",
+    );
+    const techTrack = document.querySelector<HTMLElement>(
+      ".tech-strip .marquee-track",
+    );
     const fixedSections = Array.from(
       document.querySelectorAll<HTMLElement>(
         "main, .hero, .content-section, .contact-section",
@@ -15,9 +20,10 @@ test("only the two text strips animate horizontally", async ({ page }) => {
     );
 
     return {
-      trackAnimations: tracks.map(
-        (track) => getComputedStyle(track).animationName,
-      ),
+      serviceAnimation: serviceTrack
+        ? getComputedStyle(serviceTrack).animationName
+        : "",
+      techAnimation: techTrack ? getComputedStyle(techTrack).animationName : "",
       fixedTransforms: fixedSections.map(
         (section) => getComputedStyle(section).transform,
       ),
@@ -25,9 +31,66 @@ test("only the two text strips animate horizontally", async ({ page }) => {
     };
   });
 
-  expect(motion.trackAnimations).toEqual(["marquee-right", "marquee-right"]);
+  if (testInfo.project.name.startsWith("mobile")) {
+    expect(motion.serviceAnimation).toBe("none");
+    expect(motion.techAnimation).toBe("marquee-right");
+  } else {
+    expect(motion.serviceAnimation).toBe("marquee-right");
+    expect(motion.techAnimation).toBe("marquee-right");
+  }
+
   expect(motion.fixedTransforms.every((value) => value === "none")).toBe(true);
   expect(motion.overflows).toBe(false);
+});
+
+test("mobile services strip is static and fits on one line", async ({
+  page,
+}, testInfo) => {
+  test.skip(!testInfo.project.name.startsWith("mobile"));
+  await page.goto("/");
+
+  const result = await page.evaluate(() => {
+    const strip = document.querySelector<HTMLElement>(".services-intro");
+    const track = strip?.querySelector<HTMLElement>(".marquee-track");
+    const primaryGroup = strip?.querySelector<HTMLElement>(
+      ".marquee-group:not([aria-hidden='true'])",
+    );
+    const duplicateGroup = strip?.querySelector<HTMLElement>(
+      ".marquee-group[aria-hidden='true']",
+    );
+    const items = primaryGroup
+      ? Array.from(primaryGroup.querySelectorAll<HTMLElement>(".marquee-item"))
+      : [];
+
+    const groupRect = primaryGroup?.getBoundingClientRect();
+    const stripRect = strip?.getBoundingClientRect();
+
+    return {
+      animation: track ? getComputedStyle(track).animationName : "",
+      transform: track ? getComputedStyle(track).transform : "",
+      duplicateDisplay: duplicateGroup
+        ? getComputedStyle(duplicateGroup).display
+        : "",
+      itemCount: items.length,
+      oneLine: items.every((item) => {
+        const rect = item.getBoundingClientRect();
+        return groupRect ? rect.top >= groupRect.top && rect.bottom <= groupRect.bottom : false;
+      }),
+      fitsWidth:
+        Boolean(groupRect && stripRect) &&
+        groupRect!.left >= stripRect!.left - 1 &&
+        groupRect!.right <= stripRect!.right + 1,
+      overflows: document.documentElement.scrollWidth > window.innerWidth + 2,
+    };
+  });
+
+  expect(result.animation).toBe("none");
+  expect(result.transform).toBe("none");
+  expect(result.duplicateDisplay).toBe("none");
+  expect(result.itemCount).toBe(4);
+  expect(result.oneLine).toBe(true);
+  expect(result.fitsWidth).toBe(true);
+  expect(result.overflows).toBe(false);
 });
 
 test("mobile business core has visible clearance from satellite cards", async ({
@@ -77,6 +140,43 @@ test("mobile business core has visible clearance from satellite cards", async ({
   expect(result.found).toBe(true);
   expect(result.covered).toBe(false);
   expect(result.minClearance).toBeGreaterThanOrEqual(12);
+});
+
+test("mobile footer links stay separated and tappable", async ({ page }, testInfo) => {
+  test.skip(!testInfo.project.name.startsWith("mobile"));
+  await page.goto("/");
+
+  const result = await page.evaluate(() => {
+    const nav = document.querySelector<HTMLElement>(".site-footer > nav");
+    const links = Array.from(
+      document.querySelectorAll<HTMLElement>(".site-footer > nav a"),
+    );
+    const rects = links.map((link) => link.getBoundingClientRect());
+
+    const overlapping = rects.some((rect, index) =>
+      rects.slice(index + 1).some((other) => {
+        const overlapX = Math.min(rect.right, other.right) - Math.max(rect.left, other.left);
+        const overlapY = Math.min(rect.bottom, other.bottom) - Math.max(rect.top, other.top);
+        return overlapX > 0 && overlapY > 0;
+      }),
+    );
+
+    return {
+      display: nav ? getComputedStyle(nav).display : "",
+      count: links.length,
+      labels: links.map((link) => link.innerText.trim()),
+      minHeight: Math.min(...rects.map((rect) => rect.height)),
+      overlapping,
+      overflows: document.documentElement.scrollWidth > window.innerWidth + 2,
+    };
+  });
+
+  expect(result.display).toBe("grid");
+  expect(result.count).toBe(5);
+  expect(result.labels).toEqual(["אימייל", "טלפון", "LinkedIn", "פרטיות", "נגישות"]);
+  expect(result.minHeight).toBeGreaterThanOrEqual(44);
+  expect(result.overlapping).toBe(false);
+  expect(result.overflows).toBe(false);
 });
 
 test("admin page is private before authentication", async ({ page }) => {
