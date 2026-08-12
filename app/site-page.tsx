@@ -1,9 +1,9 @@
-import { Fragment } from "react";
 import Brand from "./brand";
 import ContactForm from "./contact-form";
 import ExternalLink from "./external-link";
 import LanguageSwitch from "./language-switch";
 import LatinText from "./latin-text";
+import MarqueeStrip from "./marquee-strip";
 import SiteFooter from "./site-footer";
 import StructuredData from "./structured-data";
 import { contact, getContent } from "@/lib/content";
@@ -137,17 +137,13 @@ export default function SitePage({ locale }: { locale: Locale }) {
         </a>
       </section>
 
-      <section className="services-intro" id="services" aria-label={t.strip.aria} tabIndex={0}>
-        <span>{t.strip.lead}</span>
-        {t.strip.items.map((item, index) => (
-          <Fragment key={item}>
-            {index > 0 && <i aria-hidden="true" />}
-            <strong>
-              <LatinText text={item} />
-            </strong>
-          </Fragment>
-        ))}
-      </section>
+      <MarqueeStrip
+        className="services-intro"
+        id="services"
+        ariaLabel={t.strip.aria}
+        lead={t.strip.lead}
+        items={t.strip.items}
+      />
 
       <section className="content-section services-section" aria-labelledby="services-title">
         <div className="section-heading">
@@ -310,19 +306,13 @@ return makeItWork(solution);`}</code>
         </div>
       </section>
 
-      <section className="tech-strip" aria-label={t.tech.aria} tabIndex={0}>
-        <span>
-          <LatinText text={t.tech.label} />
-        </span>
-        {t.tech.items.map((item, index) => (
-          <Fragment key={item}>
-            {index > 0 && <i />}
-            <strong>
-              <LatinText text={item} />
-            </strong>
-          </Fragment>
-        ))}
-      </section>
+      <MarqueeStrip
+        className="tech-strip"
+        ariaLabel={t.tech.aria}
+        lead={t.tech.label}
+        items={t.tech.items}
+        leadIsLatin
+      />
 
       <section className="contact-section" id="contact" aria-labelledby="contact-title">
         <div className="contact-copy">
