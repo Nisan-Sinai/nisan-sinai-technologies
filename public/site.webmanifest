@@ -1,0 +1,12 @@
+{
+  "name": "ניסן סיני טכנולוגיות",
+  "short_name": "NS.",
+  "description": "פיתוח אתרים, מערכות CRM ו-ERP, אוטומציות ופתרונות תוכנה בהתאמה אישית לעסקים.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#05070b",
+  "theme_color": "#05070b",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

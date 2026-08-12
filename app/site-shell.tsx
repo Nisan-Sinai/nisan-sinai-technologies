@@ -18,6 +18,11 @@ export const languageAlternates = {
   en: localePath("en", "/"),
 };
 
+/** Each locale shares its own card, so the preview is in the reader's language. */
+export function shareImage(locale: Locale): string {
+  return locale === "he" ? "/og.png" : "/og-en.png";
+}
+
 export function buildMetadata(locale: Locale): Metadata {
   const t = getContent(locale);
 
@@ -41,14 +46,46 @@ export function buildMetadata(locale: Locale): Metadata {
       siteName: `${t.brand.name} ${t.brand.suffix}`,
       title: t.meta.ogTitle,
       description: t.meta.ogDescription,
+      images: [
+        {
+          url: shareImage(locale),
+          width: 1200,
+          height: 630,
+          alt: t.meta.ogTitle,
+        },
+      ],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: `${t.brand.name} ${t.brand.suffix}`,
       description: t.meta.twitterDescription,
+      images: [shareImage(locale)],
     },
+    // Explicit rather than implied, and large previews are opt-in: without
+    // max-image-preview Google shows a thumbnail at best.
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
+    // Set NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION to the token Search Console
+    // hands out; without it the tag is simply absent.
+    verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+      ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
+      : undefined,
+    manifest: "/site.webmanifest",
     other: { "codex-preview": "development" },
-    icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
+    icons: {
+      icon: "/favicon.svg",
+      shortcut: "/favicon.svg",
+      apple: "/favicon.svg",
+    },
   };
 }
 

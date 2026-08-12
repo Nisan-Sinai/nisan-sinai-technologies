@@ -842,8 +842,8 @@ a {
 .project-card {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(320px, 0.68fr) minmax(0, 1.32fr);
-  min-height: 640px;
+  grid-template-columns: minmax(300px, 0.78fr) minmax(0, 1.22fr);
+  min-height: 460px;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 1.6rem;
@@ -971,7 +971,7 @@ a.case-study-label:focus-visible {
 .mock-browser {
   position: relative;
   z-index: 2;
-  width: min(100%, 760px);
+  width: min(100%, 520px);
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 1rem;
@@ -1020,9 +1020,9 @@ a.case-study-label:focus-visible {
 }
 
 .ld-canvas {
-  min-height: 390px;
-  padding: 3.5rem;
-  background: linear-gradient(135deg, #f5eee9, #ece0e6);
+  min-height: 250px;
+  padding: 1.6rem;
+  background: linear-gradient(135deg, #f7f2ea, #efe4d6);
   color: #2c2027;
 }
 
@@ -1064,8 +1064,8 @@ a.case-study-label:focus-visible {
 }
 
 .shel-canvas {
-  min-height: 410px;
-  padding: 1.4rem;
+  min-height: 250px;
+  padding: 1rem;
   background: #f7f1e8;
   color: #352a20;
 }
@@ -1817,6 +1817,107 @@ h2 {
   text-wrap: pretty;
 }
 
+/* The project previews illustrate the work; they are not the work. Each one
+   borrows its real site's palette so the card says something true about it:
+   LD's brass on cream, Shel-Yah's charcoal-and-brass studio, the RSVP
+   dashboard. */
+.ld-canvas {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.1rem;
+}
+
+.ld-hero-mini span {
+  display: block;
+  color: #b29259;
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.ld-hero-mini strong {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.ld-hero-mini em {
+  display: inline-block;
+  margin-top: 0.7rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 0.4rem;
+  background: #b29259;
+  color: #fff;
+  font-size: 0.5rem;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.ld-packages {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.ld-packages i {
+  flex: 1;
+  padding: 0.55rem 0.3rem;
+  border: 1px solid rgba(178, 146, 89, 0.35);
+  border-radius: 0.45rem;
+  background: rgba(255, 255, 255, 0.6);
+  font-size: 0.48rem;
+  font-style: normal;
+  font-weight: 700;
+  text-align: center;
+}
+
+.shel-canvas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.shel-hero-mini span {
+  display: block;
+  color: #9a8467;
+  font-size: 0.44rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.shel-hero-mini strong {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.shel-marquee {
+  margin-top: auto;
+  padding: 0.4rem 0.5rem;
+  border-radius: 0.35rem;
+  background: #2b2620;
+  color: rgba(247, 241, 232, 0.8);
+  font-size: 0.4rem;
+  letter-spacing: 0.18em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.dashboard-stats i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.46rem;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
 /* Latin sets tighter than Hebrew at display sizes; Hebrew loses its counters
    when tracked in. So the tightening is scoped to the locale that wants it. */
 [dir="ltr"] h1,
@@ -2092,14 +2193,14 @@ h2 {
   }
 
   .project-preview {
-    min-height: 430px;
-    padding: 1.5rem;
+    min-height: 0;
+    padding: 1.25rem;
   }
 
   .mock-browser,
   .dashboard-mock {
-    width: 118%;
-    transform: perspective(1200px) rotateY(2deg) rotateX(1deg);
+    width: 100%;
+    transform: none;
   }
 
   .ld-canvas {
