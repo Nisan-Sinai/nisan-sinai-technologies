@@ -222,14 +222,14 @@ export default function SitePage({ locale }: { locale: Locale }) {
                       </div>
                       <div className="ld-canvas">
                         <div className="ld-hero-mini">
-                          <span>{t.hero.capabilities[0].label}</span>
-                          <strong>{project.title}</strong>
-                          <i />
+                          <span>{project.preview.kicker}</span>
+                          <strong>{project.preview.headline}</strong>
+                          <em>{project.preview.cta}</em>
                         </div>
-                        <div className="ld-products-mini">
-                          <i />
-                          <i />
-                          <i />
+                        <div className="ld-packages">
+                          {project.preview.tags.map((tag) => (
+                            <i key={tag}>{tag}</i>
+                          ))}
                         </div>
                       </div>
                     </div>
@@ -245,12 +245,19 @@ export default function SitePage({ locale }: { locale: Locale }) {
                       <div className="shel-canvas">
                         <div className="shel-nav-mini">
                           <strong>SHEL‑YAH</strong>
-                          <span>SHOP · NEW · STORY</span>
+                          <span>{project.preview.tags.join(" · ")}</span>
+                        </div>
+                        <div className="shel-hero-mini">
+                          <span>{project.preview.kicker}</span>
+                          <strong>{project.preview.headline}</strong>
                         </div>
                         <div className="shel-products-mini">
                           <i />
                           <i />
                           <i />
+                        </div>
+                        <div className="shel-marquee">
+                          handmade in israel · made to order · studio shel-yah
                         </div>
                       </div>
                     </div>
@@ -266,13 +273,13 @@ export default function SitePage({ locale }: { locale: Locale }) {
                       </div>
                       <div className="dashboard-main">
                         <div className="dashboard-title">
-                          <span>{t.hero.coreStatus}</span>
-                          <strong>{project.title}</strong>
+                          <span>{project.preview.kicker}</span>
+                          <strong>{project.preview.headline}</strong>
                         </div>
                         <div className="dashboard-stats">
-                          <i />
-                          <i />
-                          <i />
+                          {project.preview.tags.map((tag) => (
+                            <i key={tag}>{tag}</i>
+                          ))}
                         </div>
                         <div className="dashboard-chart">
                           <span />

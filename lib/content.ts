@@ -17,6 +17,8 @@ export type Project = {
   linkLabel: string;
   href?: string;
   previewLabel: string;
+  /** Short strings drawn inside the mock interface, so it reads in-language. */
+  preview: { kicker: string; headline: string; cta: string; tags: [string, string, string] };
 };
 export type AboutValue = { number: string; title: string; text: string };
 export type ServiceOption = { value: string; label: string };
@@ -256,29 +258,41 @@ const he: SiteContent = {
         year: "2026",
         title: "LD Event Design",
         description:
-          "אתר מסחר לעיצוב אירועים עם הרכבת חבילה, סל קניות, הזמנות וממשק ניהול מלא לתוכן ולמוצרים.",
+          "סטודיו לעיצוב אירועים — חתונות, חינה, בר/בת מצווה וברית. הלקוח מרכיב חבילה, חותם על הסכם דיגיטלי ושולח הזמנה, והכול מנוהל מממשק אחד.",
         points: [
-          "חוויית רכישה מותאמת למובייל",
-          "ניהול הזמנות ומדיה",
-          "מערכת חבילות דינמית",
+          "הרכבת חבילה בהתאמה אישית",
+          "הסכם והזמנה דיגיטליים",
+          "ניהול תוכן, מדיה והזמנות",
         ],
         linkLabel: "CASE STUDY",
         previewLabel: "הדמיית ממשק LD Event Design",
+        preview: {
+          kicker: "עיצוב אירועים",
+          headline: "האירוע שלך, בעיצוב אישי.",
+          cta: "להרכבת חבילה",
+          tags: ["חתונה", "חינה", "בר מצווה"],
+        },
       },
       {
         meta: "02 / E-COMMERCE",
         year: "2026",
         title: "Shel‑Yah",
         description:
-          "חנות דיגיטלית מודרנית עם קטלוג, חיפוש, עמודי מוצר ותהליך קנייה שנבנה כדי להרגיש מהיר, נקי ונוח.",
+          "סטודיו ליצירות אפוקסי בעבודת יד — שעוני קיר, שלטי כניסה ומתנות. חנות מלאה עם קטלוג, סל, חשבון לקוח והזמנות בהתאמה אישית.",
         points: [
-          "ארכיטקטורת Full‑Stack",
-          "ממשק מסחר רספונסיבי",
-          "ניהול מוצרים ותוכן",
+          "קטלוג וסל קנייה מלאים",
+          "הזמנות בהתאמה אישית",
+          "חשבון לקוח ואזור אישי",
         ],
         linkLabel: "לאתר הפעיל",
         href: "https://shel-yah-web.vercel.app/",
         previewLabel: "הדמיית ממשק Shel-Yah",
+        preview: {
+          kicker: "עבודת יד · בעיצוב אישי",
+          headline: "אומנות אפוקסי שמספרת סיפור.",
+          cta: "לקטלוג",
+          tags: ["שעוני קיר", "שלטי כניסה", "מתנות"],
+        },
       },
       {
         meta: "03 / EVENT PLATFORM",
@@ -294,6 +308,12 @@ const he: SiteContent = {
         linkLabel: "לאתר הפעיל",
         href: "https://arrival-confirmations.vercel.app/",
         previewLabel: "הדמיית מערכת אישורי ההגעה",
+        preview: {
+          kicker: "מרכז ניהול",
+          headline: "אישורי הגעה בזמן אמת",
+          cta: "לדשבורד",
+          tags: ["מוזמנים", "אישרו", "הושבה"],
+        },
       },
     ],
   },
@@ -554,29 +574,41 @@ const en: SiteContent = {
         year: "2026",
         title: "LD Event Design",
         description:
-          "An event-design commerce site with package building, cart, orders and a full admin interface for content and products.",
+          "An event-design studio — weddings, henna, bar and bat mitzvahs. Clients assemble a package, sign a digital agreement and place the order, all managed from one interface.",
         points: [
-          "Mobile-first purchase flow",
-          "Order and media management",
-          "Dynamic package system",
+          "Made-to-order package builder",
+          "Digital agreement and ordering",
+          "Content, media and order management",
         ],
         linkLabel: "CASE STUDY",
         previewLabel: "LD Event Design interface mockup",
+        preview: {
+          kicker: "EVENT DESIGN",
+          headline: "Your event, designed around you.",
+          cta: "Build a package",
+          tags: ["Weddings", "Henna", "Mitzvahs"],
+        },
       },
       {
         meta: "02 / E-COMMERCE",
         year: "2026",
         title: "Shel‑Yah",
         description:
-          "A modern digital store with catalogue, search, product pages and a checkout built to feel fast, clean and effortless.",
+          "A studio for handmade epoxy art — wall clocks, entrance signs and gifts. A full storefront with catalogue, cart, customer accounts and made-to-order commissions.",
         points: [
-          "Full-stack architecture",
-          "Responsive commerce interface",
-          "Product and content management",
+          "Full catalogue and cart",
+          "Made-to-order commissions",
+          "Customer accounts and dashboard",
         ],
         linkLabel: "Visit the live site",
         href: "https://shel-yah-web.vercel.app/",
         previewLabel: "Shel-Yah interface mockup",
+        preview: {
+          kicker: "HANDMADE · MADE TO ORDER",
+          headline: "Epoxy art that tells a story.",
+          cta: "View catalogue",
+          tags: ["Wall clocks", "Signs", "Gifts"],
+        },
       },
       {
         meta: "03 / EVENT PLATFORM",
@@ -592,6 +624,12 @@ const en: SiteContent = {
         linkLabel: "Visit the live site",
         href: "https://arrival-confirmations.vercel.app/",
         previewLabel: "RSVP platform mockup",
+        preview: {
+          kicker: "CONTROL CENTRE",
+          headline: "Live arrival confirmations",
+          cta: "Open dashboard",
+          tags: ["Guests", "Confirmed", "Seating"],
+        },
       },
     ],
   },
