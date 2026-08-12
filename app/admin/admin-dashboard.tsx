@@ -37,11 +37,9 @@ function formatDate(value: string) {
 }
 
 export default function AdminDashboard({
-  adminEmail,
   supabaseUrl,
   publishableKey,
 }: {
-  adminEmail: string;
   supabaseUrl: string;
   publishableKey: string;
 }) {
@@ -54,6 +52,7 @@ export default function AdminDashboard({
   const [error, setError] = useState(
     configured ? "" : "שירות הניהול אינו מוגדר כרגע.",
   );
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -75,11 +74,23 @@ export default function AdminDashboard({
   }
 
   async function verifyAdminSession(current: Session) {
-    const response = await fetchUser(current.access_token);
-    if (!response.ok) throw new Error("invalid_session");
+    const userResponse = await fetchUser(current.access_token);
+    if (!userResponse.ok) throw new Error("invalid_session");
 
-    const user = (await response.json()) as { email?: string };
-    if (user.email?.trim().toLowerCase() !== adminEmail.toLowerCase()) {
+    const user = (await userResponse.json()) as { email?: string };
+    if (!user.email) throw new Error("missing_email");
+
+    const adminResponse = await fetch(new URL("/rest/v1/rpc/is_admin", supabaseUrl), {
+      method: "POST",
+      headers: {
+        ...authHeaders(current.access_token),
+        "Content-Type": "application/json",
+      },
+      body: "{}",
+      cache: "no-store",
+    });
+
+    if (!adminResponse.ok || (await adminResponse.json()) !== true) {
       throw new Error("not_admin");
     }
   }
@@ -120,10 +131,7 @@ export default function AdminDashboard({
       }
 
       if (!userResponse.ok) throw new Error("invalid_session");
-      const user = (await userResponse.json()) as { email?: string };
-      if (user.email?.trim().toLowerCase() !== adminEmail.toLowerCase()) {
-        throw new Error("not_admin");
-      }
+      await verifyAdminSession(activeSession);
 
       const endpoint = new URL("/rest/v1/contact_leads", supabaseUrl);
       endpoint.searchParams.set(
@@ -151,7 +159,7 @@ export default function AdminDashboard({
       localStorage.removeItem(STORAGE_KEY);
       setSession(null);
       setLeads([]);
-      setError("החיבור לניהול פג או שאינו מורשה. יש להתחבר מחדש עם מייל המנהל.");
+      setError("החיבור לניהול פג או שהחשבון אינו מורשה. יש להתחבר מחדש.");
     } finally {
       setLoading(false);
     }
@@ -208,7 +216,7 @@ export default function AdminDashboard({
             setMessage("הקישור אומת. עכשיו אפשר לבחור סיסמה חדשה.");
             localStorage.setItem(STORAGE_KEY, JSON.stringify(incoming));
           } catch {
-            setError("קישור איפוס הסיסמה אינו מורשה לחשבון המנהל.");
+            setError("קישור איפוס הסיסמה אינו מורשה לחשבון מנהל.");
             setSession(null);
           } finally {
             setLoading(false);
@@ -254,6 +262,12 @@ export default function AdminDashboard({
       return;
     }
 
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) {
+      setError("יש להזין אימייל.");
+      return;
+    }
+
     if (!password) {
       setError("יש להזין סיסמה.");
       return;
@@ -271,7 +285,7 @@ export default function AdminDashboard({
           ...authHeaders(),
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: adminEmail, password }),
+        body: JSON.stringify({ email: normalizedEmail, password }),
         cache: "no-store",
       });
 
@@ -280,7 +294,7 @@ export default function AdminDashboard({
       setPassword("");
       await loadLeads(incoming);
     } catch {
-      setError("המייל או הסיסמה אינם נכונים.");
+      setError("האימייל או הסיסמה אינם נכונים, או שהחשבון אינו מורשה לניהול.");
     } finally {
       setBusy(null);
     }
@@ -316,6 +330,12 @@ export default function AdminDashboard({
       return;
     }
 
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) {
+      setError("יש להזין את האימייל של חשבון המנהל שרוצים לאפס.");
+      return;
+    }
+
     setBusy("recovery");
 
     try {
@@ -328,11 +348,11 @@ export default function AdminDashboard({
           ...authHeaders(),
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: adminEmail }),
+        body: JSON.stringify({ email: normalizedEmail }),
       });
 
       if (!response.ok) throw new Error("recovery_failed");
-      setMessage("נשלח למייל המנהל קישור מאובטח לאיפוס הסיסמה.");
+      setMessage("אם קיים חשבון מתאים, נשלח אליו קישור מאובטח לאיפוס הסיסמה.");
     } catch {
       setError("לא הצלחתי לשלוח קישור לאיפוס סיסמה כרגע. נסה שוב.");
     } finally {
@@ -393,6 +413,7 @@ export default function AdminDashboard({
     localStorage.removeItem(STORAGE_KEY);
     setSession(null);
     setLeads([]);
+    setEmail("");
     setPassword("");
     setMessage("");
     setError("");
@@ -423,7 +444,7 @@ export default function AdminDashboard({
           </Link>
           <span className="section-kicker">ADMIN SECURITY</span>
           <h1 id="admin-reset-title">בחירת סיסמה חדשה</h1>
-          <p>הקישור מאומת עבור {adminEmail}. בחר סיסמה חדשה וחזקה.</p>
+          <p>הקישור אומת לחשבון מנהל. בחר סיסמה חדשה וחזקה.</p>
 
           <form onSubmit={updatePassword} className="admin-login-form">
             <label>
@@ -469,12 +490,18 @@ export default function AdminDashboard({
           </Link>
           <span className="section-kicker">ADMIN</span>
           <h1 id="admin-login-title">כניסה לניהול</h1>
-          <p>הכניסה מורשית רק לחשבון המנהל.</p>
+          <p>הכניסה מורשית לחשבונות מנהלים בלבד.</p>
 
           <form onSubmit={signInWithPassword} className="admin-login-form">
             <label>
-              <span>אימייל מנהל</span>
-              <input type="email" value={adminEmail} readOnly aria-readonly="true" autoComplete="username" />
+              <span>אימייל</span>
+              <input
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                autoComplete="username"
+                required
+              />
             </label>
             <label>
               <span>סיסמה</span>
@@ -526,7 +553,7 @@ export default function AdminDashboard({
           <div>
             <span className="section-kicker">ADMIN</span>
             <h1 id="admin-title">לקוחות ופניות מהאתר</h1>
-            <p>{adminEmail}</p>
+            <p>גישה לחשבון מנהל מורשה</p>
           </div>
           <div className="admin-header-actions">
             <button
