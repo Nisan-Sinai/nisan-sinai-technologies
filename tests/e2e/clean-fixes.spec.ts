@@ -193,22 +193,24 @@ test("public site exposes a clear admin entry button", async ({ page }) => {
   await expect(adminLink).toHaveAttribute("href", "/admin");
 });
 
-test("admin page exposes password, forgot password, or Google login", async ({ page }) => {
+test("admin page supports multiple admins without exposing a fixed email", async ({ page }) => {
   await page.goto("/admin");
 
   await expect(
     page.getByRole("heading", { level: 1, name: "כניסה לניהול" }),
   ).toBeVisible();
 
-  const email = page.getByLabel("אימייל מנהל");
-  await expect(email).toHaveValue("nisan.sinai5@gmail.com");
-  await expect(email).toHaveAttribute("readonly", "");
+  const email = page.getByLabel("אימייל");
+  await expect(email).toBeVisible();
+  await expect(email).toHaveValue("");
+  await expect(email).not.toHaveAttribute("readonly", "");
 
   await expect(page.getByLabel("סיסמה")).toBeVisible();
   await expect(page.getByRole("button", { name: "כניסה עם סיסמה" })).toBeVisible();
   await expect(page.getByRole("button", { name: "שכחתי סיסמה" })).toBeVisible();
   await expect(page.getByRole("button", { name: "התחברות עם Google" })).toBeVisible();
 
+  await expect(page.getByText("nisan.sinai5@gmail.com", { exact: false })).toHaveCount(0);
   await expect(
     page.getByRole("button", { name: "כניסה ראשונה / קישור למייל" }),
   ).toHaveCount(0);
