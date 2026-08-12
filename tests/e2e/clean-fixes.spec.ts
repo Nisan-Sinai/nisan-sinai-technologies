@@ -172,22 +172,46 @@ test("mobile footer links stay separated and tappable", async ({ page }, testInf
   });
 
   expect(result.display).toBe("grid");
-  expect(result.count).toBe(5);
-  expect(result.labels).toEqual(["אימייל", "טלפון", "LinkedIn", "פרטיות", "נגישות"]);
+  expect(result.count).toBe(6);
+  expect(result.labels).toEqual([
+    "אימייל",
+    "טלפון",
+    "LinkedIn",
+    "פרטיות",
+    "נגישות",
+    "כניסה לניהול",
+  ]);
   expect(result.minHeight).toBeGreaterThanOrEqual(44);
   expect(result.overlapping).toBe(false);
   expect(result.overflows).toBe(false);
 });
 
-test("admin page is private before authentication", async ({ page }) => {
+test("public site exposes a clear admin entry button", async ({ page }) => {
+  await page.goto("/");
+  const adminLink = page.getByRole("link", { name: "כניסה לניהול" });
+  await expect(adminLink).toBeVisible();
+  await expect(adminLink).toHaveAttribute("href", "/admin");
+});
+
+test("admin page is private and exposes secure sign-in options", async ({ page }) => {
   await page.goto("/admin");
 
   await expect(
     page.getByRole("heading", { level: 1, name: "כניסה לניהול" }),
   ).toBeVisible();
-  await expect(page.getByLabel("אימייל מנהל")).toHaveValue(
-    "nisan.sinai5@gmail.com",
-  );
+
+  const email = page.getByLabel("אימייל מנהל");
+  await expect(email).toHaveValue("nisan.sinai5@gmail.com");
+  await expect(email).toHaveAttribute("readonly", "");
+
+  await expect(page.getByLabel("סיסמה")).toBeVisible();
+  await expect(page.getByRole("button", { name: "כניסה עם סיסמה" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "התחברות עם Google" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "איפוס סיסמה" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "כניסה ראשונה / קישור למייל" }),
+  ).toBeVisible();
+
   await expect(page.locator(".admin-lead-card")).toHaveCount(0);
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
     "content",
