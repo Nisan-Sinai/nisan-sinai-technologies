@@ -18,6 +18,7 @@ export default defineConfig({
         "lib/i18n.ts",
         "lib/content.ts",
         "lib/rich-text.ts",
+        "lib/supabase-key.ts",
         "lib/structured-data.ts",
         "app/api/leads/route.ts",
       ],

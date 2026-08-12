@@ -72,6 +72,24 @@ body_has "privacy policy names the processors" \
 body_has "sitemap lists the accessibility statement" \
   "${SITE_URL}/sitemap.xml" "/accessibility"
 
+# NEXT_PUBLIC_SITE_URL feeds every canonical, the sitemap and robots.txt. If it
+# is unset or stale the pages quietly nominate a different host as the original
+# and hand it the ranking — the one SEO failure that looks fine in a browser.
+# Only a deployment can be judged on this: a local build has no public host to
+# name, so the check is skipped rather than failed against localhost.
+if [[ "${SITE_URL}" == https://* ]]; then
+  body_has "canonical names this host" \
+    "${SITE_URL}/" "rel=\"canonical\" href=\"${SITE_URL}"
+  body_has "robots.txt points at this host's sitemap" \
+    "${SITE_URL}/robots.txt" "Sitemap: ${SITE_URL}/sitemap.xml"
+else
+  echo "  skip: canonical host checks need a deployed https URL"
+fi
+
+# The admin login is not content. It must never be indexed.
+body_has "admin login is excluded from search" \
+  "${SITE_URL}/admin" "noindex"
+
 # These two reach the lead route and stop inside its guards, so a deployed API
 # is proven without writing a lead into the database.
 check "lead API rejects non-JSON" 415 \

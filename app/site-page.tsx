@@ -32,29 +32,6 @@ const PROJECT_SITES = [
   },
 ] as const;
 
-const LD_PROJECT_COPY = {
-  he: {
-    description:
-      "אתר ומערכת הזמנות ל־LD Event Design — סטודיו לעיצוב אירועים. הלקוחות בוחרים חבילת עיצוב, מוסיפים פריטים, חותמים על הסכם דיגיטלי ושולחים הזמנה — והכול מנוהל מאזור ניהול אחד.",
-    points: [
-      "חבילות ומוצרים בהתאמה אישית",
-      "סל, הסכם והזמנה דיגיטליים",
-      "ניהול הזמנות, תמונות ותוכן",
-    ],
-    linkLabel: "לאתר הפעיל",
-  },
-  en: {
-    description:
-      "Website and ordering system for LD Event Design, an event-design studio. Clients choose a design package, add items, sign a digital agreement and submit the order — all managed from one admin area.",
-    points: [
-      "Custom packages and add-ons",
-      "Cart, digital agreement and ordering",
-      "Orders, images and content management",
-    ],
-    linkLabel: "Live site",
-  },
-} as const;
-
 export default function SitePage({ locale }: { locale: Locale }) {
   const t = getContent(locale);
   const arrow = forwardArrow(locale);
@@ -223,10 +200,8 @@ export default function SitePage({ locale }: { locale: Locale }) {
           {t.projects.items.map((project, index) => {
             const modifier = ["project-ld", "project-shel", "project-rsvp"][index];
             const previewClass = ["ld-preview", "shel-preview", "rsvp-preview"][index];
-            const ldCopy = index === 0 ? LD_PROJECT_COPY[locale] : null;
-            const description = ldCopy?.description ?? project.description;
-            const points = ldCopy?.points ?? project.points;
-            const linkLabel = ldCopy?.linkLabel ?? project.linkLabel;
+            // Every project links to its live site; the dictionary is the only
+            // place a URL or a line of copy is written down.
             const href = project.href ?? PROJECT_SITES[index].href;
 
             return (
@@ -241,9 +216,9 @@ export default function SitePage({ locale }: { locale: Locale }) {
                   <h3>
                     <LatinText text={project.title} />
                   </h3>
-                  <p>{description}</p>
+                  <p>{project.description}</p>
                   <ul>
-                    {points.map((point) => (
+                    {project.points.map((point) => (
                       <li key={point}>{point}</li>
                     ))}
                   </ul>
@@ -252,7 +227,7 @@ export default function SitePage({ locale }: { locale: Locale }) {
                     href={href}
                     hint={t.newTabHint}
                   >
-                    <LatinText text={linkLabel} />{" "}
+                    <LatinText text={project.linkLabel} />{" "}
                     <i aria-hidden="true">↗</i>
                   </ExternalLink>
                 </div>

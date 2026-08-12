@@ -17,8 +17,6 @@ export type Project = {
   linkLabel: string;
   href?: string;
   previewLabel: string;
-  /** Short strings drawn inside the mock interface, so it reads in-language. */
-  preview: { kicker: string; headline: string; cta: string; tags: [string, string, string] };
 };
 export type AboutValue = { number: string; title: string; text: string };
 export type ServiceOption = { value: string; label: string };
@@ -144,6 +142,7 @@ export type SiteContent = {
     phone: string;
     privacy: string;
     accessibility: string;
+    admin: string;
     rights: string;
     navAria: string;
   };
@@ -280,20 +279,15 @@ const he: SiteContent = {
         year: "2026",
         title: "LD Event Design",
         description:
-          "סטודיו לעיצוב אירועים — חתונות, חינה, בר/בת מצווה וברית. הלקוח מרכיב חבילה, חותם על הסכם דיגיטלי ושולח הזמנה, והכול מנוהל מממשק אחד.",
+          "אתר ומערכת הזמנות ל־LD Event Design — סטודיו לעיצוב אירועים. הלקוחות בוחרים חבילת עיצוב, מוסיפים פריטים, חותמים על הסכם דיגיטלי ושולחים הזמנה — והכול מנוהל מאזור ניהול אחד.",
         points: [
-          "הרכבת חבילה בהתאמה אישית",
-          "הסכם והזמנה דיגיטליים",
-          "ניהול תוכן, מדיה והזמנות",
+          "חבילות ומוצרים בהתאמה אישית",
+          "סל, הסכם והזמנה דיגיטליים",
+          "ניהול הזמנות, תמונות ותוכן",
         ],
-        linkLabel: "CASE STUDY",
+        linkLabel: "לאתר הפעיל",
+        href: "https://ld-event-design.vercel.app/",
         previewLabel: "הדמיית ממשק LD Event Design",
-        preview: {
-          kicker: "עיצוב אירועים",
-          headline: "האירוע שלך, בעיצוב אישי.",
-          cta: "להרכבת חבילה",
-          tags: ["חתונה", "חינה", "בר מצווה"],
-        },
       },
       {
         meta: "02 / E-COMMERCE",
@@ -309,12 +303,6 @@ const he: SiteContent = {
         linkLabel: "לאתר הפעיל",
         href: "https://shel-yah-web.vercel.app/",
         previewLabel: "הדמיית ממשק Shel-Yah",
-        preview: {
-          kicker: "עבודת יד · בעיצוב אישי",
-          headline: "אומנות אפוקסי שמספרת סיפור.",
-          cta: "לקטלוג",
-          tags: ["שעוני קיר", "שלטי כניסה", "מתנות"],
-        },
       },
       {
         meta: "03 / EVENT PLATFORM",
@@ -330,12 +318,6 @@ const he: SiteContent = {
         linkLabel: "לאתר הפעיל",
         href: "https://arrival-confirmations.vercel.app/",
         previewLabel: "הדמיית מערכת אישורי ההגעה",
-        preview: {
-          kicker: "מרכז ניהול",
-          headline: "אישורי הגעה בזמן אמת",
-          cta: "לדשבורד",
-          tags: ["מוזמנים", "אישרו", "הושבה"],
-        },
       },
     ],
   },
@@ -438,6 +420,7 @@ const he: SiteContent = {
     phone: "טלפון",
     privacy: "פרטיות",
     accessibility: "נגישות",
+    admin: "כניסה לניהול",
     rights: "© 2026 ניסן סיני טכנולוגיות. כל הזכויות שמורות.",
     navAria: "קישורים בתחתית העמוד",
   },
@@ -679,20 +662,15 @@ const en: SiteContent = {
         year: "2026",
         title: "LD Event Design",
         description:
-          "An event-design studio — weddings, henna, bar and bat mitzvahs. Clients assemble a package, sign a digital agreement and place the order, all managed from one interface.",
+          "Website and ordering system for LD Event Design, an event-design studio. Clients choose a design package, add items, sign a digital agreement and submit the order — all managed from one admin area.",
         points: [
-          "Made-to-order package builder",
-          "Digital agreement and ordering",
-          "Content, media and order management",
+          "Custom packages and add-ons",
+          "Cart, digital agreement and ordering",
+          "Orders, images and content management",
         ],
-        linkLabel: "CASE STUDY",
+        linkLabel: "Live site",
+        href: "https://ld-event-design.vercel.app/",
         previewLabel: "LD Event Design interface mockup",
-        preview: {
-          kicker: "EVENT DESIGN",
-          headline: "Your event, designed around you.",
-          cta: "Build a package",
-          tags: ["Weddings", "Henna", "Mitzvahs"],
-        },
       },
       {
         meta: "02 / E-COMMERCE",
@@ -708,12 +686,6 @@ const en: SiteContent = {
         linkLabel: "Visit the live site",
         href: "https://shel-yah-web.vercel.app/",
         previewLabel: "Shel-Yah interface mockup",
-        preview: {
-          kicker: "HANDMADE · MADE TO ORDER",
-          headline: "Epoxy art that tells a story.",
-          cta: "View catalogue",
-          tags: ["Wall clocks", "Signs", "Gifts"],
-        },
       },
       {
         meta: "03 / EVENT PLATFORM",
@@ -729,12 +701,6 @@ const en: SiteContent = {
         linkLabel: "Visit the live site",
         href: "https://arrival-confirmations.vercel.app/",
         previewLabel: "RSVP platform mockup",
-        preview: {
-          kicker: "CONTROL CENTRE",
-          headline: "Live arrival confirmations",
-          cta: "Open dashboard",
-          tags: ["Guests", "Confirmed", "Seating"],
-        },
       },
     ],
   },
@@ -837,6 +803,7 @@ const en: SiteContent = {
     phone: "Phone",
     privacy: "Privacy",
     accessibility: "Accessibility",
+    admin: "Admin login",
     rights: "© 2026 Nisan Sinai Technologies. All rights reserved.",
     navAria: "Footer links",
   },

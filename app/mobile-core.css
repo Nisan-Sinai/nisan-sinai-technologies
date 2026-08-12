@@ -38,7 +38,10 @@
     line-height: 1.25;
   }
 
+  /* The tightest gap in the whole diagram is between this card's right edge
+     and the core label. At 82px it measured 11.6px on a 360px screen, under
+     the 12px the layout test requires. */
   .signal-card {
-    width: 82px;
+    width: 78px;
   }
 }

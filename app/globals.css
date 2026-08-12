@@ -1947,7 +1947,8 @@ h2 {
 
   .signal-card {
     /* Hard against the left edge so it clears the core label, and lifted above
-       the automation card so the two no longer stack. */
+       the automation card so the two no longer stack. mobile-core.css narrows
+       this further on phones; that override is what wins below 680px. */
     left: 0;
     bottom: 34%;
     width: 96px;
