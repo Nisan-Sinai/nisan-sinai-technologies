@@ -131,7 +131,7 @@ tests/e2e/         Playwright
 | `npm run test:rendered` | בדיקת ארטיפקט Sites |
 | `npm run test:e2e` | Playwright בדסקטופ, בשני מובייל, ו־axe-core בכל עמוד |
 | `npm run test:migrations` | מיגרציות וחוזה ה־RLS מול Postgres |
-| `npm run smoke` | בדיקת סביבה פרוסה |
+| `npm run smoke` | בדיקת סביבה פרוסה, כולל תוכן שני עמודי המדיניות |
 | `npm run check:data-api` | אימות שהמפתח של Supabase עדיין מתקבל |
 
 כיסוי הבדיקות נאכף על 100% בכל ארבעת המדדים — שורות, הצהרות, ענפים ופונקציות.
