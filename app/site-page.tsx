@@ -20,6 +20,30 @@ const PROJECT_SITES = [
   { slug: "rsvp", host: "arrival-confirmations.vercel.app" },
 ] as const;
 
+function TextStripGroup({
+  lead,
+  items,
+  hidden = false,
+}: {
+  lead: string;
+  items: readonly string[];
+  hidden?: boolean;
+}) {
+  return (
+    <div className="marquee-group" aria-hidden={hidden || undefined}>
+      <span>{lead}</span>
+      {items.map((item, index) => (
+        <Fragment key={`${hidden ? "copy" : "main"}-${item}`}>
+          {index > 0 && <i aria-hidden="true" />}
+          <strong>
+            <LatinText text={item} />
+          </strong>
+        </Fragment>
+      ))}
+    </div>
+  );
+}
+
 export default function SitePage({ locale }: { locale: Locale }) {
   const t = getContent(locale);
   const arrow = forwardArrow(locale);
@@ -138,15 +162,10 @@ export default function SitePage({ locale }: { locale: Locale }) {
       </section>
 
       <section className="services-intro" id="services" aria-label={t.strip.aria} tabIndex={0}>
-        <span>{t.strip.lead}</span>
-        {t.strip.items.map((item, index) => (
-          <Fragment key={item}>
-            {index > 0 && <i aria-hidden="true" />}
-            <strong>
-              <LatinText text={item} />
-            </strong>
-          </Fragment>
-        ))}
+        <div className="marquee-track">
+          <TextStripGroup lead={t.strip.lead} items={t.strip.items} />
+          <TextStripGroup lead={t.strip.lead} items={t.strip.items} hidden />
+        </div>
       </section>
 
       <section className="content-section services-section" aria-labelledby="services-title">
@@ -311,17 +330,10 @@ return makeItWork(solution);`}</code>
       </section>
 
       <section className="tech-strip" aria-label={t.tech.aria} tabIndex={0}>
-        <span>
-          <LatinText text={t.tech.label} />
-        </span>
-        {t.tech.items.map((item, index) => (
-          <Fragment key={item}>
-            {index > 0 && <i />}
-            <strong>
-              <LatinText text={item} />
-            </strong>
-          </Fragment>
-        ))}
+        <div className="marquee-track">
+          <TextStripGroup lead={t.tech.label} items={t.tech.items} />
+          <TextStripGroup lead={t.tech.label} items={t.tech.items} hidden />
+        </div>
       </section>
 
       <section className="contact-section" id="contact" aria-labelledby="contact-title">
