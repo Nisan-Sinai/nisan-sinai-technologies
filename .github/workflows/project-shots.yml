@@ -1,0 +1,40 @@
+name: Project screenshots
+
+# The portfolio shows the three live sites. Two of them refuse to be framed,
+# which is correct for a site with a login, so a real browser photographs them
+# on a schedule instead and commits the result.
+on:
+  schedule:
+    - cron: "0 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    name: Photograph the live sites
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run capture:projects
+
+      - name: Commit the refreshed screenshots
+        run: |
+          if git diff --quiet -- public/projects; then
+            echo "The sites look the same as last time; nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/projects
+          git commit -m "Refresh the project screenshots
+
+          Captured from the live sites by the scheduled workflow."
+          git push
