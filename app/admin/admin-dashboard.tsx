@@ -24,7 +24,8 @@ type AuthSettings = {
   external?: Record<string, boolean | undefined>;
 };
 
-type BusyAction = "password" | "google" | null;
+type AuthMode = "login" | "reset";
+type BusyAction = "password" | "google" | "recovery" | "update-password" | null;
 
 const STORAGE_KEY = "nisan-admin-session";
 
@@ -49,10 +50,14 @@ export default function AdminDashboard({
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(configured);
   const [busy, setBusy] = useState<BusyAction>(null);
+  const [message, setMessage] = useState("");
   const [error, setError] = useState(
     configured ? "" : "שירות הניהול אינו מוגדר כרגע.",
   );
   const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [authMode, setAuthMode] = useState<AuthMode>("login");
   const [googleEnabled, setGoogleEnabled] = useState<boolean | null>(null);
 
   function authHeaders(accessToken?: string) {
@@ -67,6 +72,16 @@ export default function AdminDashboard({
       headers: authHeaders(accessToken),
       cache: "no-store",
     });
+  }
+
+  async function verifyAdminSession(current: Session) {
+    const response = await fetchUser(current.access_token);
+    if (!response.ok) throw new Error("invalid_session");
+
+    const user = (await response.json()) as { email?: string };
+    if (user.email?.trim().toLowerCase() !== adminEmail.toLowerCase()) {
+      throw new Error("not_admin");
+    }
   }
 
   async function refreshSession(current: Session): Promise<Session | null> {
@@ -130,6 +145,7 @@ export default function AdminDashboard({
 
       setSession(activeSession);
       setLeads(rows);
+      setAuthMode("login");
       localStorage.setItem(STORAGE_KEY, JSON.stringify(activeSession));
     } catch {
       localStorage.removeItem(STORAGE_KEY);
@@ -169,7 +185,7 @@ export default function AdminDashboard({
 
       if (authError) {
         window.history.replaceState({}, document.title, "/admin");
-        setError("ההתחברות נכשלה. נסה שוב.");
+        setError("ההתחברות נכשלה או שפג תוקף הקישור. נסה שוב.");
         setLoading(false);
         return;
       }
@@ -180,8 +196,26 @@ export default function AdminDashboard({
           access_token: accessToken,
           refresh_token: hash.get("refresh_token") ?? undefined,
         };
+        const recovery = hash.get("type") === "recovery";
 
         window.history.replaceState({}, document.title, "/admin");
+
+        if (recovery) {
+          try {
+            await verifyAdminSession(incoming);
+            setSession(incoming);
+            setAuthMode("reset");
+            setMessage("הקישור אומת. עכשיו אפשר לבחור סיסמה חדשה.");
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(incoming));
+          } catch {
+            setError("קישור איפוס הסיסמה אינו מורשה לחשבון המנהל.");
+            setSession(null);
+          } finally {
+            setLoading(false);
+          }
+          return;
+        }
+
         await loadLeads(incoming);
         return;
       }
@@ -213,6 +247,7 @@ export default function AdminDashboard({
   async function signInWithPassword(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+    setMessage("");
 
     if (!configured) {
       setError("שירות הניהול אינו מוגדר כרגע.");
@@ -253,6 +288,7 @@ export default function AdminDashboard({
 
   function signInWithGoogle() {
     setError("");
+    setMessage("");
 
     if (!configured) {
       setError("שירות הניהול אינו מוגדר כרגע.");
@@ -271,13 +307,96 @@ export default function AdminDashboard({
     window.location.assign(endpoint.toString());
   }
 
+  async function requestRecovery() {
+    setError("");
+    setMessage("");
+
+    if (!configured) {
+      setError("שירות הניהול אינו מוגדר כרגע.");
+      return;
+    }
+
+    setBusy("recovery");
+
+    try {
+      const endpoint = new URL("/auth/v1/recover", supabaseUrl);
+      endpoint.searchParams.set("redirect_to", `${window.location.origin}/admin`);
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          ...authHeaders(),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: adminEmail }),
+      });
+
+      if (!response.ok) throw new Error("recovery_failed");
+      setMessage("נשלח למייל המנהל קישור מאובטח לאיפוס הסיסמה.");
+    } catch {
+      setError("לא הצלחתי לשלוח קישור לאיפוס סיסמה כרגע. נסה שוב.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function updatePassword(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+    setMessage("");
+
+    if (!session) {
+      setError("קישור האיפוס פג. יש לבקש קישור חדש.");
+      return;
+    }
+
+    if (newPassword.length < 10) {
+      setError("הסיסמה החדשה צריכה להכיל לפחות 10 תווים.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError("הסיסמאות אינן זהות.");
+      return;
+    }
+
+    setBusy("update-password");
+
+    try {
+      await verifyAdminSession(session);
+
+      const response = await fetch(new URL("/auth/v1/user", supabaseUrl), {
+        method: "PUT",
+        headers: {
+          ...authHeaders(session.access_token),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password: newPassword }),
+        cache: "no-store",
+      });
+
+      if (!response.ok) throw new Error("password_update_failed");
+
+      setNewPassword("");
+      setConfirmPassword("");
+      setMessage("הסיסמה עודכנה בהצלחה.");
+      await loadLeads(session);
+    } catch {
+      setError("לא הצלחתי לעדכן את הסיסמה. בקש קישור איפוס חדש ונסה שוב.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
   async function signOut() {
     const accessToken = session?.access_token;
     localStorage.removeItem(STORAGE_KEY);
     setSession(null);
     setLeads([]);
     setPassword("");
+    setMessage("");
     setError("");
+    setAuthMode("login");
 
     if (!accessToken || !configured) return;
 
@@ -294,6 +413,52 @@ export default function AdminDashboard({
     }),
     [leads],
   );
+
+  if (authMode === "reset" && session) {
+    return (
+      <main className="admin-shell">
+        <section className="admin-login-card" aria-labelledby="admin-reset-title">
+          <Link className="admin-back-link" href="/">
+            ← חזרה לאתר
+          </Link>
+          <span className="section-kicker">ADMIN SECURITY</span>
+          <h1 id="admin-reset-title">בחירת סיסמה חדשה</h1>
+          <p>הקישור מאומת עבור {adminEmail}. בחר סיסמה חדשה וחזקה.</p>
+
+          <form onSubmit={updatePassword} className="admin-login-form">
+            <label>
+              <span>סיסמה חדשה</span>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(event) => setNewPassword(event.target.value)}
+                autoComplete="new-password"
+                minLength={10}
+                required
+              />
+            </label>
+            <label>
+              <span>אימות סיסמה</span>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                autoComplete="new-password"
+                minLength={10}
+                required
+              />
+            </label>
+            <button className="button button-primary" type="submit" disabled={busy !== null}>
+              {busy === "update-password" ? "מעדכן..." : "שמירת סיסמה חדשה"}
+            </button>
+          </form>
+
+          {message && <p className="admin-notice admin-notice-success">{message}</p>}
+          {error && <p className="admin-notice admin-notice-error">{error}</p>}
+        </section>
+      </main>
+    );
+  }
 
   if (!session) {
     return (
@@ -326,6 +491,12 @@ export default function AdminDashboard({
             </button>
           </form>
 
+          <div className="admin-login-options admin-login-options-single">
+            <button type="button" onClick={() => void requestRecovery()} disabled={busy !== null || !configured}>
+              {busy === "recovery" ? "שולח..." : "שכחתי סיסמה"}
+            </button>
+          </div>
+
           <div className="admin-auth-divider" aria-hidden="true">
             <span>או</span>
           </div>
@@ -341,6 +512,7 @@ export default function AdminDashboard({
           </button>
 
           {loading && <p className="admin-notice">בודק התחברות...</p>}
+          {message && <p className="admin-notice admin-notice-success">{message}</p>}
           {error && <p className="admin-notice admin-notice-error">{error}</p>}
         </section>
       </main>
@@ -382,6 +554,7 @@ export default function AdminDashboard({
           </article>
         </section>
 
+        {message && <p className="admin-notice admin-notice-success">{message}</p>}
         {error && <p className="admin-notice admin-notice-error">{error}</p>}
 
         <section aria-labelledby="admin-leads-title">
