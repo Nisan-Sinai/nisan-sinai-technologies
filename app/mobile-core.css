@@ -1,0 +1,31 @@
+@media (max-width: 680px) {
+  .system-core {
+    width: 9rem;
+  }
+
+  .signal-card {
+    width: 88px;
+  }
+}
+
+@media (max-width: 380px) {
+  .system-core {
+    width: 8.5rem;
+  }
+
+  .capability {
+    width: 82px;
+    min-width: 82px;
+    max-width: 82px;
+    padding: 0.48rem 0.5rem;
+  }
+
+  .capability strong {
+    font-size: 0.68rem;
+    line-height: 1.25;
+  }
+
+  .signal-card {
+    width: 82px;
+  }
+}

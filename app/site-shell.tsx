@@ -4,6 +4,8 @@ import { GeistMono } from "geist/font/mono";
 import { getContent } from "@/lib/content";
 import { directionOf, localePath, type Locale } from "@/lib/i18n";
 import "./globals.css";
+import "./clean-fixes.css";
+import "./mobile-core.css";
 
 export const siteUrl = new URL(
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -61,8 +63,6 @@ export function buildMetadata(locale: Locale): Metadata {
       description: t.meta.twitterDescription,
       images: [shareImage(locale)],
     },
-    // Explicit rather than implied, and large previews are opt-in: without
-    // max-image-preview Google shows a thumbnail at best.
     robots: {
       index: true,
       follow: true,
@@ -74,8 +74,6 @@ export function buildMetadata(locale: Locale): Metadata {
         "max-video-preview": -1,
       },
     },
-    // Set NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION to the token Search Console
-    // hands out; without it the tag is simply absent.
     verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
       ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
       : undefined,

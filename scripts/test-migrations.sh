@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
-# Applies supabase/migrations to a throwaway database and asserts the contact
-# form's security model still holds: the public roles may add a lead and do
-# nothing else. Supabase enforces this in production, so a regression here is
-# invisible until leads leak or stop arriving.
-#
-# Usage: DATABASE_URL=postgres://... bash scripts/test-migrations.sh
+# Applies Supabase migrations to a throwaway database and asserts the contact
+# form's security model: anyone may submit a valid lead, nobody may change or
+# delete one, and only the authenticated admin email may read leads.
 set -euo pipefail
 
 : "${DATABASE_URL:?set DATABASE_URL to a throwaway Postgres database}"
@@ -24,8 +21,17 @@ expect_reject() {
   echo "  ok: ${label} is rejected"
 }
 
+expect_value() {
+  local label="$1" expected="$2" sql="$3" actual
+  actual="$(psql_q -c "${sql}" | tail -n 1 | tr -d '[:space:]')"
+  if [[ "${actual}" != "${expected}" ]]; then
+    echo "FAIL: ${label}: expected ${expected}, got ${actual}" >&2
+    exit 1
+  fi
+  echo "  ok: ${label} = ${expected}"
+}
+
 echo "==> Creating the Supabase roles the migrations grant to"
-# A bare Postgres has no anon/authenticated; Supabase ships them.
 psql_q -c "do \$\$ begin
   if not exists (select from pg_roles where rolname = 'anon') then
     create role anon nologin;
@@ -56,14 +62,30 @@ begin
     select from pg_policies
     where schemaname = 'public' and tablename = 'contact_leads' and cmd = 'INSERT'
   ), 'the public insert policy must exist';
+  assert exists (
+    select from pg_policies
+    where schemaname = 'public' and tablename = 'contact_leads'
+      and cmd = 'SELECT' and policyname = 'admin_can_read_contact_leads'
+  ), 'the admin select policy must exist';
+  assert exists (
+    select from information_schema.role_table_grants
+    where table_name = 'contact_leads'
+      and grantee = 'authenticated' and privilege_type = 'SELECT'
+  ), 'authenticated needs select so RLS can admit the admin';
   assert not exists (
     select from information_schema.role_table_grants
     where table_name = 'contact_leads'
-      and grantee in ('anon', 'authenticated')
+      and grantee = 'anon'
       and privilege_type in ('SELECT', 'UPDATE', 'DELETE')
-  ), 'public roles must never hold select, update or delete on contact_leads';
+  ), 'anon must never hold select, update or delete on contact_leads';
+  assert not exists (
+    select from information_schema.role_table_grants
+    where table_name = 'contact_leads'
+      and grantee = 'authenticated'
+      and privilege_type in ('UPDATE', 'DELETE')
+  ), 'authenticated must never update or delete contact_leads';
 end \$\$;"
-echo "  ok: RLS on, insert policy present, no read or write-back grants"
+echo "  ok: RLS, public insert and admin-only read contract present"
 
 echo "==> Exercising the public role"
 psql_q -c "set role anon;
@@ -71,8 +93,19 @@ psql_q -c "set role anon;
   values ('בדיקת מיגרציה', '0500000000', 'הודעת בדיקה עבור צינור ה-CI.');"
 echo "  ok: a valid lead is accepted"
 
-expect_reject "reading leads back" \
+expect_reject "anonymous reading leads back" \
   "set role anon; select * from public.contact_leads;"
+
+expect_value "non-admin authenticated visible leads" "0" \
+  "set role authenticated;
+   set request.jwt.claims = '{\"email\":\"someone@example.com\"}';
+   select count(*) from public.contact_leads;"
+
+expect_value "admin authenticated visible leads" "1" \
+  "set role authenticated;
+   set request.jwt.claims = '{\"email\":\"nisan.sinai5@gmail.com\"}';
+   select count(*) from public.contact_leads;"
+
 expect_reject "deleting leads" \
   "set role anon; delete from public.contact_leads;"
 expect_reject "a lead claiming a foreign source" \
