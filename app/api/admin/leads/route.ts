@@ -10,13 +10,16 @@ export async function GET() {
     }
 
     const { baseUrl, key } = getSupabaseConfig();
-    const endpoint = new URL("/rest/v1/contact_leads", baseUrl);
-    endpoint.searchParams.set("select", "id,name,business_name,phone,email,service,message,status,created_at");
-    endpoint.searchParams.set("order", "created_at.desc");
-    endpoint.searchParams.set("limit", "500");
+    const endpoint = new URL("/rest/v1/rpc/admin_contact_leads", baseUrl);
 
     const response = await fetch(endpoint, {
-      headers: { apikey: key, Authorization: `Bearer ${accessToken}` },
+      method: "POST",
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: "{}",
       cache: "no-store",
       signal: AbortSignal.timeout(8_000),
     });
