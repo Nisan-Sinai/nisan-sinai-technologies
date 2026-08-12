@@ -5,6 +5,7 @@ import { getContent } from "@/lib/content";
 import { directionOf, localePath, type Locale } from "@/lib/i18n";
 import "./globals.css";
 import "./clean-fixes.css";
+import "./mobile-core.css";
 
 export const siteUrl = new URL(
   process.env.NEXT_PUBLIC_SITE_URL ??
