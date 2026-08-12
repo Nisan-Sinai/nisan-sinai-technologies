@@ -82,10 +82,90 @@ describe("site content", () => {
     expect(contact.phoneDisplay).toBe("058-7170978");
   });
 
-  it("marks where the address belongs in the privacy copy", () => {
+  it("marks where the address belongs in both policy documents", () => {
     for (const locale of locales) {
-      const bodies = getContent(locale).privacy.sections.map((s) => s.body);
-      expect(bodies.some((body) => body.includes("{email}"))).toBe(true);
+      for (const document of ["privacy", "accessibility"] as const) {
+        const bodies = getContent(locale)[document].sections.flatMap((section) =>
+          section.body ? [section.body] : [],
+        );
+        expect(bodies.some((body) => body.includes("{email}"))).toBe(true);
+      }
+    }
+  });
+
+  it("gives every policy section something to render", () => {
+    // A section with neither prose nor a list is a heading over blank space.
+    for (const locale of locales) {
+      for (const document of ["privacy", "accessibility"] as const) {
+        for (const section of getContent(locale)[document].sections) {
+          expect(section.title.trim()).not.toBe("");
+          expect(Boolean(section.body) || Boolean(section.items?.length)).toBe(true);
+        }
+      }
+    }
+  });
+
+  it("states in the privacy policy what Israeli law requires it to state", () => {
+    // Section 11 of the Protection of Privacy Law asks for the controller, the
+    // purpose, whether disclosure is voluntary and who the data reaches;
+    // Amendment 13 adds access, correction and erasure. Losing any of these in
+    // an edit is the kind of regression nobody notices by reading the page.
+    const required: Record<Locale, string[]> = {
+      he: [
+        "בעל המאגר",
+        "מרצון",
+        "Supabase",
+        "Vercel",
+        "מחוץ לישראל",
+        "זכות עיון",
+        "זכות תיקון",
+        "זכות מחיקה",
+        "רשות להגנת הפרטיות",
+        "עוגיות",
+      ],
+      en: [
+        "controller",
+        "voluntary",
+        "Supabase",
+        "Vercel",
+        "outside Israel",
+        "Access",
+        "Correction",
+        "Erasure",
+        "Privacy Protection Authority",
+        "Cookies",
+      ],
+    };
+
+    for (const locale of locales) {
+      const text = collectStrings(getContent(locale).privacy).join(" ");
+      for (const phrase of required[locale]) {
+        expect(text, `${locale}: ${phrase}`).toContain(phrase);
+      }
+    }
+  });
+
+  it("names the standard and the coordinator in the accessibility statement", () => {
+    // The Israeli service-accessibility regulations require the statement to
+    // name the standard it claims and to give a coordinator who can be reached.
+    const required: Record<Locale, string[]> = {
+      he: ["5568", "AA", "רכז הנגישות", "058-7170978", "{email}"],
+      en: ["5568", "AA", "coordinator", "058-7170978", "{email}"],
+    };
+
+    for (const locale of locales) {
+      const text = collectStrings(getContent(locale).accessibility).join(" ");
+      for (const phrase of required[locale]) {
+        expect(text, `${locale}: ${phrase}`).toContain(phrase);
+      }
+    }
+  });
+
+  it("dates both policy documents", () => {
+    for (const locale of locales) {
+      for (const document of ["privacy", "accessibility"] as const) {
+        expect(getContent(locale)[document].updated).toMatch(/2026/);
+      }
     }
   });
 });

@@ -7,13 +7,14 @@ const siteUrl =
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
     : "https://nisan-sinai-tech.nisan-sinai.chatgpt.site");
 
-const lastModified = new Date("2026-08-11");
+const lastModified = new Date("2026-08-12");
 
 /** Each page is listed once per locale, with the pair cross-referenced. */
 export default function sitemap(): MetadataRoute.Sitemap {
   const pages = [
     { path: "/", changeFrequency: "monthly" as const, priority: 1 },
     { path: "/privacy", changeFrequency: "yearly" as const, priority: 0.3 },
+    { path: "/accessibility", changeFrequency: "yearly" as const, priority: 0.3 },
   ];
 
   return pages.flatMap((page) =>

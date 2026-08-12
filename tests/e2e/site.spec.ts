@@ -1,5 +1,5 @@
 import { createRequire } from "node:module";
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 const require = createRequire(import.meta.url);
 const axePath = require.resolve("axe-core/axe.min.js");
@@ -191,13 +191,23 @@ test("contact form reports a successful submission without a real write", async 
   });
 });
 
+/** The address is named several times in a policy; every one must be a link. */
+async function expectEveryAddressIsAMailtoLink(page: Page) {
+  const links = page.getByRole("link", { name: /nisan.sinai5@gmail.com/ });
+  const count = await links.count();
+  expect(count).toBeGreaterThan(0);
+  for (let index = 0; index < count; index += 1) {
+    await expect(links.nth(index)).toHaveAttribute(
+      "href",
+      "mailto:nisan.sinai5@gmail.com",
+    );
+  }
+}
+
 test("privacy page is reachable", async ({ page }) => {
   await page.goto("/privacy");
   await expect(page.getByRole("heading", { level: 1, name: "מדיניות פרטיות" })).toBeVisible();
-  await expect(page.getByRole("link", { name: /nisan.sinai5@gmail.com/ })).toHaveAttribute(
-    "href",
-    "mailto:nisan.sinai5@gmail.com",
-  );
+  await expectEveryAddressIsAMailtoLink(page);
 });
 
 test("serves Hebrew at the root and English at /en", async ({ page }) => {
@@ -228,10 +238,7 @@ test("both privacy pages are reachable and cross-linked", async ({ page }) => {
   await expect(
     page.getByRole("heading", { level: 1, name: "Privacy policy" }),
   ).toBeVisible();
-  await expect(page.getByRole("link", { name: /nisan.sinai5@gmail.com/ })).toHaveAttribute(
-    "href",
-    "mailto:nisan.sinai5@gmail.com",
-  );
+  await expectEveryAddressIsAMailtoLink(page);
 });
 
 test("the English page reads left to right without overflowing", async ({
@@ -322,27 +329,175 @@ test("robots.txt invites crawlers and names the sitemap", async ({ request }) =>
 
   const sitemap = await (await request.get("/sitemap.xml")).text();
   // Both languages, both pages, cross-referenced.
-  for (const path of ["/", "/en", "/privacy", "/en/privacy"]) {
+  for (const path of [
+    "/",
+    "/en",
+    "/privacy",
+    "/en/privacy",
+    "/accessibility",
+    "/en/accessibility",
+  ]) {
     expect(sitemap).toContain(`${path}<`.replace("/<", "/<"));
   }
   expect(sitemap).toContain("hreflang");
 });
 
+const ALL_PAGES = [
+  "/",
+  "/en",
+  "/privacy",
+  "/en/privacy",
+  "/accessibility",
+  "/en/accessibility",
+] as const;
+
 test("has no serious or critical automated accessibility violations", async ({
   page,
 }) => {
-  await page.goto("/");
-  await page.addScriptTag({ path: axePath });
-  const violations = await page.evaluate(async () => {
-    const result = await window.axe.run(document, {
-      resultTypes: ["violations"],
+  // Every page, not only the home page: a policy page nobody looks at is
+  // exactly where a contrast or landmark regression survives unnoticed.
+  for (const path of ALL_PAGES) {
+    await page.goto(path);
+    await page.addScriptTag({ path: axePath });
+    const violations = await page.evaluate(async () => {
+      const result = await window.axe.run(document, {
+        resultTypes: ["violations"],
+      });
+      return result.violations.filter((violation) =>
+        ["serious", "critical"].includes(violation.impact ?? ""),
+      );
     });
-    return result.violations.filter((violation) =>
-      ["serious", "critical"].includes(violation.impact ?? ""),
+
+    expect(violations, path).toEqual([]);
+  }
+});
+
+test("publishes an accessibility statement in both languages", async ({ page }) => {
+  // Israeli service-accessibility regulations require a published statement
+  // naming the standard claimed and a coordinator who can be reached.
+  await page.goto("/accessibility");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "הצהרת נגישות" }),
+  ).toBeVisible();
+  await expect(page.locator(".legal-page")).toContainText("5568");
+  await expect(page.locator(".legal-page")).toContainText("רכז הנגישות");
+  await expectEveryAddressIsAMailtoLink(page);
+
+  await page.goto("/en/accessibility");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Accessibility statement" }),
+  ).toBeVisible();
+  await expect(page.locator(".legal-page")).toContainText("5568");
+  await expect(page.locator(".legal-page")).toContainText("coordinator");
+});
+
+test("states in the privacy policy who holds the data and where it goes", async ({
+  page,
+}) => {
+  await page.goto("/privacy");
+  const body = page.locator(".legal-page");
+  for (const phrase of ["בעל המאגר", "Supabase", "מחוץ לישראל", "זכות עיון"]) {
+    await expect(body, phrase).toContainText(phrase);
+  }
+
+  await page.goto("/en/privacy");
+  const english = page.locator(".legal-page");
+  for (const phrase of ["controller", "Supabase", "outside Israel", "Access"]) {
+    await expect(english, phrase).toContainText(phrase);
+  }
+});
+
+test("reaches both policy pages from the footer of every page", async ({ page }) => {
+  // A statement nobody can find is a statement nobody published.
+  for (const path of ALL_PAGES) {
+    await page.goto(path);
+    const english = path.startsWith("/en");
+    const footer = page.locator(".site-footer");
+    await expect(footer, path).toBeVisible();
+    await expect(
+      footer.getByRole("link", { name: english ? "Accessibility" : "נגישות" }),
+      path,
+    ).toHaveAttribute("href", english ? "/en/accessibility" : "/accessibility");
+    await expect(
+      footer.getByRole("link", { name: english ? "Privacy" : "פרטיות" }),
+      path,
+    ).toHaveAttribute("href", english ? "/en/privacy" : "/privacy");
+  }
+});
+
+test("warns before a link hands the reader to another site", async ({ page }) => {
+  await page.goto("/");
+  const external = page.locator('a[target="_blank"]');
+  const count = await external.count();
+  expect(count).toBeGreaterThan(0);
+
+  for (let index = 0; index < count; index += 1) {
+    const link = external.nth(index);
+    // The accessible name carries the warning; the arrow only serves the eye.
+    expect(await link.evaluate((node) => node.textContent ?? "")).toContain(
+      "נפתח בכרטיסייה חדשה",
     );
+    await expect(link).toHaveAttribute("rel", /noreferrer/);
+  }
+});
+
+test("marks Latin words inside the Hebrew page with their own language", async ({
+  page,
+}) => {
+  // Unmarked, a screen reader reads "CRM" and "LD Event Design" with Hebrew
+  // phonetics (WCAG 3.1.2). Scripts and hidden decoration do not count.
+  await page.goto("/");
+
+  const unmarked = await page.evaluate(() => {
+    const found: string[] = [];
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    let node = walker.nextNode();
+
+    while (node) {
+      const text = node.textContent?.trim() ?? "";
+      const parent = node.parentElement;
+      const inScript = parent?.closest("script") !== null;
+
+      if (text.length >= 3 && /[A-Za-z]{3}/.test(text) && !/[\u0590-\u05ff]/.test(text) && !inScript) {
+        let element: HTMLElement | null = parent;
+        let language: string | null = null;
+        let hidden = false;
+        while (element) {
+          if (element.getAttribute("aria-hidden") === "true") hidden = true;
+          if (element.lang && !language) language = element.lang;
+          element = element.parentElement;
+        }
+        if (language !== "en" && !hidden) found.push(text.slice(0, 40));
+      }
+      node = walker.nextNode();
+    }
+
+    return found;
   });
 
-  expect(violations).toEqual([]);
+  expect(unmarked).toEqual([]);
+});
+
+test("the project preview keeps its size when the card is hovered", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name.startsWith("mobile"), "hover is a pointer state");
+
+  // A selector that lost its declaration block once merged into the rule below
+  // it, which handed the preview a 38px bar height and collapsed the shot.
+  await page.goto("/");
+  const card = page.locator(".project-card").first();
+  await card.scrollIntoViewIfNeeded();
+
+  const preview = card.locator(".mock-browser");
+  const before = await preview.boundingBox();
+  await card.hover();
+  await page.waitForTimeout(500);
+  const after = await preview.boundingBox();
+
+  expect(before?.height).toBeGreaterThan(100);
+  expect(after?.height).toBeGreaterThan((before?.height ?? 0) * 0.9);
+  expect(after?.width).toBeGreaterThan((before?.width ?? 0) * 0.9);
 });
 
 declare global {
