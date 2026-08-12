@@ -6,5 +6,10 @@ create policy "admin_can_read_contact_leads"
   for select
   to authenticated
   using (
-    lower(coalesce(auth.jwt() ->> 'email', '')) = 'nisan.sinai5@gmail.com'
+    lower(
+      coalesce(
+        nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'email',
+        ''
+      )
+    ) = 'nisan.sinai5@gmail.com'
   );
