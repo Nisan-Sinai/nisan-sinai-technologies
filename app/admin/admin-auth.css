@@ -66,6 +66,10 @@
   margin-top: 0.85rem;
 }
 
+.admin-login-options-single {
+  grid-template-columns: 1fr;
+}
+
 .admin-login-options button {
   min-height: 44px;
   padding: 0.65rem 0.75rem;
