@@ -1,0 +1,69 @@
+/* Final responsive and motion refinements. */
+
+.services-intro,
+.tech-strip {
+  display: block;
+  padding: 0;
+  overflow: hidden;
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: marquee-right 26s linear infinite;
+}
+
+.marquee-group {
+  flex: none;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.services-intro .marquee-group {
+  direction: rtl;
+  min-height: 112px;
+  gap: clamp(1rem, 2.5vw, 2.4rem);
+  padding: 1.5rem 5vw;
+}
+
+.tech-strip .marquee-group {
+  direction: ltr;
+  gap: clamp(1.3rem, 3vw, 3rem);
+  padding: 2.5rem 5vw;
+}
+
+@keyframes marquee-right {
+  from {
+    transform: translateX(-50%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Keep the about badge completely clear of the code card on phones. */
+@media (max-width: 680px) {
+  .about-visual {
+    min-height: 520px;
+    align-items: start;
+    padding-bottom: 8rem;
+  }
+
+  .about-badge {
+    right: 0.5rem;
+    bottom: 1rem;
+    width: 7rem;
+  }
+
+  .services-intro .marquee-group {
+    min-height: 96px;
+    padding-inline: 1.5rem;
+  }
+
+  .tech-strip .marquee-group {
+    padding: 2rem 1.5rem;
+  }
+}
