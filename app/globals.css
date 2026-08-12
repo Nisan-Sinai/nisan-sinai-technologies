@@ -369,7 +369,7 @@ a {
 }
 
 .hero-proof dt {
-  color: var(--cyan);
+  color: var(--accent);
   font-family: var(--font-geist-mono), monospace;
   font-size: 0.68rem;
 }
@@ -776,6 +776,8 @@ a {
 
 .service-card:hover {
   background: rgba(83, 228, 255, 0.025);
+  transform: translateY(-4px);
+  box-shadow: var(--elevation);
 }
 
 .service-card:hover::after {
@@ -838,6 +840,7 @@ a {
   color: #aeb9c6;
   font-family: var(--font-geist-sans), sans-serif;
   font-size: 0.58rem;
+  transition: border-color 240ms ease;
 }
 
 .projects-section {
@@ -1263,7 +1266,7 @@ a.case-study-label:focus-visible {
 }
 
 .about-values span {
-  color: var(--cyan);
+  color: var(--accent);
   font-family: var(--font-geist-mono), monospace;
   font-size: 0.62rem;
 }
@@ -1757,21 +1760,12 @@ h2 {
   transition: opacity 260ms ease;
 }
 
-.service-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--elevation);
-}
-
 .service-card:hover::before {
   opacity: 1;
 }
 
 .service-card:hover li {
   border-color: rgba(215, 196, 160, 0.28);
-}
-
-.service-card li {
-  transition: border-color 240ms ease;
 }
 
 /* The numeral is the one place a serif-scale flourish is affordable: it is
@@ -1784,21 +1778,13 @@ h2 {
   color: var(--accent);
 }
 
-.about-values span {
-  color: var(--accent);
-}
-
-.hero-proof dt {
-  color: var(--accent);
-}
-
 /* Respect the system setting: everything above is decoration, and none of it
    is worth triggering motion sickness for. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    animation-duration: 0.001ms !important;
+    animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
@@ -1926,15 +1912,6 @@ h2 {
     font-size: clamp(0.66rem, 2.8vw, 0.78rem);
   }
 
-  .system-visual {
-    /* The satellite cards are anchored to this box, so anything wider than the
-       screen clips them: at 112vw the CRM, live-chart and automation cards were
-       sliced off the left edge. */
-    width: 100%;
-    min-width: 0;
-    transform: none;
-  }
-
   .capability {
     /* Kept small enough that the ring of cards never crowds the core label. */
     min-width: 88px;
@@ -1951,7 +1928,7 @@ h2 {
        this further on phones; that override is what wins below 680px. */
     left: 0;
     bottom: 34%;
-    width: 96px;
+    width: 88px;
     padding: 0.55rem;
   }
 
@@ -2089,26 +2066,15 @@ h2 {
     padding: 3rem 1.15rem;
   }
 
-  .site-footer p {
-    justify-self: start;
-  }
-
   .site-footer > small {
     width: 100%;
+    line-height: 1.75;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
   }
 }
 
@@ -2443,10 +2409,14 @@ h2 {
   /* The four satellite cards sit outside the core instead of touching its ring. */
   .system-visual {
     margin: 1rem auto 1.75rem;
+    width: 100%;
+    min-width: 0;
+    transform: none;
   }
 
   .system-core {
     z-index: 6;
+    width: 9rem;
   }
 
   .capability-1,
@@ -2460,8 +2430,13 @@ h2 {
   }
 
   .services-intro .marquee-group {
-    min-height: 96px;
-    padding: 1.2rem 1.15rem;
+    min-height: 68px;
+    padding: 0.8rem 0.75rem;
+    direction: ltr;
+    width: 100%;
+    justify-content: center;
+    gap: clamp(0.45rem, 2.3vw, 0.72rem);
+    white-space: nowrap;
   }
 
   .tech-strip .marquee-group {
@@ -2498,9 +2473,6 @@ h2 {
    Was mobile-core.css. Kept in cascade order: these rules override what is above.
    ───────────────────────────────────────────────────── */
 @media (max-width: 680px) {
-  .system-core {
-    width: 9rem;
-  }
 
   /* Keep the four satellite cards visually outside the business core.
      The desktop percentages place the upper-left card too close to the core
@@ -2513,10 +2485,6 @@ h2 {
   .capability-3,
   .capability-4 {
     bottom: 5%;
-  }
-
-  .signal-card {
-    width: 88px;
   }
 }
 
@@ -2601,6 +2569,7 @@ h2 {
     width: 100%;
     margin: 0;
     line-height: 1.75;
+    justify-self: start;
   }
 
   .site-footer > nav {
@@ -2624,11 +2593,6 @@ h2 {
     border-color: rgba(83, 228, 255, 0.34);
     background: rgba(83, 228, 255, 0.075);
   }
-
-  .site-footer > small {
-    width: 100%;
-    line-height: 1.75;
-  }
 }
 
 
@@ -2646,16 +2610,6 @@ h2 {
     transform: none !important;
     animation: none !important;
     will-change: auto;
-  }
-
-  .services-intro .marquee-group {
-    direction: ltr;
-    width: 100%;
-    min-height: 68px;
-    justify-content: center;
-    gap: clamp(0.45rem, 2.3vw, 0.72rem);
-    padding: 0.8rem 0.75rem;
-    white-space: nowrap;
   }
 
   .services-intro .marquee-group[aria-hidden="true"] {
