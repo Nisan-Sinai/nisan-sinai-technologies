@@ -351,6 +351,11 @@ export default function AdminDashboard({
         body: JSON.stringify({ email: normalizedEmail }),
       });
 
+      if (response.status === 429) {
+        setError("שליחת קישור האיפוס נחסמה זמנית בגלל יותר מדי בקשות בזמן קצר. נסה שוב בעוד מספר דקות.");
+        return;
+      }
+
       if (!response.ok) throw new Error("recovery_failed");
       setMessage("אם קיים חשבון מתאים, נשלח אליו קישור מאובטח לאיפוס הסיסמה.");
     } catch {
