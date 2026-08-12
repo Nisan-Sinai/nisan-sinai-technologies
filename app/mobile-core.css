@@ -3,6 +3,19 @@
     width: 9rem;
   }
 
+  /* Keep the four satellite cards visually outside the business core.
+     The desktop percentages place the upper-left card too close to the core
+     on narrow phones, even when the boxes do not technically overlap. */
+  .capability-1,
+  .capability-2 {
+    top: 5%;
+  }
+
+  .capability-3,
+  .capability-4 {
+    bottom: 5%;
+  }
+
   .signal-card {
     width: 88px;
   }
