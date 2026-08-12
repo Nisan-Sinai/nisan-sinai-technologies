@@ -2063,6 +2063,7 @@ h2 {
   .site-footer {
     grid-template-columns: 1fr;
     justify-items: start;
+    gap: 1.35rem;
     padding: 3rem 1.15rem;
   }
 
@@ -2561,10 +2562,6 @@ h2 {
 }
 
 @media (max-width: 680px) {
-  .site-footer {
-    gap: 1.35rem;
-  }
-
   .site-footer p {
     width: 100%;
     margin: 0;
