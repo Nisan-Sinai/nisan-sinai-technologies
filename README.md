@@ -131,7 +131,7 @@ tests/e2e/         Playwright
 | `npm run test:rendered` | בדיקת ארטיפקט Sites |
 | `npm run test:e2e` | Playwright בדסקטופ, בשני מובייל, ו־axe-core בכל עמוד |
 | `npm run test:migrations` | מיגרציות וחוזה ה־RLS מול Postgres |
-| `npm run smoke` | בדיקת סביבה פרוסה, כולל תוכן שני עמודי המדיניות |
+| `npm run smoke` | סביבה פרוסה: תוכן עמודי המדיניות, הדומיין הקנוני ו־noindex על `/admin` |
 | `npm run check:data-api` | אימות שהמפתח של Supabase עדיין מתקבל |
 
 כיסוי הבדיקות נאכף על 100% בכל ארבעת המדדים — שורות, הצהרות, ענפים ופונקציות.
@@ -145,6 +145,19 @@ tests/e2e/         Playwright
 | `smoke.yml` | כל 6 שעות, ובהרצה ידנית | האתר הפרוס עונה ומפתח ה־Data API עדיין מתקבל |
 | `project-shots.yml` | כל יום שני, ובהרצה ידנית | מצלם מחדש את שלושת האתרים ומעדכן את התמונות |
 | `dependabot-automerge.yml` | על כל PR של Dependabot | ממתין לכל השערים וממזג לבד patch ו־minor |
+
+## אזור הניהול
+
+`/admin` הוא עמוד `noindex` שקורא פניות מ־Supabase בדפדפן. הרשאת הקריאה נשענת
+כולה על טבלת `public.admin_users` ועל הפונקציה `is_admin()`, ולכן
+`npm run test:migrations` מוודא גם שמשתמש מחובר אינו יכול לקרוא את רשימת
+המנהלים או להוסיף את עצמו אליה, ושמנהל שכובה (`is_active = false`) מפסיק לראות
+פניות.
+
+העמוד מוסר את מפתח ה־publishable לדפדפן — זה תפקידו — אבל המשתנה אינו נושא
+תחית `NEXT_PUBLIC_`, ולכן `lib/supabase-key.ts` בודק שהערך באמת מפתח publishable
+לפני שהוא נשלח. מפתח secret שהודבק בטעות לא יגיע לדפדפן; העמוד פשוט ידווח
+שהשירות אינו מוגדר.
 
 ## עדכוני תלויות
 

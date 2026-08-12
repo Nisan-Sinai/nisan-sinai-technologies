@@ -106,6 +106,38 @@ expect_value "admin authenticated visible leads" "1" \
    set request.jwt.claims = '{\"email\":\"nisan.sinai5@gmail.com\"}';
    select count(*) from public.contact_leads;"
 
+# The admin allow-list is the whole access-control story: anyone who could add
+# a row to it, or who kept access after being switched off, would be reading
+# every lead in the database.
+expect_reject "an authenticated user reading the admin allow-list" \
+  "set role authenticated;
+   set request.jwt.claims = '{\"email\":\"someone@example.com\"}';
+   select * from public.admin_users;"
+
+expect_reject "an authenticated user adding themselves as an admin" \
+  "set role authenticated;
+   set request.jwt.claims = '{\"email\":\"someone@example.com\"}';
+   insert into public.admin_users (email) values ('someone@example.com');"
+
+expect_reject "an anonymous visitor adding an admin" \
+  "set role anon; insert into public.admin_users (email) values ('anon@example.com');"
+
+psql_q -c "insert into public.admin_users (email, is_active)
+  values ('retired@example.com', false)
+  on conflict (email) do update set is_active = false;"
+expect_value "a deactivated admin's visible leads" "0" \
+  "set role authenticated;
+   set request.jwt.claims = '{\"email\":\"retired@example.com\"}';
+   select count(*) from public.contact_leads;"
+psql_q -c "delete from public.admin_users where email = 'retired@example.com';"
+
+# An address that differs only by case or padding is the same person; a lookup
+# that missed that would either lock the admin out or let a near-miss in.
+expect_value "an admin signing in with a capitalised address" "1" \
+  "set role authenticated;
+   set request.jwt.claims = '{\"email\":\"Nisan.Sinai5@Gmail.com\"}';
+   select count(*) from public.contact_leads;"
+
 expect_reject "deleting leads" \
   "set role anon; delete from public.contact_leads;"
 expect_reject "a lead claiming a foreign source" \

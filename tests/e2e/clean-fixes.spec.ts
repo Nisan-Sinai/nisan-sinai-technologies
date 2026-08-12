@@ -161,10 +161,19 @@ test("mobile footer links stay separated and tappable", async ({ page }, testInf
       }),
     );
 
+    // A link that leaves the site carries a visually hidden "opens in a new
+    // tab" hint, which innerText picks up. The label under test is what a
+    // sighted reader sees, so the hint is stripped rather than asserted away.
+    const visibleLabel = (link: HTMLElement) => {
+      const copy = link.cloneNode(true) as HTMLElement;
+      copy.querySelectorAll(".visually-hidden").forEach((node) => node.remove());
+      return (copy.textContent ?? "").trim();
+    };
+
     return {
       display: nav ? getComputedStyle(nav).display : "",
       count: links.length,
-      labels: links.map((link) => link.innerText.trim()),
+      labels: links.map(visibleLabel),
       minHeight: Math.min(...rects.map((rect) => rect.height)),
       overlapping,
       overflows: document.documentElement.scrollWidth > window.innerWidth + 2,
