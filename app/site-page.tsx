@@ -1,12 +1,15 @@
+import Link from "next/link";
 import Brand from "./brand";
 import ContactForm from "./contact-form";
 import ExternalLink from "./external-link";
 import LanguageSwitch from "./language-switch";
 import LatinText from "./latin-text";
 import MarqueeStrip from "./marquee-strip";
+import MobileMenu, { type MenuItem } from "./mobile-menu";
 import SiteFooter from "./site-footer";
 import StructuredData from "./structured-data";
 import { contact, getContent } from "@/lib/content";
+import { formatPostDate, getPosts } from "@/lib/blog";
 import { forwardArrow, localePath, type Locale } from "@/lib/i18n";
 
 /**
@@ -36,6 +39,23 @@ export default function SitePage({ locale }: { locale: Locale }) {
   const t = getContent(locale);
   const arrow = forwardArrow(locale);
   const privacyHref = localePath(locale, "/privacy");
+  const posts = getPosts(locale);
+
+  // One list, rendered twice: the wide nav and the menu behind the button must
+  // not be able to drift apart. The testimonials entry appears only once there
+  // is a testimonials section for it to point at.
+  const navItems: MenuItem[] = [
+    { href: "#services", label: t.nav.services },
+    { href: "#projects", label: t.nav.projects },
+    ...(t.testimonials.items.length > 0
+      ? [{ href: "#testimonials", label: t.nav.testimonials }]
+      : []),
+    { href: "#process", label: t.nav.process },
+    { href: "#pricing", label: t.nav.pricing },
+    { href: "#faq", label: t.nav.faq },
+    ...(posts.length > 0 ? [{ href: "#blog", label: t.nav.blog }] : []),
+    { href: "#about", label: t.nav.about },
+  ];
 
   return (
     <main>
@@ -50,11 +70,11 @@ export default function SitePage({ locale }: { locale: Locale }) {
         </a>
 
         <nav className="desktop-nav" aria-label={t.nav.aria}>
-          <a href="#services">{t.nav.services}</a>
-          <a href="#projects">{t.nav.projects}</a>
-          <a href="#process">{t.nav.process}</a>
-          <a href="#pricing">{t.nav.pricing}</a>
-          <a href="#about">{t.nav.about}</a>
+          {navItems.map((item) => (
+            <a href={item.href} key={item.href}>
+              {item.label}
+            </a>
+          ))}
         </nav>
 
         <div className="header-actions">
@@ -62,15 +82,13 @@ export default function SitePage({ locale }: { locale: Locale }) {
           <a className="header-cta" href="#contact">
             {t.nav.cta} <span aria-hidden="true">{arrow}</span>
           </a>
+          <MobileMenu
+            ariaLabel={t.nav.menuAria}
+            items={navItems}
+            label={t.nav.menu}
+            navAria={t.nav.aria}
+          />
         </div>
-
-        <nav className="mobile-nav" aria-label={t.nav.aria}>
-          <a href="#services">{t.nav.services}</a>
-          <a href="#projects">{t.nav.projects}</a>
-          <a href="#process">{t.nav.process}</a>
-          <a href="#pricing">{t.nav.pricing}</a>
-          <a href="#about">{t.nav.about}</a>
-        </nav>
       </header>
 
       <section className="hero" id="top">
@@ -346,6 +364,83 @@ export default function SitePage({ locale }: { locale: Locale }) {
           {t.pricing.hourly} {t.pricing.note}
         </p>
       </section>
+
+      <section
+        className="content-section faq-section"
+        id="faq"
+        aria-labelledby="faq-title"
+      >
+        <div className="section-heading">
+          <div>
+            <span className="section-kicker">{t.faq.kicker}</span>
+            <h2 id="faq-title">{t.faq.title}</h2>
+          </div>
+          <p>{t.faq.lead}</p>
+        </div>
+
+        {/* Native disclosures: keyboard and screen-reader behaviour comes from
+            the browser rather than from anything written here. */}
+        <div className="faq-list">
+          {t.faq.items.map((item) => (
+            <details className="faq-item" key={item.question}>
+              <summary>
+                <span>{item.question}</span>
+                <i aria-hidden="true" />
+              </summary>
+              <p>
+                <LatinText text={item.answer} />
+              </p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      {posts.length > 0 && (
+        <section
+          className="content-section blog-section"
+          id="blog"
+          aria-labelledby="blog-title"
+        >
+          <div className="section-heading">
+            <div>
+              <span className="section-kicker">{t.blog.kicker}</span>
+              <h2 id="blog-title">{t.blog.title}</h2>
+            </div>
+            <p>{t.blog.lead}</p>
+          </div>
+
+          <ul className="post-grid">
+            {posts.map((post) => (
+              <li key={post.slug}>
+                <article className="post-card">
+                  <p className="post-meta">
+                    <time dateTime={post.date}>{formatPostDate(locale, post.date)}</time>
+                    <span aria-hidden="true">·</span>
+                    <span>{post.readingTime}</span>
+                  </p>
+                  <h3>
+                    <Link href={localePath(locale, `/blog/${post.slug}`)}>
+                      <LatinText text={post.title} />
+                    </Link>
+                  </h3>
+                  <p className="post-excerpt">
+                    <LatinText text={post.excerpt} />
+                  </p>
+                  <span className="post-more" aria-hidden="true">
+                    {t.blog.readMore} {arrow}
+                  </span>
+                </article>
+              </li>
+            ))}
+          </ul>
+
+          <p className="blog-all">
+            <Link href={localePath(locale, "/blog")}>
+              {t.blog.all} <span aria-hidden="true">{arrow}</span>
+            </Link>
+          </p>
+        </section>
+      )}
 
       <section className="content-section about-section" id="about" aria-labelledby="about-title">
         <div className="about-visual" aria-hidden="true">

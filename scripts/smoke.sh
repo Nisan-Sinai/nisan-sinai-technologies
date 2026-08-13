@@ -55,6 +55,12 @@ check "privacy page"               200 "$(get_code "${SITE_URL}/privacy")"
 check "english privacy page"       200 "$(get_code "${SITE_URL}/en/privacy")"
 check "accessibility statement"    200 "$(get_code "${SITE_URL}/accessibility")"
 check "english accessibility page" 200 "$(get_code "${SITE_URL}/en/accessibility")"
+check "blog index"                 200 "$(get_code "${SITE_URL}/blog")"
+check "english blog index"         200 "$(get_code "${SITE_URL}/en/blog")"
+check "a blog post renders"        200 "$(get_code "${SITE_URL}/blog/website-cost-israel")"
+check "english blog post renders"  200 "$(get_code "${SITE_URL}/en/blog/website-cost-israel")"
+# A slug that never existed must 404 rather than serve an empty shell.
+check "unknown post is a 404"      404 "$(get_code "${SITE_URL}/blog/no-such-post")"
 check "robots.txt"                 200 "$(get_code "${SITE_URL}/robots.txt")"
 check "sitemap.xml"                200 "$(get_code "${SITE_URL}/sitemap.xml")"
 
@@ -69,6 +75,8 @@ body_has "privacy policy names the database controller" \
   "${SITE_URL}/privacy" "בעל המאגר"
 body_has "privacy policy names the processors" \
   "${SITE_URL}/privacy" "Supabase"
+body_has "sitemap lists the blog" \
+  "${SITE_URL}/sitemap.xml" "/blog"
 body_has "sitemap lists the accessibility statement" \
   "${SITE_URL}/sitemap.xml" "/accessibility"
 

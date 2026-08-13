@@ -310,6 +310,7 @@ test("every page carries what a crawler needs", async ({ page }) => {
     expect(graph.map((node: { "@type": string }) => node["@type"])).toEqual([
       "ProfessionalService",
       "WebSite",
+      "FAQPage",
     ]);
   }
 });
@@ -336,6 +337,10 @@ test("robots.txt invites crawlers and names the sitemap", async ({ request }) =>
     "/en/privacy",
     "/accessibility",
     "/en/accessibility",
+    "/blog",
+    "/en/blog",
+    "/blog/website-cost-israel",
+    "/en/blog/website-cost-israel",
   ]) {
     expect(sitemap).toContain(`${path}<`.replace("/<", "/<"));
   }
@@ -349,6 +354,10 @@ const ALL_PAGES = [
   "/en/privacy",
   "/accessibility",
   "/en/accessibility",
+  "/blog",
+  "/en/blog",
+  "/blog/website-cost-israel",
+  "/en/blog/website-cost-israel",
 ] as const;
 
 test("has no serious or critical automated accessibility violations", async ({
@@ -548,92 +557,216 @@ test("the project preview keeps its size when the card is hovered", async ({
   expect(after?.width).toBeGreaterThan((before?.width ?? 0) * 0.9);
 });
 
-test("phones get the same section links the desktop nav has", async ({
+test("narrow screens reach every section through the menu", async ({
   page,
 }, testInfo) => {
   test.skip(!testInfo.project.name.startsWith("mobile"));
 
-  // Below 1100px the desktop nav is display:none, and for a while nothing
-  // replaced it: every section past the hero was reachable only by scrolling
-  // for it. The strip under the brand carries the same five links.
+  // The wide nav is display:none below 1250px. Everything it lists has to be
+  // reachable from the button that replaces it.
   await page.goto("/");
-
-  const strip = page.locator(".mobile-nav");
-  await expect(strip).toBeVisible();
   await expect(page.locator(".desktop-nav")).toBeHidden();
 
-  const links = strip.locator("a");
-  await expect(links).toHaveCount(5);
+  const button = page.getByRole("button", { name: "פתיחת תפריט הניווט" });
+  await expect(button).toBeVisible();
+  await expect(button).toHaveAttribute("aria-expanded", "false");
 
-  const layout = await page.evaluate(() => {
-    const nav = document.querySelector(".mobile-nav");
-    if (!nav) return null;
-    const anchors = Array.from(nav.querySelectorAll("a"));
-    return {
-      targets: anchors.map((a) => a.getAttribute("href")),
-      // One row: a wrapped strip pushes the hero down and looks broken.
-      rows: new Set(anchors.map((a) => Math.round(a.getBoundingClientRect().top)))
-        .size,
-      minHeight: Math.min(
-        ...anchors.map((a) => a.getBoundingClientRect().height),
-      ),
-      insideViewport: anchors.every((a) => {
-        const rect = a.getBoundingClientRect();
-        return rect.left >= -1 && rect.right <= window.innerWidth + 1;
-      }),
-      pageOverflowsSideways:
-        document.documentElement.scrollWidth >
-        document.documentElement.clientWidth,
-    };
-  });
+  // Closed means closed: the links are not in the document, so they cannot be
+  // tabbed into from behind the panel.
+  expect(await page.locator(".mobile-menu-panel a").count()).toBe(0);
 
-  expect(layout?.targets).toEqual([
-    "#services",
-    "#projects",
-    "#process",
-    "#pricing",
-    "#about",
-  ]);
-  expect(layout?.rows).toBe(1);
-  expect(layout?.minHeight).toBeGreaterThanOrEqual(44);
-  expect(layout?.insideViewport).toBe(true);
-  expect(layout?.pageOverflowsSideways).toBe(false);
+  await button.click();
+  await expect(button).toHaveAttribute("aria-expanded", "true");
+
+  const links = page.locator(".mobile-menu-panel a");
+  const wide = page.locator(".desktop-nav a");
+  expect(await links.allTextContents()).toEqual(
+    await wide.allTextContents(),
+  );
+
+  // The button says which element it controls, and that element exists: an
+  // aria-controls pointing at nothing is worse than none at all.
+  const controls = await button.getAttribute("aria-controls");
+  expect(controls).toBeTruthy();
+  const pointsAtThePanel = await page.evaluate((id) => {
+    const target = document.getElementById(id ?? "");
+    return Boolean(target?.classList.contains("mobile-menu-panel"));
+  }, controls);
+  expect(pointsAtThePanel).toBe(true);
 });
 
-test("a section the strip links to is not left under the header", async ({
+test("the menu opens to the first link and Escape gives focus back", async ({
   page,
 }, testInfo) => {
   test.skip(!testInfo.project.name.startsWith("mobile"));
 
-  // The header carries two rows on a phone, so the scroll-margin that cleared
-  // the one-row desktop header is no longer enough on its own.
-  for (const id of ["services", "projects", "process", "pricing", "about"]) {
-    await page.goto("/");
-    await page.locator(`.mobile-nav a[href="#${id}"]`).click();
-    await page.waitForTimeout(800);
+  await page.goto("/");
+  const button = page.getByRole("button", { name: "פתיחת תפריט הניווט" });
+  await button.click();
 
-    const clearance = await page.evaluate((target) => {
-      const section = document.getElementById(target);
-      const header = document.querySelector(".site-header");
-      if (!section || !header) return null;
-      return (
-        section.getBoundingClientRect().top -
-        header.getBoundingClientRect().bottom
-      );
-    }, id);
+  // Opening moves focus into the panel, or a keyboard reader has to tab back
+  // through the whole header to reach it.
+  await expect(page.locator(".mobile-menu-panel a").first()).toBeFocused();
 
-    expect(clearance, `#${id} sits under the header`).toBeGreaterThanOrEqual(0);
-  }
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".mobile-menu-panel")).toHaveCount(0);
+  await expect(button).toBeFocused();
+  await expect(button).toHaveAttribute("aria-expanded", "false");
 });
 
-test("the wide layout keeps the desktop nav and drops the strip", async ({
+test("tabbing stays inside the open menu", async ({ page }, testInfo) => {
+  test.skip(!testInfo.project.name.startsWith("mobile"));
+
+  await page.goto("/");
+  await page.getByRole("button", { name: "פתיחת תפריט הניווט" }).click();
+
+  const count = await page.locator(".mobile-menu-panel a").count();
+  // One full cycle plus one: focus must land back on the first link rather
+  // than escaping to the page behind the panel.
+  for (let index = 0; index < count; index += 1) {
+    await page.keyboard.press("Tab");
+  }
+  await expect(page.locator(".mobile-menu-panel a").first()).toBeFocused();
+
+  await page.keyboard.press("Shift+Tab");
+  await expect(page.locator(".mobile-menu-panel a").last()).toBeFocused();
+});
+
+test("choosing a link closes the menu and moves the page", async ({
+  page,
+}, testInfo) => {
+  test.skip(!testInfo.project.name.startsWith("mobile"));
+
+  await page.goto("/");
+  await page.getByRole("button", { name: "פתיחת תפריט הניווט" }).click();
+  await page.locator('.mobile-menu-panel a[href="#pricing"]').click();
+
+  await expect(page.locator(".mobile-menu-panel")).toHaveCount(0);
+  await page.waitForTimeout(800);
+
+  const clearance = await page.evaluate(() => {
+    const section = document.getElementById("pricing");
+    const header = document.querySelector(".site-header");
+    if (!section || !header) return null;
+    return (
+      section.getBoundingClientRect().top -
+      header.getBoundingClientRect().bottom
+    );
+  });
+  expect(clearance).toBeGreaterThanOrEqual(0);
+});
+
+test("an open menu does not let the page behind it scroll", async ({
+  page,
+}, testInfo) => {
+  test.skip(!testInfo.project.name.startsWith("mobile"));
+
+  await page.goto("/");
+  await page.getByRole("button", { name: "פתיחת תפריט הניווט" }).click();
+  expect(
+    await page.evaluate(() => getComputedStyle(document.body).overflow),
+  ).toBe("hidden");
+
+  await page.keyboard.press("Escape");
+  expect(
+    await page.evaluate(() => getComputedStyle(document.body).overflow),
+  ).not.toBe("hidden");
+});
+
+test("the wide layout keeps its nav and hides the button", async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name.startsWith("mobile"));
 
   await page.goto("/");
   await expect(page.locator(".desktop-nav")).toBeVisible();
-  await expect(page.locator(".mobile-nav")).toBeHidden();
+  await expect(page.locator(".mobile-menu")).toBeHidden();
+
+  const labels = await page.locator(".desktop-nav a").allTextContents();
+  expect(labels).toEqual([
+    "שירותים",
+    "פרויקטים",
+    "איך זה עובד",
+    "מחירים",
+    "שאלות נפוצות",
+    "בלוג",
+    "אודות",
+  ]);
+});
+
+test("the FAQ answers open and close without script of ours", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const first = page.locator(".faq-item").first();
+  const answer = first.locator("p");
+
+  await expect(answer).toBeHidden();
+  await first.locator("summary").click();
+  await expect(answer).toBeVisible();
+  await first.locator("summary").click();
+  await expect(answer).toBeHidden();
+});
+
+test("the FAQ the page shows is the FAQ it publishes to search", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const match = await page.evaluate(() => {
+    const script = document.querySelector('script[type="application/ld+json"]');
+    const graph = JSON.parse(script?.textContent ?? "{}")["@graph"] ?? [];
+    const faq = graph.find(
+      (node: { "@type": string }) => node["@type"] === "FAQPage",
+    );
+    const asked = Array.from(document.querySelectorAll(".faq-item summary span"))
+      .map((node) => node.textContent?.trim());
+    return {
+      published: (faq?.mainEntity ?? []).map(
+        (entry: { name: string }) => entry.name,
+      ),
+      asked,
+    };
+  });
+
+  expect(match.published.length).toBeGreaterThan(0);
+  expect(match.published).toEqual(match.asked);
+});
+
+test("every blog card reaches a post that renders", async ({ page }) => {
+  await page.goto("/");
+
+  const hrefs = await page
+    .locator(".blog-section .post-card h3 a")
+    .evaluateAll((links) => links.map((link) => link.getAttribute("href")));
+  expect(hrefs.length).toBeGreaterThan(0);
+
+  for (const href of hrefs) {
+    await page.goto(href ?? "/");
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page.locator("time")).toHaveCount(1);
+  }
+});
+
+test("the blog index lists the same posts in both languages", async ({
+  page,
+}) => {
+  const titles = async (path: string) => {
+    await page.goto(path);
+    return page.locator(".post-list .post-card h2 a").count();
+  };
+
+  const hebrew = await titles("/blog");
+  const english = await titles("/en/blog");
+  expect(hebrew).toBeGreaterThan(0);
+  expect(english).toBe(hebrew);
+});
+
+test("a post that does not exist is a 404, not a blank page", async ({
+  page,
+}) => {
+  const response = await page.goto("/blog/no-such-post");
+  expect(response?.status()).toBe(404);
 });
 
 declare global {

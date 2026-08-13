@@ -23,6 +23,7 @@ export type PriceTier = { name: string; from: string; note: string };
 export type ServiceOption = { value: string; label: string };
 /** A quote from a real client. Nothing here is written on their behalf. */
 export type Testimonial = { quote: string; name: string; role: string };
+export type FaqItem = { question: string; answer: string };
 
 /**
  * Both policy pages are the same shape: a heading, a date, an opening
@@ -62,8 +63,14 @@ export type SiteContent = {
     projects: string;
     process: string;
     pricing: string;
+    testimonials: string;
+    blog: string;
+    faq: string;
     about: string;
     cta: string;
+    /** Accessible name of the button that opens the menu on narrow screens. */
+    menu: string;
+    menuAria: string;
   };
   languageSwitch: { label: string; toName: string; aria: string };
   hero: {
@@ -162,6 +169,24 @@ export type SiteContent = {
      */
     items: Testimonial[];
   };
+  faq: {
+    kicker: string;
+    title: string;
+    lead: string;
+    items: FaqItem[];
+  };
+  blog: {
+    kicker: string;
+    title: string;
+    lead: string;
+    /** Label on the card that opens a post, and on the link to the index. */
+    readMore: string;
+    all: string;
+    back: string;
+    indexTitle: string;
+    indexDescription: string;
+    empty: string;
+  };
   footer: {
     tagline: string;
     email: string;
@@ -212,8 +237,13 @@ const he: SiteContent = {
     projects: "פרויקטים",
     process: "איך זה עובד",
     pricing: "מחירים",
+    testimonials: "המלצות",
+    blog: "בלוג",
+    faq: "שאלות נפוצות",
     about: "אודות",
     cta: "בואו נדבר",
+    menu: "תפריט",
+    menuAria: "פתיחת תפריט הניווט",
   },
   languageSwitch: { label: "EN", toName: "English", aria: "Switch to English" },
   hero: {
@@ -480,6 +510,60 @@ const he: SiteContent = {
     lead: "ציטוטים אמיתיים מלקוחות שאישרו לפרסם את שמם. אין כאן טקסט ממולא מראש.",
     items: [],
   },
+  faq: {
+    kicker: "שאלות",
+    title: "מה שואלים אותי לפני שמתחילים",
+    lead: "התשובות הקצרות. כל השאר נסגר בשיחת האפיון.",
+    items: [
+      {
+        question: "כמה עולה פרויקט?",
+        answer:
+          "המספרים בסקשן המחירים הם נקודת פתיחה אמיתית ולא כותרת שיווקית. המחיר הסופי נסגר כהצעה קבועה מראש אחרי שיחת אפיון קצרה, כך שאין שעון פתוח ואין הפתעות באמצע הדרך.",
+      },
+      {
+        question: "כמה זמן לוקח לבנות?",
+        answer:
+          "לוח הזמנים נקבע בשיחת האפיון ונכנס להצעת המחיר יחד עם המחיר עצמו, כדי ששני הצדדים יידעו בדיוק למה הם מתחייבים לפני שמתחילים.",
+      },
+      {
+        question: "האם האתר יעמוד בדרישות הנגישות?",
+        answer:
+          "כן. אני בונה לפי התקן הישראלי ת״י 5568 ברמה AA ומצרף הצהרת נגישות לאתר. זו דרישה של תקנות שוויון זכויות לאנשים עם מוגבלות (התאמות נגישות לשירות), התשע״ג-2013, והיא חלה כמעט על כל אתר שפונה לציבור בישראל.",
+      },
+      {
+        question: "אפשר אתר בעברית ובאנגלית?",
+        answer:
+          "כן, וזה נבנה כך מההתחלה ולא מולבש בדיעבד. האתר שאתם קוראים בו עכשיו הוא בדיוק הדוגמה: שתי השפות, כיווניות נכונה לכל אחת, וכתובת נפרדת לכל עמוד כדי שגוגל יאנדקס את שתיהן.",
+      },
+      {
+        question: "אתה עובד עם וורדפרס או בונה מאפס?",
+        answer:
+          "אני בונה בקוד. זה עולה יותר בהתחלה מתבנית מוכנה, ובתמורה אין תוספים שצריך לעדכן, אין פרצות אבטחה שמגיעות מקוד של אחרים, והביצועים לא תלויים במה שהתבנית הכניסה פנימה.",
+      },
+      {
+        question: "מה קורה אחרי שהאתר עולה?",
+        answer:
+          "אפשר לקחת חבילת תחזוקה שכוללת אחסון, עדכונים, גיבויים ומעקב, או לעבוד לפי שעות על שינויים נקודתיים. שתי האפשרויות מתומחרות בסקשן המחירים.",
+      },
+      {
+        question: "למי שייך הקוד בסוף?",
+        answer:
+          "לכם. בסיום הפרויקט הקוד והתוכן עוברים אליכם, ואתם לא תלויים בי כדי להמשיך לעבוד עם האתר או להעביר אותו למישהו אחר.",
+      },
+    ],
+  },
+  blog: {
+    kicker: "בלוג",
+    title: "כתבתי על זה בהרחבה",
+    lead: "מה שאני מסביר שוב ושוב בשיחות ראשונות, כתוב פעם אחת כמו שצריך.",
+    readMore: "לקריאה",
+    all: "לכל הפוסטים",
+    back: "חזרה לבלוג",
+    indexTitle: "בלוג",
+    indexDescription:
+      "מדריכים על מחירי פיתוח בישראל, נגישות אתרים לפי ת״י 5568, ומתי כדאי מערכת מותאמת אישית.",
+    empty: "עוד לא פורסמו פוסטים.",
+  },
   footer: {
     tagline: "אתרים · מערכות · אוטומציות · פתרונות דיגיטליים",
     email: "אימייל",
@@ -635,8 +719,13 @@ const en: SiteContent = {
     projects: "Projects",
     process: "How it works",
     pricing: "Pricing",
+    testimonials: "Clients",
+    blog: "Blog",
+    faq: "FAQ",
     about: "About",
     cta: "Let's talk",
+    menu: "Menu",
+    menuAria: "Open the navigation menu",
   },
   languageSwitch: { label: "עב", toName: "עברית", aria: "מעבר לעברית" },
   hero: {
@@ -902,6 +991,60 @@ const en: SiteContent = {
     title: "What they said afterwards",
     lead: "Real quotes from clients who agreed to be named. Nothing here is filler.",
     items: [],
+  },
+  faq: {
+    kicker: "Questions",
+    title: "What people ask before we start",
+    lead: "The short answers. Everything else gets settled on the scoping call.",
+    items: [
+      {
+        question: "What does a project cost?",
+        answer:
+          "The figures in the pricing section are real starting points rather than a headline. The final number is a fixed quote agreed after a short scoping call, so there is no open-ended clock and no surprise halfway through.",
+      },
+      {
+        question: "How long does it take?",
+        answer:
+          "The schedule is set on the scoping call and goes into the quote alongside the price, so both sides know exactly what is being committed to before any work starts.",
+      },
+      {
+        question: "Will the site meet accessibility requirements?",
+        answer:
+          "Yes. I build to the Israeli standard IS 5568 at level AA and ship an accessibility statement with the site. That is what the Equal Rights for Persons with Disabilities (Service Accessibility Adjustments) Regulations, 5773-2013 require, and they apply to almost every site serving the Israeli public.",
+      },
+      {
+        question: "Can the site work in two languages?",
+        answer:
+          "Yes, and it is built that way from the start rather than bolted on later. The site you are reading is the example: both languages, the right text direction for each, and a separate address per page so search engines index both.",
+      },
+      {
+        question: "Do you use WordPress or build from scratch?",
+        answer:
+          "I write the code. That costs more up front than a ready-made template, and in return there are no plugins to keep updating, no security holes arriving from somebody else's code, and performance that does not depend on what a template dragged in with it.",
+      },
+      {
+        question: "What happens after launch?",
+        answer:
+          "You can take a maintenance package covering hosting, updates, backups and monitoring, or work by the hour on individual changes. Both are priced in the pricing section.",
+      },
+      {
+        question: "Who owns the code at the end?",
+        answer:
+          "You do. The code and the content transfer to you when the project ends, so you are not dependent on me to keep working on the site or to hand it to somebody else.",
+      },
+    ],
+  },
+  blog: {
+    kicker: "Blog",
+    title: "Written up properly",
+    lead: "The things I explain over and over on first calls, written down once.",
+    readMore: "Read",
+    all: "All posts",
+    back: "Back to the blog",
+    indexTitle: "Blog",
+    indexDescription:
+      "Guides on development pricing in Israel, website accessibility under IS 5568, and when a custom system is worth building.",
+    empty: "No posts published yet.",
   },
   footer: {
     tagline: "Websites · Systems · Automations · Digital solutions",

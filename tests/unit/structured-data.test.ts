@@ -12,7 +12,26 @@ describe("buildStructuredData", () => {
       expect(graph.map((node) => node["@type"])).toEqual([
         "ProfessionalService",
         "WebSite",
+        "FAQPage",
       ]);
+    }
+  });
+
+  it("publishes every answer the page shows, and no others", () => {
+    // A rich result that answers something the page does not is the kind of
+    // mismatch search engines penalise, so the two lists are built from one
+    // source and asserted to match.
+    for (const locale of locales) {
+      const faq = buildStructuredData(locale, SITE)["@graph"][2];
+      const items = getContent(locale).faq.items;
+
+      expect(faq.mainEntity).toHaveLength(items.length);
+      expect(faq.mainEntity.map((entry) => entry.name)).toEqual(
+        items.map((item) => item.question),
+      );
+      expect(faq.mainEntity.map((entry) => entry.acceptedAnswer.text)).toEqual(
+        items.map((item) => item.answer),
+      );
     }
   });
 

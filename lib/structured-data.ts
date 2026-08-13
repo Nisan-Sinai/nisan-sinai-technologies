@@ -33,9 +33,19 @@ export type WebSiteNode = {
   publisher: { "@id": string };
 };
 
+export type FaqNode = {
+  "@type": "FAQPage";
+  "@id": string;
+  mainEntity: {
+    "@type": "Question";
+    name: string;
+    acceptedAnswer: { "@type": "Answer"; text: string };
+  }[];
+};
+
 export type StructuredData = {
   "@context": "https://schema.org";
-  "@graph": [BusinessNode, WebSiteNode];
+  "@graph": [BusinessNode, WebSiteNode, FaqNode];
 };
 
 /**
@@ -92,6 +102,16 @@ export function buildStructuredData(
         name: `${t.brand.name} ${t.brand.suffix}`,
         inLanguage: locale,
         publisher: { "@id": businessId },
+      },
+      // The same questions the page answers, in the form search engines read.
+      {
+        "@type": "FAQPage",
+        "@id": absolute(`${localePath(locale, "/")}#faq`),
+        mainEntity: t.faq.items.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: { "@type": "Answer", text: item.answer },
+        })),
       },
     ],
   };

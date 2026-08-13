@@ -143,13 +143,113 @@ a {
   font-size: 0.86rem;
 }
 
-/* The desktop nav is hidden below 1100px, which used to leave phones with no
-   way to reach a section other than scrolling for it. This is the same row of
-   links as a strip that scrolls sideways under the brand, in the visual
-   language of the marquee further down the page. It needs no JavaScript, so
-   there is no panel to trap focus in and nothing that can get stuck open. */
-.mobile-nav {
+/* The narrow-screen navigation. Eight destinations do not fit across a phone,
+   so below the breakpoint they collapse behind a button. The panel is rendered
+   only while open, which is what keeps its links out of the tab order the rest
+   of the time; the focus handling itself lives in mobile-menu.tsx. */
+.mobile-menu {
+  position: relative;
   display: none;
+}
+
+.mobile-menu-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.75rem;
+  padding: 0 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: border-color 180ms ease, color 180ms ease;
+}
+
+.mobile-menu-button:hover,
+.mobile-menu-button:focus-visible {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.menu-bars {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.25rem;
+  width: 1.05rem;
+  height: 0.95rem;
+}
+
+.menu-bars i {
+  display: block;
+  height: 1.5px;
+  border-radius: 999px;
+  background: currentColor;
+  transition: transform 200ms ease, opacity 160ms ease;
+}
+
+/* Open state folds the three bars into a cross, so the button reads as the way
+   back out and not only as the way in. */
+.menu-bars.is-open i:first-child {
+  transform: translateY(0.36rem) rotate(45deg);
+}
+
+.menu-bars.is-open i:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-bars.is-open i:last-child {
+  transform: translateY(-0.36rem) rotate(-45deg);
+}
+
+.mobile-menu-panel {
+  position: absolute;
+  z-index: 60;
+  inset-inline-end: 0;
+  top: calc(100% + 0.7rem);
+  min-width: min(72vw, 260px);
+  padding: 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  background: #0b0f16;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+
+.mobile-menu-panel nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-menu-panel a {
+  display: flex;
+  align-items: center;
+  min-height: 3rem;
+  padding: 0 0.85rem;
+  border-radius: 0.6rem;
+  color: #b9c3cf;
+  font-size: 0.9rem;
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.mobile-menu-panel a:hover,
+.mobile-menu-panel a:focus-visible {
+  background: rgba(83, 228, 255, 0.08);
+  color: var(--cyan);
+}
+
+/* Eight links need more room across than the wide nav has below this width, so
+   the switch happens here rather than at the layout breakpoint further down. */
+@media (max-width: 1250px) {
+  .desktop-nav {
+    display: none;
+  }
+
+  .mobile-menu {
+    display: block;
+  }
 }
 
 .desktop-nav a,
@@ -1497,6 +1597,209 @@ a.case-study-label:focus-visible {
   }
 }
 
+/* FAQ. Native <details>, so the open/close behaviour, the keyboard handling and
+   the screen-reader announcement all come from the browser. */
+.faq-list {
+  max-width: 1000px;
+  margin: 0 auto;
+  border-top: 1px solid var(--line);
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--line);
+}
+
+.faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  min-height: 3.75rem;
+  padding: 1.1rem 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.6;
+  cursor: pointer;
+  list-style: none;
+  transition: color 180ms ease;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary:hover,
+.faq-item summary:focus-visible {
+  color: var(--cyan);
+}
+
+/* The marker is drawn rather than typed, so nothing extra is announced. */
+.faq-item summary i {
+  position: relative;
+  flex: 0 0 0.8rem;
+  width: 0.8rem;
+  height: 0.8rem;
+}
+
+.faq-item summary i::before,
+.faq-item summary i::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 0;
+  width: 0.8rem;
+  height: 1.5px;
+  border-radius: 999px;
+  background: var(--cyan);
+  transition: transform 200ms ease, opacity 160ms ease;
+}
+
+.faq-item summary i::after {
+  transform: rotate(90deg);
+}
+
+.faq-item[open] summary i::after {
+  opacity: 0;
+  transform: rotate(0deg);
+}
+
+.faq-item > p {
+  margin: 0;
+  padding: 0 0 1.6rem;
+  max-width: 78ch;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.9;
+  text-wrap: pretty;
+}
+
+/* Blog cards, on the home page and on the index. */
+.post-grid,
+.post-list {
+  max-width: 1450px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+}
+
+.post-grid > li {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.post-grid .post-card {
+  gap: 0.9rem;
+  padding: clamp(1.6rem, 3vw, 2.4rem);
+  background: rgba(255, 255, 255, 0.012);
+  transition: background 240ms ease;
+}
+
+.post-grid > li:hover .post-card {
+  background: rgba(215, 196, 160, 0.03);
+}
+
+.post-card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.post-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+}
+
+.post-card h2,
+.post-card h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  text-wrap: balance;
+}
+
+.post-card h2 a,
+.post-card h3 a {
+  transition: color 180ms ease;
+}
+
+.post-card h2 a:hover,
+.post-card h3 a:hover,
+.post-card h2 a:focus-visible,
+.post-card h3 a:focus-visible {
+  color: var(--cyan);
+}
+
+.post-excerpt {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.8;
+  text-wrap: pretty;
+}
+
+.post-more {
+  margin-top: auto;
+  padding-top: 1.1rem;
+  color: var(--cyan);
+  font-size: 0.78rem;
+}
+
+.blog-all {
+  max-width: 1450px;
+  margin: 2.2rem auto 0;
+  font-size: 0.85rem;
+}
+
+.blog-all a {
+  color: var(--cyan);
+}
+
+/* The index reuses the legal page shell, so the cards stack rather than grid. */
+.post-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 2.5rem;
+}
+
+.post-list > li {
+  padding: 1.8rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.post-list .post-card {
+  gap: 0.7rem;
+}
+
+@media (max-width: 1100px) {
+  .post-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .post-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .faq-item summary {
+    font-size: 0.9rem;
+  }
+}
+
 .contact-direct span {
   color: var(--muted);
   font-size: 0.68rem;
@@ -1929,69 +2232,11 @@ h2 {
 @media (max-width: 1100px) {
   .site-header {
     grid-template-columns: 1fr auto;
-    row-gap: 0.55rem;
-    padding-top: 0.7rem;
-    padding-bottom: 0.15rem;
-  }
-
-  .desktop-nav {
-    display: none;
-  }
-
-  .mobile-nav {
-    grid-column: 1 / -1;
-    display: flex;
-    align-items: center;
-    gap: clamp(0.85rem, 3.6vw, 1.5rem);
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    padding-bottom: 0.15rem;
-    color: #b9c3cf;
-    font-size: 0.82rem;
-    white-space: nowrap;
-    scrollbar-width: none;
-  }
-
-  .mobile-nav::-webkit-scrollbar {
-    display: none;
-  }
-
-  .mobile-nav a {
-    display: inline-flex;
-    align-items: center;
-    flex: 0 0 auto;
-    /* A thumb needs more than the height of the text itself. */
-    min-height: 2.75rem;
-    transition: color 180ms ease;
-  }
-
-  .mobile-nav a:hover,
-  .mobile-nav a:focus-visible {
-    color: var(--cyan);
-  }
-
-  /* Decorative separators, in the same cyan as the marquee dots. Empty
-     generated content, so nothing is announced between the link names. */
-  .mobile-nav a + a::before {
-    content: "";
-    flex: 0 0 0.24rem;
-    width: 0.24rem;
-    height: 0.24rem;
-    margin-inline-end: clamp(0.85rem, 3.6vw, 1.5rem);
-    border-radius: 999px;
-    background: var(--cyan);
-  }
-
-  /* The header carries a second row now, so anything the strip links to has to
-     clear a taller bar when it is scrolled into view. */
-  .content-section,
-  .services-intro.marquee-strip {
-    scroll-margin-top: 132px;
   }
 
   .hero {
     grid-template-columns: 1fr;
-    padding-top: 190px;
+    padding-top: 150px;
   }
 
   .hero-copy {
@@ -2044,22 +2289,11 @@ h2 {
 @media (max-width: 680px) {
   .site-header {
     min-height: 72px;
-    padding: 0.6rem 1.15rem 0.15rem;
+    padding: 0 1.15rem;
   }
 
   .brand-copy {
     display: none;
-  }
-
-  /* Five labels, a 360px-wide phone and no room to spare: tighten the strip
-     rather than hide the last link behind a scroll nobody notices. */
-  .mobile-nav {
-    gap: 0.6rem;
-    font-size: 0.76rem;
-  }
-
-  .mobile-nav a + a::before {
-    margin-inline-end: 0.6rem;
   }
 
   .header-cta {
@@ -2072,7 +2306,7 @@ h2 {
   .hero {
     gap: 2rem;
     min-height: auto;
-    padding: 152px 1.15rem 80px;
+    padding: 118px 1.15rem 80px;
   }
 
   .hero-copy {
