@@ -464,8 +464,12 @@ a {
   border-color: rgba(83, 228, 255, 0.55);
 }
 
+/* The three steps read as one span of the hero, so they sit edge to edge with
+   equal space between them: the first against the reading edge, the last
+   against the far one. */
 .hero-proof {
   display: flex;
+  justify-content: space-between;
   gap: clamp(1.2rem, 3vw, 2.8rem);
   margin: 3.3rem 0 0;
 }
@@ -2349,15 +2353,16 @@ h2 {
     min-width: 0;
   }
 
+  /* Still spread edge to edge, but sized to their own text rather than into
+     three equal columns, so the last step reaches the far edge. */
   .hero-proof {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.5rem;
   }
 
   .hero-proof div {
     min-width: 0;
     grid-template-columns: 1fr;
+    justify-items: center;
     gap: 0.3rem;
   }
 

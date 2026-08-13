@@ -18,10 +18,13 @@ export default defineConfig({
         "lib/i18n.ts",
         "lib/content.ts",
         "lib/blog.ts",
+        "lib/site-url.ts",
         "lib/rich-text.ts",
         "lib/supabase-key.ts",
         "lib/structured-data.ts",
         "app/api/leads/route.ts",
+        "app/sitemap.ts",
+        "app/robots.ts",
       ],
       thresholds: {
         branches: 100,

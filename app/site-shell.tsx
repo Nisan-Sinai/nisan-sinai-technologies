@@ -3,14 +3,10 @@ import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { getContent } from "@/lib/content";
 import { directionOf, localePath, type Locale } from "@/lib/i18n";
+import { resolveSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
-export const siteUrl = new URL(
-  process.env.NEXT_PUBLIC_SITE_URL ??
-    (process.env.VERCEL_PROJECT_PRODUCTION_URL
-      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : "https://nisan-sinai-tech.nisan-sinai.chatgpt.site"),
-);
+export const siteUrl = new URL(resolveSiteUrl());
 
 /** Every locale points at every other one, so search engines can pair them. */
 export const languageAlternates = {
