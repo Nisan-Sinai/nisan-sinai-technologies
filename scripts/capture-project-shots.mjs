@@ -11,10 +11,16 @@
 import { chromium } from "@playwright/test";
 import { writeFileSync } from "node:fs";
 
+// `height` is how much of the page each shot keeps. It defaults to the 16:10
+// fold, but a site whose layout puts a headline right on that line gets cut
+// through the middle of it, so that one is trimmed to the seam above instead.
+// These numbers are mirrored in PROJECT_SITES in app/site-page.tsx, which sets
+// the img dimensions — change one and change the other, or the card shifts as
+// the image loads.
 const SITES = [
   { slug: "ld-event-design", url: "https://ld-event-design.vercel.app/" },
   { slug: "shel-yah", url: "https://shel-yah-web.vercel.app/" },
-  { slug: "rsvp", url: "https://arrival-confirmations.vercel.app/" },
+  { slug: "rsvp", url: "https://arrival-confirmations.vercel.app/", height: 800 },
 ];
 
 // 16:10 of the top of the page — the part a visitor sees first.
@@ -47,7 +53,7 @@ for (const site of SITES) {
     const image = await page.screenshot({
       type: "jpeg",
       quality: 82,
-      clip: { x: 0, y: 0, width: WIDTH, height: HEIGHT },
+      clip: { x: 0, y: 0, width: WIDTH, height: site.height ?? HEIGHT },
     });
     writeFileSync(`public/projects/${site.slug}.jpg`, image);
     console.log(`captured ${site.slug} (${Math.round(image.length / 1024)}KB)`);

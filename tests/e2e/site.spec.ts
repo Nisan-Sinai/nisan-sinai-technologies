@@ -249,12 +249,14 @@ test("the English page reads left to right without overflowing", async ({
   const layout = await page.evaluate(() => ({
     overflows: document.documentElement.scrollWidth > window.innerWidth + 2,
     // The tags sit at the reading start of each card, which flips with dir.
+    // Measured on the first pill rather than the list: the list is in normal
+    // flow now and spans the card so its tags can wrap.
     tagsStartAtReadingEdge: (() => {
       const card = document.querySelector(".service-card");
-      const tags = card?.querySelector("ul");
-      if (!card || !tags) return false;
+      const tag = card?.querySelector("li");
+      if (!card || !tag) return false;
       const cardBox = card.getBoundingClientRect();
-      const tagBox = tags.getBoundingClientRect();
+      const tagBox = tag.getBoundingClientRect();
       return tagBox.left - cardBox.left < cardBox.right - tagBox.right;
     })(),
   }));
@@ -745,6 +747,78 @@ test("every blog card reaches a post that renders", async ({ page }) => {
     await page.goto(href ?? "/");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await expect(page.locator("time")).toHaveCount(1);
+  }
+});
+
+test("the whole blog card is clickable, not only the title", async ({
+  page,
+}) => {
+  // The "read" line under each card looked like a control and did nothing,
+  // because it was decoration next to the real link rather than part of it.
+  await page.goto("/");
+
+  const card = page.locator(".blog-section .post-card").first();
+  await card.scrollIntoViewIfNeeded();
+  const target = await card.locator("h3 a").getAttribute("href");
+  expect(target).toBeTruthy();
+
+  const more = await card.locator(".post-more").boundingBox();
+  expect(more).not.toBeNull();
+  await page.mouse.click(
+    more!.x + more!.width / 2,
+    more!.y + more!.height / 2,
+  );
+
+  await page.waitForURL(`**${target}`);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+});
+
+test("each card still offers exactly one link to its post", async ({ page }) => {
+  // Stretching the title's link over the card is what makes the whole surface
+  // clickable; adding a second anchor would make a screen reader read every
+  // post twice.
+  await page.goto("/");
+
+  const perCard = await page.evaluate(() =>
+    Array.from(document.querySelectorAll(".blog-section .post-card")).map(
+      (card) => card.querySelectorAll("a[href]").length,
+    ),
+  );
+
+  expect(perCard.length).toBeGreaterThan(0);
+  expect(perCard.every((count) => count === 1)).toBe(true);
+});
+
+test("a project preview is not cut through a line of text", async ({ page }) => {
+  // The img dimensions and the capture height are declared in two places; if
+  // they drift the card jumps as the image loads.
+  await page.goto("/");
+  await page.locator(".mock-shot").last().scrollIntoViewIfNeeded();
+  await page.waitForFunction(() =>
+    Array.from(document.querySelectorAll<HTMLImageElement>(".mock-shot")).every(
+      (img) => img.complete && img.naturalWidth > 0,
+    ),
+  );
+
+  const shots = await page.evaluate(() =>
+    Array.from(document.querySelectorAll<HTMLImageElement>(".mock-shot")).map(
+      (img) => ({
+        src: img.getAttribute("src"),
+        declared: `${img.getAttribute("width")}x${img.getAttribute("height")}`,
+        natural: `${img.naturalWidth}x${img.naturalHeight}`,
+        ratioDeclared:
+          Number(img.getAttribute("width")) / Number(img.getAttribute("height")),
+        ratioNatural: img.naturalWidth / img.naturalHeight,
+      }),
+    ),
+  );
+
+  expect(shots.length).toBe(3);
+  for (const shot of shots) {
+    expect(
+      Math.abs(shot.ratioDeclared - shot.ratioNatural),
+      `${shot.src}: declared ${shot.declared}, file is ${shot.natural}`,
+    ).toBeLessThan(0.01);
   }
 });
 

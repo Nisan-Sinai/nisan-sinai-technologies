@@ -22,16 +22,21 @@ const PROJECT_SITES = [
     slug: "ld-event-design",
     host: "ld-event-design.vercel.app",
     href: "https://ld-event-design.vercel.app/",
+    shot: { width: 1440, height: 900 },
   },
   {
     slug: "shel-yah",
     host: "shel-yah-web.vercel.app",
     href: "https://shel-yah-web.vercel.app/",
+    shot: { width: 1440, height: 900 },
   },
   {
+    // Shorter than the others: the 900px fold on this site lands in the middle
+    // of a headline, so the shot is cut at the seam above it instead.
     slug: "rsvp",
     host: "arrival-confirmations.vercel.app",
     href: "https://arrival-confirmations.vercel.app/",
+    shot: { width: 1440, height: 800 },
   },
 ] as const;
 
@@ -270,8 +275,8 @@ export default function SitePage({ locale }: { locale: Locale }) {
                       className="mock-shot"
                       src={`/projects/${PROJECT_SITES[index].slug}.jpg`}
                       alt={project.previewLabel}
-                      width={1440}
-                      height={900}
+                      width={PROJECT_SITES[index].shot.width}
+                      height={PROJECT_SITES[index].shot.height}
                       loading="lazy"
                       decoding="async"
                     />
