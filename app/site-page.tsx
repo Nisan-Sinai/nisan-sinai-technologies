@@ -63,6 +63,14 @@ export default function SitePage({ locale }: { locale: Locale }) {
             {t.nav.cta} <span aria-hidden="true">{arrow}</span>
           </a>
         </div>
+
+        <nav className="mobile-nav" aria-label={t.nav.aria}>
+          <a href="#services">{t.nav.services}</a>
+          <a href="#projects">{t.nav.projects}</a>
+          <a href="#process">{t.nav.process}</a>
+          <a href="#pricing">{t.nav.pricing}</a>
+          <a href="#about">{t.nav.about}</a>
+        </nav>
       </header>
 
       <section className="hero" id="top">
@@ -256,6 +264,36 @@ export default function SitePage({ locale }: { locale: Locale }) {
           })}
         </div>
       </section>
+
+      {t.testimonials.items.length > 0 && (
+        <section
+          className="content-section testimonials-section"
+          id="testimonials"
+          aria-labelledby="testimonials-title"
+        >
+          <div className="section-heading">
+            <div>
+              <span className="section-kicker">{t.testimonials.kicker}</span>
+              <h2 id="testimonials-title">{t.testimonials.title}</h2>
+            </div>
+            <p>{t.testimonials.lead}</p>
+          </div>
+
+          <div className="testimonials-grid">
+            {t.testimonials.items.map((item) => (
+              <figure className="testimonial-card" key={item.name}>
+                <blockquote>
+                  <p>{item.quote}</p>
+                </blockquote>
+                <figcaption>
+                  <strong>{item.name}</strong>
+                  <span>{item.role}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="content-section process-section" id="process" aria-labelledby="process-title">
         <div className="section-heading">

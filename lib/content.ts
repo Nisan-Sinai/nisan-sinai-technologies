@@ -21,6 +21,8 @@ export type Project = {
 export type AboutValue = { number: string; title: string; text: string };
 export type PriceTier = { name: string; from: string; note: string };
 export type ServiceOption = { value: string; label: string };
+/** A quote from a real client. Nothing here is written on their behalf. */
+export type Testimonial = { quote: string; name: string; role: string };
 
 /**
  * Both policy pages are the same shape: a heading, a date, an opening
@@ -148,6 +150,17 @@ export type SiteContent = {
     tiers: [PriceTier, PriceTier, PriceTier, PriceTier];
     hourly: string;
     note: string;
+  };
+  testimonials: {
+    kicker: string;
+    title: string;
+    lead: string;
+    /**
+     * Empty until a client has actually said something and agreed to be
+     * quoted. The section renders nothing while this is empty, so the page
+     * never claims praise it has not been given.
+     */
+    items: Testimonial[];
   };
   footer: {
     tagline: string;
@@ -438,12 +451,12 @@ const he: SiteContent = {
     tiers: [
       {
         name: "אתר תדמית",
-        from: "8,000 ₪",
+        from: "9,500 ₪",
         note: "עיצוב מותאם, שתי שפות, נגישות לפי ת״י 5568 ומוכנות לגוגל.",
       },
       {
         name: "חנות או מערכת הזמנות",
-        from: "18,000 ₪",
+        from: "20,000 ₪",
         note: "קטלוג, סל, תשלומים, אזור לקוח וממשק ניהול.",
       },
       {
@@ -458,8 +471,14 @@ const he: SiteContent = {
       },
     ],
     hourly:
-      "עבודות שוטפות ושינויים: 320 ₪ לשעה. אחסון, עדכונים ותחזוקה: מ־250 ₪ לחודש.",
+      "עבודות שוטפות ושינויים: 350 ₪ לשעה. אחסון, עדכונים ותחזוקה: מ־250 ₪ לחודש.",
     note: "שיחת האפיון הראשונה היא ללא עלות וללא התחייבות.",
+  },
+  testimonials: {
+    kicker: "לקוחות",
+    title: "מה אומרים אחרי שסיימנו",
+    lead: "ציטוטים אמיתיים מלקוחות שאישרו לפרסם את שמם. אין כאן טקסט ממולא מראש.",
+    items: [],
   },
   footer: {
     tagline: "אתרים · מערכות · אוטומציות · פתרונות דיגיטליים",
@@ -855,12 +874,12 @@ const en: SiteContent = {
     tiers: [
       {
         name: "Marketing website",
-        from: "₪8,000",
+        from: "₪9,500",
         note: "Custom design, two languages, accessibility to IS 5568, ready for search.",
       },
       {
         name: "Store or ordering system",
-        from: "₪18,000",
+        from: "₪20,000",
         note: "Catalogue, cart, payments, customer area and an admin interface.",
       },
       {
@@ -875,8 +894,14 @@ const en: SiteContent = {
       },
     ],
     hourly:
-      "Ongoing work and changes: ₪320 per hour. Hosting, updates and maintenance: from ₪250 a month.",
+      "Ongoing work and changes: ₪350 per hour. Hosting, updates and maintenance: from ₪250 a month.",
     note: "The first scoping call is free and carries no obligation.",
+  },
+  testimonials: {
+    kicker: "Clients",
+    title: "What they said afterwards",
+    lead: "Real quotes from clients who agreed to be named. Nothing here is filler.",
+    items: [],
   },
   footer: {
     tagline: "Websites · Systems · Automations · Digital solutions",

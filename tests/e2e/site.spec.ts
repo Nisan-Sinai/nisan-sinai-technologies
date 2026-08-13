@@ -548,6 +548,94 @@ test("the project preview keeps its size when the card is hovered", async ({
   expect(after?.width).toBeGreaterThan((before?.width ?? 0) * 0.9);
 });
 
+test("phones get the same section links the desktop nav has", async ({
+  page,
+}, testInfo) => {
+  test.skip(!testInfo.project.name.startsWith("mobile"));
+
+  // Below 1100px the desktop nav is display:none, and for a while nothing
+  // replaced it: every section past the hero was reachable only by scrolling
+  // for it. The strip under the brand carries the same five links.
+  await page.goto("/");
+
+  const strip = page.locator(".mobile-nav");
+  await expect(strip).toBeVisible();
+  await expect(page.locator(".desktop-nav")).toBeHidden();
+
+  const links = strip.locator("a");
+  await expect(links).toHaveCount(5);
+
+  const layout = await page.evaluate(() => {
+    const nav = document.querySelector(".mobile-nav");
+    if (!nav) return null;
+    const anchors = Array.from(nav.querySelectorAll("a"));
+    return {
+      targets: anchors.map((a) => a.getAttribute("href")),
+      // One row: a wrapped strip pushes the hero down and looks broken.
+      rows: new Set(anchors.map((a) => Math.round(a.getBoundingClientRect().top)))
+        .size,
+      minHeight: Math.min(
+        ...anchors.map((a) => a.getBoundingClientRect().height),
+      ),
+      insideViewport: anchors.every((a) => {
+        const rect = a.getBoundingClientRect();
+        return rect.left >= -1 && rect.right <= window.innerWidth + 1;
+      }),
+      pageOverflowsSideways:
+        document.documentElement.scrollWidth >
+        document.documentElement.clientWidth,
+    };
+  });
+
+  expect(layout?.targets).toEqual([
+    "#services",
+    "#projects",
+    "#process",
+    "#pricing",
+    "#about",
+  ]);
+  expect(layout?.rows).toBe(1);
+  expect(layout?.minHeight).toBeGreaterThanOrEqual(44);
+  expect(layout?.insideViewport).toBe(true);
+  expect(layout?.pageOverflowsSideways).toBe(false);
+});
+
+test("a section the strip links to is not left under the header", async ({
+  page,
+}, testInfo) => {
+  test.skip(!testInfo.project.name.startsWith("mobile"));
+
+  // The header carries two rows on a phone, so the scroll-margin that cleared
+  // the one-row desktop header is no longer enough on its own.
+  for (const id of ["services", "projects", "process", "pricing", "about"]) {
+    await page.goto("/");
+    await page.locator(`.mobile-nav a[href="#${id}"]`).click();
+    await page.waitForTimeout(800);
+
+    const clearance = await page.evaluate((target) => {
+      const section = document.getElementById(target);
+      const header = document.querySelector(".site-header");
+      if (!section || !header) return null;
+      return (
+        section.getBoundingClientRect().top -
+        header.getBoundingClientRect().bottom
+      );
+    }, id);
+
+    expect(clearance, `#${id} sits under the header`).toBeGreaterThanOrEqual(0);
+  }
+});
+
+test("the wide layout keeps the desktop nav and drops the strip", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name.startsWith("mobile"));
+
+  await page.goto("/");
+  await expect(page.locator(".desktop-nav")).toBeVisible();
+  await expect(page.locator(".mobile-nav")).toBeHidden();
+});
+
 declare global {
   interface Window {
     axe: typeof import("axe-core");

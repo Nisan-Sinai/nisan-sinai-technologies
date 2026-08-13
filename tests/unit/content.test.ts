@@ -189,6 +189,28 @@ describe("site content", () => {
     expect(digits(en.hourly)).toBe(digits(he.hourly));
   });
 
+  it("never invents a testimonial", () => {
+    // The section is social proof, so a placeholder here would be a lie on the
+    // page. Either a quote is real and complete, or the list stays empty and
+    // the section does not render at all.
+    for (const locale of locales) {
+      for (const item of getContent(locale).testimonials.items) {
+        expect(item.quote.trim()).not.toBe("");
+        expect(item.name.trim()).not.toBe("");
+        expect(item.role.trim()).not.toBe("");
+        expect(item.quote.trim().length).toBeGreaterThan(20);
+      }
+    }
+  });
+
+  it("publishes the same testimonials in both languages", () => {
+    // A quote that appears in Hebrew but not in English is a different offer
+    // on each page, and the missing one is invisible until someone complains.
+    const names = (locale: Locale) =>
+      getContent(locale).testimonials.items.map((item) => item.name);
+    expect(names("en")).toEqual(names("he"));
+  });
+
   it("dates both policy documents", () => {
     for (const locale of locales) {
       for (const document of ["privacy", "accessibility"] as const) {
