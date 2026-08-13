@@ -478,6 +478,54 @@ test("marks Latin words inside the Hebrew page with their own language", async (
   expect(unmarked).toEqual([]);
 });
 
+test("answers the price question in both languages", async ({ page }) => {
+  // The one thing every visitor wants to know before they fill in a form.
+  for (const [path, heading] of [
+    ["/", "כמה זה עולה?"],
+    ["/en", "What does it cost?"],
+  ] as const) {
+    await page.goto(path);
+    await expect(page.getByRole("heading", { level: 2, name: heading })).toBeVisible();
+    const cards = page.locator(".pricing-card");
+    await expect(cards, path).toHaveCount(4);
+    for (let index = 0; index < 4; index += 1) {
+      await expect(cards.nth(index).locator(".pricing-figure strong")).toContainText("₪");
+    }
+    await expect(page.locator(".pricing-footnote")).toContainText("₪");
+  }
+});
+
+test("offers WhatsApp alongside the form", async ({ page }) => {
+  // Israeli small businesses answer on WhatsApp; a form and an inbox are a
+  // higher bar than most visitors will clear.
+  await page.goto("/");
+  const link = page.locator('a[href^="https://wa.me/"]').first();
+  await expect(link).toHaveAttribute("href", "https://wa.me/972587170978");
+  await expect(link).toHaveAttribute("rel", /noreferrer/);
+  expect(await link.evaluate((node) => node.textContent ?? "")).toContain(
+    "נפתח בכרטיסייה חדשה",
+  );
+});
+
+test("every page names itself in its share card", async ({ page }) => {
+  // og:url used to point at the home page from every page, so sharing the
+  // privacy policy previewed as the home page.
+  for (const path of ["/", "/privacy", "/accessibility", "/en/privacy"] as const) {
+    await page.goto(path);
+    const meta = await page.evaluate(() => ({
+      ogUrl: document
+        .querySelector('meta[property="og:url"]')
+        ?.getAttribute("content"),
+      canonical: document
+        .querySelector('link[rel="canonical"]')
+        ?.getAttribute("href"),
+      devTag: document.querySelector('meta[name="codex-preview"]'),
+    }));
+    expect(meta.ogUrl, path).toBe(meta.canonical);
+    expect(meta.devTag, `${path} still ships the development marker`).toBeNull();
+  }
+});
+
 test("the project preview keeps its size when the card is hovered", async ({
   page,
 }, testInfo) => {

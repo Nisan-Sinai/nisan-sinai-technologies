@@ -23,8 +23,9 @@ export function shareImage(locale: Locale): string {
   return locale === "he" ? "/og.png" : "/og-en.png";
 }
 
-export function buildMetadata(locale: Locale): Metadata {
+export function buildMetadata(locale: Locale, path = "/"): Metadata {
   const t = getContent(locale);
+  const canonical = localePath(locale, path);
 
   return {
     metadataBase: siteUrl,
@@ -36,13 +37,16 @@ export function buildMetadata(locale: Locale): Metadata {
     creator: t.brand.name,
     publisher: `${t.brand.name} ${t.brand.suffix}`,
     alternates: {
-      canonical: localePath(locale, "/"),
-      languages: languageAlternates,
+      canonical,
+      languages: {
+        he: localePath("he", path),
+        en: localePath("en", path),
+      },
     },
     openGraph: {
       type: "website",
       locale: t.meta.ogLocale,
-      url: localePath(locale, "/"),
+      url: canonical,
       siteName: `${t.brand.name} ${t.brand.suffix}`,
       title: t.meta.ogTitle,
       description: t.meta.ogDescription,
@@ -76,7 +80,6 @@ export function buildMetadata(locale: Locale): Metadata {
       ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
       : undefined,
     manifest: "/site.webmanifest",
-    other: { "codex-preview": "development" },
     icons: {
       icon: "/favicon.svg",
       shortcut: "/favicon.svg",

@@ -53,6 +53,7 @@ export default function SitePage({ locale }: { locale: Locale }) {
           <a href="#services">{t.nav.services}</a>
           <a href="#projects">{t.nav.projects}</a>
           <a href="#process">{t.nav.process}</a>
+          <a href="#pricing">{t.nav.pricing}</a>
           <a href="#about">{t.nav.about}</a>
         </nav>
 
@@ -277,6 +278,37 @@ export default function SitePage({ locale }: { locale: Locale }) {
         </ol>
       </section>
 
+      <section
+        className="content-section pricing-section"
+        id="pricing"
+        aria-labelledby="pricing-title"
+      >
+        <div className="section-heading">
+          <div>
+            <span className="section-kicker">{t.pricing.kicker}</span>
+            <h2 id="pricing-title">{t.pricing.title}</h2>
+          </div>
+          <p>{t.pricing.lead}</p>
+        </div>
+
+        <div className="pricing-grid">
+          {t.pricing.tiers.map((tier) => (
+            <article className="pricing-card" key={tier.name}>
+              <h3>{tier.name}</h3>
+              <p className="pricing-figure">
+                <span>{t.pricing.fromLabel}</span>
+                <strong>{tier.from}</strong>
+              </p>
+              <p className="pricing-note">{tier.note}</p>
+            </article>
+          ))}
+        </div>
+
+        <p className="pricing-footnote">
+          {t.pricing.hourly} {t.pricing.note}
+        </p>
+      </section>
+
       <section className="content-section about-section" id="about" aria-labelledby="about-title">
         <div className="about-visual" aria-hidden="true">
           <div className="code-window">
@@ -337,6 +369,14 @@ return makeItWork(solution);`}</code>
               <span>{t.contact.phoneLabel}</span>
               <strong>{contact.phoneDisplay}</strong>
             </a>
+            <ExternalLink
+              className="contact-direct contact-whatsapp"
+              href={contact.whatsappHref}
+              hint={t.newTabHint}
+            >
+              <span>{t.contact.whatsappLabel}</span>
+              <strong>{t.contact.whatsappValue}</strong>
+            </ExternalLink>
           </div>
         </div>
         <ContactForm copy={t.form} arrow={arrow} privacyHref={privacyHref} />

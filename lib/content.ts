@@ -19,6 +19,7 @@ export type Project = {
   previewLabel: string;
 };
 export type AboutValue = { number: string; title: string; text: string };
+export type PriceTier = { name: string; from: string; note: string };
 export type ServiceOption = { value: string; label: string };
 
 /**
@@ -58,6 +59,7 @@ export type SiteContent = {
     services: string;
     projects: string;
     process: string;
+    pricing: string;
     about: string;
     cta: string;
   };
@@ -106,6 +108,8 @@ export type SiteContent = {
   };
   tech: { aria: string; label: string; items: string[] };
   contact: {
+    whatsappLabel: string;
+    whatsappValue: string;
     kicker: string;
     title: string;
     lead: string;
@@ -135,6 +139,15 @@ export type SiteContent = {
     success: string;
     errorBefore: string;
     errorAfter: string;
+  };
+  pricing: {
+    kicker: string;
+    title: string;
+    lead: string;
+    fromLabel: string;
+    tiers: [PriceTier, PriceTier, PriceTier, PriceTier];
+    hourly: string;
+    note: string;
   };
   footer: {
     tagline: string;
@@ -185,6 +198,7 @@ const he: SiteContent = {
     services: "שירותים",
     projects: "פרויקטים",
     process: "איך זה עובד",
+    pricing: "מחירים",
     about: "אודות",
     cta: "בואו נדבר",
   },
@@ -377,6 +391,8 @@ const he: SiteContent = {
     items: ["TypeScript", "React", "Next.js", "Node.js", "Supabase", "PostgreSQL"],
   },
   contact: {
+    whatsappLabel: "וואטסאפ",
+    whatsappValue: "שליחת הודעה",
     kicker: "יש לך רעיון?",
     title: "בואו נהפוך אותו למשהו שעובד.",
     lead: "ספרו לי בקצרה מה העסק צריך. אחזור אליכם כדי להבין את המטרה ולבדוק מה הדרך הנכונה לבנות אותה.",
@@ -413,6 +429,37 @@ const he: SiteContent = {
     success: "תודה! הפרטים התקבלו ואחזור אליך בהקדם.",
     errorBefore: "השליחה לא הצליחה כרגע. אפשר לפנות אליי ישירות ב־",
     errorAfter: ".",
+  },
+  pricing: {
+    kicker: "השקעה",
+    title: "כמה זה עולה?",
+    lead: "כל פרויקט נסגר במחיר קבוע מראש, אחרי שיחת אפיון קצרה — בלי שעון פתוח ובלי הפתעות באמצע. המספרים כאן הם נקודת פתיחה אמיתית, לא כותרת שיווקית.",
+    fromLabel: "החל מ־",
+    tiers: [
+      {
+        name: "אתר תדמית",
+        from: "8,000 ₪",
+        note: "עיצוב מותאם, שתי שפות, נגישות לפי ת״י 5568 ומוכנות לגוגל.",
+      },
+      {
+        name: "חנות או מערכת הזמנות",
+        from: "18,000 ₪",
+        note: "קטלוג, סל, תשלומים, אזור לקוח וממשק ניהול.",
+      },
+      {
+        name: "מערכת ניהול בהתאמה אישית",
+        from: "35,000 ₪",
+        note: "CRM או ERP שנבנה סביב התהליך שלכם, לא להפך.",
+      },
+      {
+        name: "אוטומציה ואינטגרציה",
+        from: "3,500 ₪",
+        note: "חיבור בין מערכות קיימות וביטול עבודה ידנית חוזרת.",
+      },
+    ],
+    hourly:
+      "עבודות שוטפות ושינויים: 320 ₪ לשעה. אחסון, עדכונים ותחזוקה: מ־250 ₪ לחודש.",
+    note: "שיחת האפיון הראשונה היא ללא עלות וללא התחייבות.",
   },
   footer: {
     tagline: "אתרים · מערכות · אוטומציות · פתרונות דיגיטליים",
@@ -568,6 +615,7 @@ const en: SiteContent = {
     services: "Services",
     projects: "Projects",
     process: "How it works",
+    pricing: "Pricing",
     about: "About",
     cta: "Let's talk",
   },
@@ -760,6 +808,8 @@ const en: SiteContent = {
     items: ["TypeScript", "React", "Next.js", "Node.js", "Supabase", "PostgreSQL"],
   },
   contact: {
+    whatsappLabel: "WhatsApp",
+    whatsappValue: "Send a message",
     kicker: "Got an idea?",
     title: "Let's turn it into something that works.",
     lead: "Tell me briefly what the business needs. I'll get back to you to understand the goal and work out the right way to build it.",
@@ -796,6 +846,37 @@ const en: SiteContent = {
     success: "Thank you! Your details came through and I'll be in touch shortly.",
     errorBefore: "That didn't go through. You can reach me directly at ",
     errorAfter: ".",
+  },
+  pricing: {
+    kicker: "Investment",
+    title: "What does it cost?",
+    lead: "Every project is quoted at a fixed price agreed before any work starts, after a short scoping call — no open-ended clock, no surprises halfway through. These are real starting points, not a headline.",
+    fromLabel: "From ",
+    tiers: [
+      {
+        name: "Marketing website",
+        from: "₪8,000",
+        note: "Custom design, two languages, accessibility to IS 5568, ready for search.",
+      },
+      {
+        name: "Store or ordering system",
+        from: "₪18,000",
+        note: "Catalogue, cart, payments, customer area and an admin interface.",
+      },
+      {
+        name: "Custom management system",
+        from: "₪35,000",
+        note: "A CRM or ERP built around your process rather than the other way round.",
+      },
+      {
+        name: "Automation and integration",
+        from: "₪3,500",
+        note: "Connecting the systems you already run, and retiring repeated manual work.",
+      },
+    ],
+    hourly:
+      "Ongoing work and changes: ₪320 per hour. Hosting, updates and maintenance: from ₪250 a month.",
+    note: "The first scoping call is free and carries no obligation.",
   },
   footer: {
     tagline: "Websites · Systems · Automations · Digital solutions",
@@ -921,7 +1002,13 @@ const en: SiteContent = {
 
 const dictionaries: Record<Locale, SiteContent> = { he, en };
 
-export const contact = { email: EMAIL, phoneDisplay: PHONE_DISPLAY, phoneHref: "+972587170978" };
+export const contact = {
+  email: EMAIL,
+  phoneDisplay: PHONE_DISPLAY,
+  phoneHref: "+972587170978",
+  /** The channel most Israeli small businesses actually answer on. */
+  whatsappHref: "https://wa.me/972587170978",
+};
 
 export function getContent(locale: Locale): SiteContent {
   return dictionaries[locale];

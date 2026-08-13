@@ -181,10 +181,11 @@ test("mobile footer links stay separated and tappable", async ({ page }, testInf
   });
 
   expect(result.display).toBe("grid");
-  expect(result.count).toBe(6);
+  expect(result.count).toBe(7);
   expect(result.labels).toEqual([
     "אימייל",
     "טלפון",
+    "וואטסאפ",
     "LinkedIn",
     "פרטיות",
     "נגישות",

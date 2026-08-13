@@ -161,6 +161,34 @@ describe("site content", () => {
     }
   });
 
+  it("quotes a real figure for every price tier", () => {
+    // A tier with a vague figure is worse than no pricing section: it reads as
+    // evasive on the one question every visitor arrives with.
+    for (const locale of locales) {
+      const pricing = getContent(locale).pricing;
+      expect(pricing.tiers).toHaveLength(4);
+      for (const tier of pricing.tiers) {
+        expect(tier.name.trim()).not.toBe("");
+        expect(tier.note.trim()).not.toBe("");
+        expect(tier.from, `${locale}: ${tier.name}`).toMatch(/₪/);
+        expect(tier.from, `${locale}: ${tier.name}`).toMatch(/\d[\d,]{2,}/);
+      }
+      expect(pricing.hourly).toMatch(/₪/);
+    }
+  });
+
+  it("keeps the same figures in both languages", () => {
+    // The English page is the same offer, so a number may not drift between
+    // them: only the words around it are translated.
+    const digits = (value: string) => value.replace(/[^\d]/g, "");
+    const he = getContent("he").pricing;
+    const en = getContent("en").pricing;
+    expect(en.tiers.map((t) => digits(t.from))).toEqual(
+      he.tiers.map((t) => digits(t.from)),
+    );
+    expect(digits(en.hourly)).toBe(digits(he.hourly));
+  });
+
   it("dates both policy documents", () => {
     for (const locale of locales) {
       for (const document of ["privacy", "accessibility"] as const) {
