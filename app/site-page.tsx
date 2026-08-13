@@ -45,6 +45,9 @@ export default function SitePage({ locale }: { locale: Locale }) {
   const arrow = forwardArrow(locale);
   const privacyHref = localePath(locale, "/privacy");
   const posts = getPosts(locale);
+  // Each project is photographed in both languages, so an English reader sees
+  // the English version of the work rather than a Hebrew screenshot of it.
+  const shotSuffix = locale === "en" ? "-en" : "";
 
   // One list, rendered twice: the wide nav and the menu behind the button must
   // not be able to drift apart. The testimonials entry appears only once there
@@ -273,7 +276,7 @@ export default function SitePage({ locale }: { locale: Locale }) {
                     </div>
                     <img
                       className="mock-shot"
-                      src={`/projects/${PROJECT_SITES[index].slug}.jpg`}
+                      src={`/projects/${PROJECT_SITES[index].slug}${shotSuffix}.jpg`}
                       alt={project.previewLabel}
                       width={PROJECT_SITES[index].shot.width}
                       height={PROJECT_SITES[index].shot.height}

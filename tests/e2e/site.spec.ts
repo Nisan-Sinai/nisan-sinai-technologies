@@ -789,6 +789,42 @@ test("each card still offers exactly one link to its post", async ({ page }) => 
   expect(perCard.every((count) => count === 1)).toBe(true);
 });
 
+test("each language shows its own screenshots of the work", async ({ page }) => {
+  // An English reader was being shown Hebrew screenshots. Each locale now
+  // points at its own capture of the same site.
+  const sources = async (path: string) => {
+    await page.goto(path);
+    await page.locator(".mock-shot").last().scrollIntoViewIfNeeded();
+    await page.waitForFunction(() =>
+      Array.from(document.querySelectorAll<HTMLImageElement>(".mock-shot")).every(
+        (img) => img.complete && img.naturalWidth > 0,
+      ),
+    );
+    return page
+      .locator(".mock-shot")
+      .evaluateAll((images) =>
+        images.map((image) => image.getAttribute("src")),
+      );
+  };
+
+  const hebrew = await sources("/");
+  const english = await sources("/en");
+
+  expect(hebrew.length).toBe(3);
+  expect(english.length).toBe(3);
+  for (const [index, source] of english.entries()) {
+    expect(source).toMatch(/-en\.jpg$/);
+    // Same project, same slug — only the language suffix differs.
+    expect(source).toBe(hebrew[index]?.replace(/\.jpg$/, "-en.jpg"));
+  }
+  // And every one of them actually resolves, rather than 404ing into a broken
+  // image the way a missing capture would.
+  for (const source of english) {
+    const response = await page.request.get(source ?? "");
+    expect(response.status(), source ?? "").toBe(200);
+  }
+});
+
 test("a project preview is not cut through a line of text", async ({ page }) => {
   // The img dimensions and the capture height are declared in two places; if
   // they drift the card jumps as the image loads.
