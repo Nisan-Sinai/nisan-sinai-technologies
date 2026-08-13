@@ -2536,6 +2536,12 @@ h2 {
 .marquee-strip {
   display: block;
   overflow: hidden;
+  /* The track is wider than the screen, and in an RTL block it would be hung
+     from the right edge — so it started fully off to the left and slid in,
+     leaving the strip empty for most of every cycle instead of looping. Pinned
+     to the left edge here; the groups set their own direction, so no text
+     changes side. */
+  direction: ltr;
 }
 
 .marquee-strip .marquee-track {
@@ -2597,9 +2603,13 @@ h2 {
   letter-spacing: 0.1em;
 }
 
+/* One copy's worth of travel, then start over — with COPIES = 4 in
+   marquee-strip.tsx that is a quarter of the track. The two numbers have to
+   agree or the loop jumps; the coverage test in clean-fixes.spec.ts is what
+   catches it if they drift. */
 @keyframes marquee-right {
   from {
-    transform: translate3d(-50%, 0, 0);
+    transform: translate3d(-25%, 0, 0);
   }
   to {
     transform: translate3d(0, 0, 0);

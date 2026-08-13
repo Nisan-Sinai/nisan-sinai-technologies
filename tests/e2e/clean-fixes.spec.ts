@@ -4,7 +4,7 @@ test("only intended strips animate horizontally", async ({ page }) => {
   await page.goto("/");
 
   await expect(page.locator(".marquee-track")).toHaveCount(2);
-  await expect(page.locator(".marquee-group")).toHaveCount(4);
+  await expect(page.locator(".marquee-group")).toHaveCount(8);
 
   const motion = await page.evaluate(() => {
     const serviceTrack = document.querySelector<HTMLElement>(
@@ -79,9 +79,81 @@ test("the services strip reads the same on a phone as on a desktop", async ({
   expect(result.duplicateShown).toBe(true);
   expect(result.leadShown).toBe(true);
   expect(result.leadText).not.toBe("");
-  expect(result.itemCount).toBe(8);
+  expect(result.itemCount).toBe(16);
   expect(result.stripClips).toBe("hidden");
   expect(result.overflows).toBe(false);
+});
+
+test("the strips loop without running dry or jumping", async ({ page }) => {
+  // Two separate faults, so two separate invariants.
+  //
+  // The strip was hung from the right edge of an RTL block, so a track wider
+  // than the screen started fully off to the left: the strip was empty for most
+  // of every pass and the words slid in from nowhere. That is the coverage
+  // check — some part of the track has to fill the strip at every instant.
+  //
+  // Separately, the loop only reads as continuous if one pass travels exactly
+  // one copy of the run. Travel further and the content teleports at the seam,
+  // which still leaves the strip full, so coverage alone does not catch it.
+  await page.goto("/");
+
+  const result = await page.evaluate(() => {
+    const readStrip = (selector: string) => {
+      const strip = document.querySelector(selector);
+      const track = strip?.querySelector<HTMLElement>(".marquee-track");
+      const groups = strip?.querySelectorAll(".marquee-group");
+      if (!strip || !track || !groups?.length) return null;
+
+      const stripBox = strip.getBoundingClientRect();
+      const groupWidth = groups[0].getBoundingClientRect().width;
+      const animations = track.getAnimations();
+      const duration = Number(animations[0]?.effect?.getTiming()?.duration ?? 0);
+
+      const offsetAt = (time: number) => {
+        for (const animation of animations) {
+          animation.pause();
+          animation.currentTime = time;
+        }
+        return track.getBoundingClientRect().left;
+      };
+
+      let leastCovered = 100;
+      for (let step = 0; step <= 40; step += 1) {
+        offsetAt((step / 40) * duration * 0.9999);
+        const trackBox = track.getBoundingClientRect();
+        const covered =
+          Math.max(
+            0,
+            Math.min(stripBox.right, trackBox.right) -
+              Math.max(stripBox.left, trackBox.left),
+          ) / stripBox.width;
+        leastCovered = Math.min(leastCovered, Math.round(covered * 100));
+      }
+
+      const travel = offsetAt(duration * 0.9999) - offsetAt(0);
+      for (const animation of animations) animation.play();
+
+      return {
+        leastCovered,
+        travelInGroups: travel / groupWidth,
+        groupCount: groups.length,
+      };
+    };
+
+    return {
+      services: readStrip(".services-intro"),
+      tech: readStrip(".tech-strip"),
+    };
+  });
+
+  for (const [name, strip] of Object.entries(result)) {
+    expect(strip, name).not.toBeNull();
+    expect(strip!.leastCovered, `${name} runs dry mid-cycle`).toBe(100);
+    expect(
+      Math.abs(strip!.travelInGroups - 1),
+      `${name} travels ${strip!.travelInGroups.toFixed(2)} copies per pass, not 1`,
+    ).toBeLessThan(0.02);
+  }
 });
 
 test("no service card prints its tags over its own description", async ({
