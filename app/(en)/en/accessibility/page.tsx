@@ -1,14 +1,19 @@
 import LegalContent from "../../../legal-content";
+import { buildMetadata } from "../../../site-shell";
 import { getContent } from "@/lib/content";
 
 const copy = getContent("en").accessibility;
 
+const base = buildMetadata("en", "/accessibility");
+
 export const metadata = {
+  ...base,
   title: copy.metaTitle,
   description: copy.metaDescription,
-  alternates: {
-    canonical: "/en/accessibility",
-    languages: { he: "/accessibility", en: "/en/accessibility" },
+  openGraph: {
+    ...base.openGraph,
+    title: copy.metaTitle,
+    description: copy.metaDescription,
   },
 };
 

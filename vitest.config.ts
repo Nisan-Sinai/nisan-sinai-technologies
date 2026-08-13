@@ -17,6 +17,7 @@ export default defineConfig({
         "lib/lead-validation.ts",
         "lib/i18n.ts",
         "lib/content.ts",
+        "lib/blog.ts",
         "lib/rich-text.ts",
         "lib/supabase-key.ts",
         "lib/structured-data.ts",

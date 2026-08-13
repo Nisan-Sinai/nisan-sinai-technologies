@@ -23,6 +23,9 @@ export default function SiteFooter({ locale }: { locale: Locale }) {
       <nav aria-label={t.footer.navAria}>
         <a href={`mailto:${contact.email}`}>{t.footer.email}</a>
         <a href={`tel:${contact.phoneHref}`}>{t.footer.phone}</a>
+        <ExternalLink href={contact.whatsappHref} hint={t.newTabHint}>
+          {t.contact.whatsappLabel}
+        </ExternalLink>
         <ExternalLink href="https://www.linkedin.com/in/nisansinai" hint={t.newTabHint}>
           <span lang="en">LinkedIn</span>
         </ExternalLink>

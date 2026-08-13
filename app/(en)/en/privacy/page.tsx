@@ -1,12 +1,20 @@
 import LegalContent from "../../../legal-content";
+import { buildMetadata } from "../../../site-shell";
 import { getContent } from "@/lib/content";
 
 const copy = getContent("en").privacy;
 
+const base = buildMetadata("en", "/privacy");
+
 export const metadata = {
+  ...base,
   title: copy.metaTitle,
   description: copy.metaDescription,
-  alternates: { canonical: "/en/privacy", languages: { he: "/privacy", en: "/en/privacy" } },
+  openGraph: {
+    ...base.openGraph,
+    title: copy.metaTitle,
+    description: copy.metaDescription,
+  },
 };
 
 export default function EnglishPrivacyPage() {
