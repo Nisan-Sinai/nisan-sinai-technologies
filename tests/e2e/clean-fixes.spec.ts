@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("only intended strips animate horizontally", async ({ page }, testInfo) => {
+test("only intended strips animate horizontally", async ({ page }) => {
   await page.goto("/");
 
   await expect(page.locator(".marquee-track")).toHaveCount(2);
@@ -31,19 +31,17 @@ test("only intended strips animate horizontally", async ({ page }, testInfo) => 
     };
   });
 
-  if (testInfo.project.name.startsWith("mobile")) {
-    expect(motion.serviceAnimation).toBe("none");
-    expect(motion.techAnimation).toBe("marquee-right");
-  } else {
-    expect(motion.serviceAnimation).toBe("marquee-right");
-    expect(motion.techAnimation).toBe("marquee-right");
-  }
+  // Both strips move, at every width. The services strip used to be frozen and
+  // stripped of its lead line on phones while the one below it kept scrolling,
+  // which read as a bug rather than a decision.
+  expect(motion.serviceAnimation).toBe("marquee-right");
+  expect(motion.techAnimation).toBe("marquee-right");
 
   expect(motion.fixedTransforms.every((value) => value === "none")).toBe(true);
   expect(motion.overflows).toBe(false);
 });
 
-test("mobile services strip is static and fits on one line", async ({
+test("the services strip reads the same on a phone as on a desktop", async ({
   page,
 }, testInfo) => {
   test.skip(!testInfo.project.name.startsWith("mobile"));
@@ -52,45 +50,65 @@ test("mobile services strip is static and fits on one line", async ({
   const result = await page.evaluate(() => {
     const strip = document.querySelector<HTMLElement>(".services-intro");
     const track = strip?.querySelector<HTMLElement>(".marquee-track");
-    const primaryGroup = strip?.querySelector<HTMLElement>(
-      ".marquee-group:not([aria-hidden='true'])",
+    const groups = Array.from(
+      strip?.querySelectorAll<HTMLElement>(".marquee-group") ?? [],
     );
-    const duplicateGroup = strip?.querySelector<HTMLElement>(
-      ".marquee-group[aria-hidden='true']",
+    const lead = strip?.querySelector<HTMLElement>(
+      ".marquee-group > span:first-child",
     );
-    const items = primaryGroup
-      ? Array.from(primaryGroup.querySelectorAll<HTMLElement>(".marquee-item"))
+    const items = strip
+      ? Array.from(strip.querySelectorAll<HTMLElement>(".marquee-item"))
       : [];
-
-    const groupRect = primaryGroup?.getBoundingClientRect();
-    const stripRect = strip?.getBoundingClientRect();
 
     return {
       animation: track ? getComputedStyle(track).animationName : "",
-      transform: track ? getComputedStyle(track).transform : "",
-      duplicateDisplay: duplicateGroup
-        ? getComputedStyle(duplicateGroup).display
-        : "",
+      // The duplicate group is what makes the loop seamless; hiding it on
+      // phones left a gap on every pass.
+      duplicateShown:
+        groups.length > 1 ? getComputedStyle(groups[1]).display !== "none" : false,
+      leadShown: lead ? getComputedStyle(lead).display !== "none" : false,
+      leadText: lead?.textContent?.trim() ?? "",
       itemCount: items.length,
-      oneLine: items.every((item) => {
-        const rect = item.getBoundingClientRect();
-        return groupRect ? rect.top >= groupRect.top && rect.bottom <= groupRect.bottom : false;
-      }),
-      fitsWidth:
-        Boolean(groupRect && stripRect) &&
-        groupRect!.left >= stripRect!.left - 1 &&
-        groupRect!.right <= stripRect!.right + 1,
+      // The section clips its own overflow; the document must not scroll.
+      stripClips: strip ? getComputedStyle(strip).overflow : "",
       overflows: document.documentElement.scrollWidth > window.innerWidth + 2,
     };
   });
 
-  expect(result.animation).toBe("none");
-  expect(result.transform).toBe("none");
-  expect(result.duplicateDisplay).toBe("none");
-  expect(result.itemCount).toBe(4);
-  expect(result.oneLine).toBe(true);
-  expect(result.fitsWidth).toBe(true);
+  expect(result.animation).toBe("marquee-right");
+  expect(result.duplicateShown).toBe(true);
+  expect(result.leadShown).toBe(true);
+  expect(result.leadText).not.toBe("");
+  expect(result.itemCount).toBe(8);
+  expect(result.stripClips).toBe("hidden");
   expect(result.overflows).toBe(false);
+});
+
+test("no service card prints its tags over its own description", async ({
+  page,
+}) => {
+  // The tags were pinned with position:absolute, so the card with the longest
+  // copy laid them across its own last line.
+  await page.goto("/");
+
+  const gaps = await page.evaluate(() =>
+    Array.from(document.querySelectorAll(".service-card")).map((card, index) => {
+      const copy = card.querySelector("p");
+      const tag = card.querySelector("li");
+      if (!copy || !tag) return { index, gap: Number.NaN };
+      return {
+        index,
+        gap: Math.round(
+          tag.getBoundingClientRect().top - copy.getBoundingClientRect().bottom,
+        ),
+      };
+    }),
+  );
+
+  expect(gaps.length).toBeGreaterThan(0);
+  for (const { index, gap } of gaps) {
+    expect(gap, `service card ${index + 1} overlaps its copy`).toBeGreaterThan(0);
+  }
 });
 
 test("mobile business core has visible clearance from satellite cards", async ({

@@ -856,6 +856,8 @@ a {
 
 .service-card {
   position: relative;
+  display: flex;
+  flex-direction: column;
   min-height: 350px;
   padding: clamp(1.6rem, 3vw, 2.6rem);
   overflow: hidden;
@@ -924,16 +926,20 @@ a {
   line-height: 1.85;
 }
 
+/* The tags used to be pinned to the bottom of the card with position:absolute,
+   which is fine until the copy above them runs long: on a phone the longest
+   card printed its tags straight over the last line of its own description.
+   Pushed down by the free space above them instead, so a card whose text needs
+   the room grows rather than overlapping itself. Grid stretches the row, so
+   they still line up across cards. */
 .service-card ul {
-  position: absolute;
+  position: relative;
   z-index: 1;
-  inset-inline-start: clamp(1.6rem, 3vw, 2.6rem);
-  bottom: 2rem;
   display: flex;
   flex-wrap: wrap;
   gap: 0.45rem;
-  margin: 0;
-  padding: 0;
+  margin: auto 0 0;
+  padding: 2rem 0 0;
   list-style: none;
 }
 
@@ -1707,9 +1713,22 @@ a.case-study-label:focus-visible {
 }
 
 .post-card {
+  position: relative;
   display: flex;
   flex: 1;
   flex-direction: column;
+}
+
+/* The "read" line under each card looked like a control but was decoration, so
+   tapping it did nothing. Rather than adding a second link to the same post —
+   which a screen reader would then announce twice — the title's link is
+   stretched over the whole card, so anywhere on it works and there is still
+   exactly one link in the accessibility tree. */
+.post-card h2 a::after,
+.post-card h3 a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
 }
 
 .post-meta {
@@ -2399,10 +2418,6 @@ h2 {
     padding: 1.5rem;
   }
 
-  .service-card ul {
-    inset-inline-start: 1.5rem;
-  }
-
   .project-card {
     grid-template-columns: 1fr;
     min-height: 0;
@@ -2865,13 +2880,9 @@ h2 {
   }
 
   .services-intro .marquee-group {
-    min-height: 68px;
-    padding: 0.8rem 0.75rem;
-    direction: ltr;
-    width: 100%;
-    justify-content: center;
-    gap: clamp(0.45rem, 2.3vw, 0.72rem);
-    white-space: nowrap;
+    min-height: 76px;
+    padding: 1rem 1.15rem;
+    gap: clamp(0.7rem, 3.2vw, 1.2rem);
   }
 
   .tech-strip .marquee-group {
@@ -3031,38 +3042,27 @@ h2 {
    Was mobile-services-strip.css. Kept in cascade order: these rules override what is above.
    ─────────────────────────────────────────── */
 @media (max-width: 680px) {
-  /* The service strip above "מה אני בונה" is intentionally static on phones. */
-  .services-intro.marquee-strip {
-    overflow: hidden;
-  }
-
-  .services-intro .marquee-track {
-    width: 100%;
-    transform: none !important;
-    animation: none !important;
-    will-change: auto;
-  }
-
-  .services-intro .marquee-group[aria-hidden="true"] {
-    display: none;
-  }
-
-  .services-intro .marquee-group > span:first-child {
-    display: none;
-  }
-
+  /* This strip used to be frozen and stripped down on phones — no lead line, no
+     duplicate group, no animation — while the tech strip below it kept moving.
+     The two now behave the same way. The section clips its own overflow, which
+     is what keeps a track wider than the screen from scrolling the document,
+     and the global reduced-motion rule still stops the animation for anyone who
+     asks for that. */
   .services-intro .marquee-item {
-    gap: clamp(0.45rem, 2.3vw, 0.72rem);
+    gap: clamp(0.7rem, 3.2vw, 1.2rem);
   }
 
   .services-intro .marquee-item strong {
-    font-size: clamp(0.68rem, 3vw, 0.82rem);
-    letter-spacing: -0.01em;
+    font-size: clamp(0.82rem, 3.6vw, 0.98rem);
   }
 
   .services-intro .marquee-item i {
-    width: 0.24rem;
-    height: 0.24rem;
-    flex: 0 0 0.24rem;
+    width: 0.26rem;
+    height: 0.26rem;
+    flex: 0 0 0.26rem;
+  }
+
+  .services-intro .marquee-group > span:first-child {
+    font-size: 0.72rem;
   }
 }

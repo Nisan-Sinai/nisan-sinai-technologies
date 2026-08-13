@@ -93,12 +93,12 @@ export default function MobileMenu({
         ref={buttonRef}
         type="button"
       >
+        <span className="menu-label">{label}</span>
         <span className={`menu-bars${open ? " is-open" : ""}`} aria-hidden="true">
           <i />
           <i />
           <i />
         </span>
-        <span className="menu-label">{label}</span>
       </button>
 
       {open && (
