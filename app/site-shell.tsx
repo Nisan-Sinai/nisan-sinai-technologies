@@ -8,6 +8,11 @@ import "./globals.css";
 
 export const siteUrl = new URL(resolveSiteUrl());
 
+/** Google Search Console verification token; the env var overrides this default. */
+const googleSiteVerification =
+  process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ??
+  "E28NaBeiOIjkaklYu2ZeTrE9hEni9yBGcYeyGkrZ7MQ";
+
 /** Every locale points at every other one, so search engines can pair them. */
 export const languageAlternates = {
   he: localePath("he", "/"),
@@ -72,9 +77,7 @@ export function buildMetadata(locale: Locale, path = "/"): Metadata {
         "max-video-preview": -1,
       },
     },
-    verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
-      ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
-      : undefined,
+    verification: googleSiteVerification ? { google: googleSiteVerification } : undefined,
     manifest: "/site.webmanifest",
     icons: {
       icon: "/favicon.svg",
