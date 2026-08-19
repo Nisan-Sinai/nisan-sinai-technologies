@@ -65,6 +65,8 @@ function isPreferences(value: unknown): value is Preferences {
 }
 
 function readPreferences(): Preferences {
+  if (typeof window === "undefined") return DEFAULT_PREFERENCES;
+
   try {
     const stored = window.localStorage.getItem(STORAGE_KEY);
     if (!stored) return DEFAULT_PREFERENCES;
@@ -100,15 +102,14 @@ function savePreferences(preferences: Preferences) {
 export function AccessibilityMenu({ locale }: Readonly<{ locale: Locale }>) {
   const t = COPY[locale];
   const [open, setOpen] = useState(false);
-  const [preferences, setPreferences] = useState(DEFAULT_PREFERENCES);
+  const [preferences, setPreferences] = useState<Preferences>(() => readPreferences());
   const widgetRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    const stored = readPreferences();
-    setPreferences(stored);
-    applyPreferences(stored);
-  }, []);
+    applyPreferences(preferences);
+    savePreferences(preferences);
+  }, [preferences]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -137,18 +138,11 @@ export function AccessibilityMenu({ locale }: Readonly<{ locale: Locale }>) {
   }, [open]);
 
   const updatePreference = (key: keyof Preferences) => {
-    setPreferences((current) => {
-      const next = { ...current, [key]: !current[key] };
-      applyPreferences(next);
-      savePreferences(next);
-      return next;
-    });
+    setPreferences((current) => ({ ...current, [key]: !current[key] }));
   };
 
   const resetPreferences = () => {
     setPreferences(DEFAULT_PREFERENCES);
-    applyPreferences(DEFAULT_PREFERENCES);
-    savePreferences(DEFAULT_PREFERENCES);
   };
 
   const statementHref = locale === "he" ? "/accessibility" : "/en/accessibility";
