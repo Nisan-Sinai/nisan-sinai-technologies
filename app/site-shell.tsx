@@ -4,6 +4,7 @@ import { GeistMono } from "geist/font/mono";
 import { getContent } from "@/lib/content";
 import { directionOf, localePath, type Locale } from "@/lib/i18n";
 import { resolveSiteUrl } from "@/lib/site-url";
+import { AccessibilityMenu } from "./accessibility-menu";
 import "./globals.css";
 
 export const siteUrl = new URL(resolveSiteUrl());
@@ -105,7 +106,10 @@ export function SiteShell({
       data-scroll-behavior="smooth"
       className={`${GeistSans.variable} ${GeistMono.variable}`}
     >
-      <body className={GeistSans.className}>{children}</body>
+      <body className={GeistSans.className}>
+        {children}
+        <AccessibilityMenu locale={locale} />
+      </body>
     </html>
   );
 }
