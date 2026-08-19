@@ -4,12 +4,14 @@ test("accessibility menu applies, persists, and resets preferences", async ({ pa
   await page.goto("/");
 
   const root = page.locator("html");
-  const trigger = page.getByRole("button", { name: "פתיחת תפריט נגישות" });
+  const trigger = page.locator('button[aria-controls="accessibility-tools"]');
   await expect(trigger).toBeVisible();
+  await expect(trigger).toHaveAccessibleName("פתיחת תפריט נגישות");
   await expect(trigger).toHaveAttribute("aria-expanded", "false");
 
   await trigger.click();
   await expect(trigger).toHaveAttribute("aria-expanded", "true");
+  await expect(trigger).toHaveAccessibleName("סגירת תפריט נגישות");
 
   const panel = page.getByRole("dialog", { name: "כלי נגישות" });
   await expect(panel).toBeVisible();
@@ -29,7 +31,7 @@ test("accessibility menu applies, persists, and resets preferences", async ({ pa
   await expect(root).toHaveAttribute("data-a11y-large-text", "true");
   await expect(root).toHaveAttribute("data-a11y-reduce-motion", "true");
 
-  await page.getByRole("button", { name: "פתיחת תפריט נגישות" }).click();
+  await trigger.click();
   const reopenedPanel = page.getByRole("dialog", { name: "כלי נגישות" });
   await reopenedPanel.getByRole("button", { name: "איפוס הגדרות" }).click();
 
@@ -40,7 +42,8 @@ test("accessibility menu applies, persists, and resets preferences", async ({ pa
 test("accessibility controls fit the viewport and close with Escape", async ({ page }) => {
   await page.goto("/");
 
-  const trigger = page.getByRole("button", { name: "פתיחת תפריט נגישות" });
+  const trigger = page.locator('button[aria-controls="accessibility-tools"]');
+  await expect(trigger).toHaveAccessibleName("פתיחת תפריט נגישות");
   await trigger.click();
 
   const panel = page.getByRole("dialog", { name: "כלי נגישות" });
