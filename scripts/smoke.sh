@@ -32,8 +32,13 @@ get_code() {
 # a legal requirement, the requirement is the content, so check the content.
 body_has() {
   local label="$1" url="$2" needle="$3"
-  if curl -sS --max-time 30 --retry 2 --retry-delay 5 --retry-all-errors "${url}" \
-      2>/dev/null | grep -qF -- "${needle}"; then
+  local body
+
+  # Keep curl out of a grep -q pipeline. With pipefail enabled, grep exits as
+  # soon as it finds a match, which can give curl SIGPIPE on larger HTML pages
+  # and turn a successful content check into a false failure.
+  if body="$(curl -sS --max-time 30 --retry 2 --retry-delay 5 --retry-all-errors "${url}" 2>/dev/null)" \
+      && grep -qF -- "${needle}" <<<"${body}"; then
     echo "  ok: ${label}"
   else
     echo "FAIL: ${label} — ${url} does not contain \"${needle}\"" >&2
