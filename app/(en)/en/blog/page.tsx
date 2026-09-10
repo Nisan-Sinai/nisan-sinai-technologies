@@ -5,14 +5,15 @@ import { getContent } from "@/lib/content";
 const copy = getContent("en").blog;
 
 const base = buildMetadata("en", "/blog");
+const title = "Web & software guides | Nisan Sinai Technologies";
 
 export const metadata = {
   ...base,
-  title: copy.indexTitle,
+  title: { absolute: title },
   description: copy.indexDescription,
   openGraph: {
     ...base.openGraph,
-    title: copy.indexTitle,
+    title,
     description: copy.indexDescription,
   },
 };

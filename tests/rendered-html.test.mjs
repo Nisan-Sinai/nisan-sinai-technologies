@@ -40,4 +40,8 @@ test("the worker build serves the page without a development marker", async () =
   // A page that renders nothing would also pass the check above.
   assert.match(html, /<meta[^>]*\bname=["']description["'][^>]*>/i);
   assert.match(html, /id="pricing"/);
+  // Secondary pages inherit this site identity too, so keep the shared WebSite
+  // JSON-LD in the shell rather than relying on homepage-only structured data.
+  assert.match(html, /"@type":"WebSite"/);
+  assert.match(html, /"name":"ניסן סיני טכנולוגיות"/);
 });
