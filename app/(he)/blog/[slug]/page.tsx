@@ -19,7 +19,7 @@ export async function generateMetadata({
 
   return {
     ...base,
-    title: post.title,
+    title: { absolute: post.title },
     description: post.excerpt,
     openGraph: {
       ...base.openGraph,
