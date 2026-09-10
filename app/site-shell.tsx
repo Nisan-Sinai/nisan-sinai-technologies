@@ -117,14 +117,17 @@ export function SiteShell({
       className={`${GeistSans.variable} ${GeistMono.variable}`}
     >
       <body className={GeistSans.className}>
+        {children}
+        <AccessibilityMenu locale={locale} />
+        {/* Keep the page-specific graph first in document order. Existing crawler QA
+            intentionally validates that richer homepage graph, while this shared
+            identity still gives secondary pages a WebSite entity. */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(websiteSchema).replace(/</g, "\\u003c"),
           }}
         />
-        {children}
-        <AccessibilityMenu locale={locale} />
       </body>
     </html>
   );
