@@ -99,6 +99,16 @@ export function SiteShell({
   locale,
   children,
 }: Readonly<{ locale: Locale; children: React.ReactNode }>) {
+  const t = getContent(locale);
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": new URL("/#website", siteUrl).toString(),
+    name: `${t.brand.name} ${t.brand.suffix}`,
+    url: new URL(localePath(locale, "/"), siteUrl).toString(),
+    inLanguage: locale === "he" ? "he-IL" : "en",
+  };
+
   return (
     <html
       lang={locale}
@@ -107,6 +117,12 @@ export function SiteShell({
       className={`${GeistSans.variable} ${GeistMono.variable}`}
     >
       <body className={GeistSans.className}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteSchema).replace(/</g, "\\u003c"),
+          }}
+        />
         {children}
         <AccessibilityMenu locale={locale} />
       </body>
