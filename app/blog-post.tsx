@@ -6,6 +6,11 @@ import { getContent } from "@/lib/content";
 import { formatPostDate, getPost } from "@/lib/blog";
 import { forwardArrow, localePath, type Locale } from "@/lib/i18n";
 
+const ARTICLE_CONTEXT: Record<Locale, string> = {
+  he: "הדוגמאות במדריך נועדו לעזור לכם לשאול שאלות מדויקות יותר ולהשוות חלופות לפי הצורך העסקי, העלות והתחזוקה לאורך זמן.",
+  en: "The examples in this guide are intended to help you ask better questions and compare options by business need, cost and long-term maintenance.",
+};
+
 export default function BlogPost({
   locale,
   slug,
@@ -40,6 +45,9 @@ export default function BlogPost({
           </p>
           <p className="legal-intro">
             <LatinText text={post.intro} />
+          </p>
+          <p>
+            <LatinText text={ARTICLE_CONTEXT[locale]} />
           </p>
 
           {post.sections.map((section) => (
