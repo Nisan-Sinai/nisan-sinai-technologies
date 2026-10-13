@@ -99,6 +99,16 @@ export function SiteShell({
   locale,
   children,
 }: Readonly<{ locale: Locale; children: React.ReactNode }>) {
+  const t = getContent(locale);
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": new URL("/#website", siteUrl).toString(),
+    name: `${t.brand.name} ${t.brand.suffix}`,
+    url: new URL(localePath(locale, "/"), siteUrl).toString(),
+    inLanguage: locale === "he" ? "he-IL" : "en",
+  };
+
   return (
     <html
       lang={locale}
@@ -109,6 +119,15 @@ export function SiteShell({
       <body className={GeistSans.className}>
         {children}
         <AccessibilityMenu locale={locale} />
+        {/* Keep the page-specific graph first in document order. Existing crawler QA
+            intentionally validates that richer homepage graph, while this shared
+            identity still gives secondary pages a WebSite entity. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteSchema).replace(/</g, "\\u003c"),
+          }}
+        />
       </body>
     </html>
   );
