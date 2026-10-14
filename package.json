@@ -62,7 +62,9 @@
     "wrangler": "4.129.0"
   },
   "overrides": {
-    "baseline-browser-mapping": "2.11.0"
+    "baseline-browser-mapping": "2.11.0",
+    "sharp": "0.35.5",
+    "source-map-js": "1.2.2"
   },
   "type": "module",
   "displayName": "ניסן סיני טכנולוגיות"
