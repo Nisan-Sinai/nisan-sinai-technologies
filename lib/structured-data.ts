@@ -71,7 +71,7 @@ export function buildStructuredData(
         description: t.meta.description,
         url: absolute(localePath(locale, "/")),
         image: absolute(locale === "he" ? "/og.png" : "/og-en.png"),
-        logo: absolute("/favicon.svg"),
+        logo: absolute("/app-icon-512.png"),
         email: contact.email,
         telephone: contact.phoneHref,
         areaServed: { "@type": "Country", name: "Israel" },

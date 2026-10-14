@@ -317,11 +317,30 @@ test("every page carries what a crawler needs", async ({ page }) => {
   }
 });
 
-test("the share cards and manifest are actually served", async ({ request }) => {
-  for (const asset of ["/og.png", "/og-en.png", "/site.webmanifest", "/favicon.svg"]) {
+test("the share cards and installable app icons are served", async ({ request }) => {
+  for (const asset of [
+    "/og.png",
+    "/og-en.png",
+    "/site.webmanifest",
+    "/app-icon-192.png",
+    "/app-icon-512.png",
+    "/app-icon-maskable-512.png",
+    "/apple-touch-icon.png",
+    "/favicon.svg",
+  ]) {
     const response = await request.get(asset);
     expect(response.status(), asset).toBe(200);
   }
+
+  const manifest = await (await request.get("/site.webmanifest")).json();
+  expect(manifest.id).toBe("/");
+  expect(manifest.icons).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({ src: "/app-icon-192.png", sizes: "192x192", purpose: "any" }),
+      expect.objectContaining({ src: "/app-icon-512.png", sizes: "512x512", purpose: "any" }),
+      expect.objectContaining({ src: "/app-icon-maskable-512.png", sizes: "512x512", purpose: "maskable" }),
+    ]),
+  );
 });
 
 test("robots.txt invites crawlers and names the sitemap", async ({ request }) => {
