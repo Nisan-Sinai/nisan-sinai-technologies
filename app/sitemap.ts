@@ -5,8 +5,6 @@ import { locales, localePath } from "@/lib/i18n";
 
 const siteUrl = resolveSiteUrl();
 
-const lastModified = new Date("2026-08-12");
-
 /** Each page is listed once per locale, with the pair cross-referenced. */
 export default function sitemap(): MetadataRoute.Sitemap {
   const pages = [
@@ -25,7 +23,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return pages.flatMap((page) =>
     locales.map((locale) => ({
       url: new URL(localePath(locale, page.path), siteUrl).toString(),
-      lastModified,
       changeFrequency: page.changeFrequency,
       priority: page.priority,
       alternates: {
