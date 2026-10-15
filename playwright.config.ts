@@ -9,6 +9,8 @@ export default defineConfig({
   reporter: process.env.CI ? [["html", { open: "never" }], ["list"]] : "list",
   use: {
     baseURL: "http://127.0.0.1:3100",
+    // Existing product journeys use an explicit opt-out. Consent itself has its own suite.
+    storageState: { cookies: [], origins: [{ origin: "http://127.0.0.1:3100", localStorage: [{ name: "public-analytics-consent-v1", value: "denied" }] }] },
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },

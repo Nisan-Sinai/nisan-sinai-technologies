@@ -581,7 +581,7 @@ const he: SiteContent = {
     back: "חזרה לאתר",
     kicker: "פרטיות",
     title: "מדיניות פרטיות",
-    updated: "עודכן לאחרונה: 12 באוגוסט 2026",
+    updated: "עודכן לאחרונה: 15 באוקטובר 2026",
     intro:
       "העמוד הזה מסביר איזה מידע אישי נאסף באתר, למה הוא משמש, למי הוא מועבר, כמה זמן הוא נשמר ואילו זכויות עומדות לך לפי חוק הגנת הפרטיות, התשמ״א-1981 ותקנותיו.",
     sections: [
@@ -591,7 +591,7 @@ const he: SiteContent = {
       },
       {
         title: "איזה מידע נאסף",
-        body: "רק מה שנמסר מרצון בטופס יצירת הקשר: שם מלא, שם העסק, טלפון, כתובת אימייל, סוג השירות המבוקש ותוכן הפנייה, יחד עם מועד השליחה. אין חובה חוקית למסור את הפרטים והמסירה נעשית מרצון בלבד, אך בלי שם וטלפון לא ניתן לחזור אליך. האתר אינו אוסף מידע נוסף עליך ואינו רוכש מידע מגורמים אחרים.",
+        body: "רק מה שנמסר מרצון בטופס יצירת הקשר: שם מלא, שם העסק, טלפון, כתובת אימייל, סוג השירות המבוקש ותוכן הפנייה, יחד עם מועד השליחה. אין חובה חוקית למסור את הפרטים והמסירה נעשית מרצון בלבד, אך בלי שם וטלפון לא ניתן לחזור אליך. מדידת שימוש טכנית בדפים הציבוריים מתבצעת רק בהסכמה, כמפורט בסעיף העוגיות. איננו רוכשים מידע מגורמים אחרים.",
       },
       {
         title: "למה המידע משמש",
@@ -599,7 +599,7 @@ const he: SiteContent = {
       },
       {
         title: "למי המידע מועבר",
-        body: "האתר מתארח אצל חברת Vercel Inc, והפניות נשמרות אצל חברת Supabase Inc. שתי החברות משמשות כספקיות תשתית בלבד, מעבדות את המידע לפי הוראותיי ואינן רשאיות לעשות בו שימוש עצמאי. השרתים נמצאים מחוץ לישראל, במדינות שרמת ההגנה בהן על מידע אישי אינה נופלת מזו הנהוגה בישראל, בהתאם לתקנות הגנת הפרטיות (העברת מידע אל מאגרי מידע שמחוץ לגבולות המדינה), התשס״א-2001. מעבר לכך המידע לא מועבר לאיש, למעט אם הדבר יידרש על פי דין או צו של רשות מוסמכת.",
+        body: "האתר מתארח אצל חברת Vercel Inc, והפניות נשמרות אצל חברת Supabase Inc. שתי החברות משמשות כספקיות תשתית בלבד, מעבדות את המידע לפי הוראותיי ואינן רשאיות לעשות בו שימוש עצמאי. השרתים נמצאים מחוץ לישראל, במדינות שרמת ההגנה בהן על מידע אישי אינה נופלת מזו הנהוגה בישראל, בהתאם לתקנות הגנת הפרטיות (העברת מידע אל מאגרי מידע שמחוץ לגבולות המדינה), התשס״א-2001. נתוני המדידה המוסכמת מעובדים גם בידי Google, כמפורט להלן. מעבר לכך המידע לא מועבר לאיש, למעט אם הדבר יידרש על פי דין או צו של רשות מוסמכת.",
       },
       {
         title: "איך המידע מאובטח",
@@ -607,7 +607,7 @@ const he: SiteContent = {
       },
       {
         title: "עוגיות ומעקב",
-        body: "האתר אינו משתמש בעוגיות מעקב, אינו מריץ כלי אנליטיקה של צד שלישי ואינו משתף מידע עם רשתות פרסום או רשתות חברתיות. השרת רושם נתוני גישה טכניים בסיסיים, כמו כתובת IP ומועד הבקשה, לצורכי אבטחה ותפעול בלבד.",
+        body: "רק לאחר הסכמה מפורשת מופעל Google Analytics 4 בדפים הציבוריים. המדידה עשויה להשתמש במזהי עוגיות ובנתוני דפדפן, מכשיר וביקורים, המעובדים בידי Google. לא נשלחים תוכן טפסים, פרטים שהוזנו, פרמטרי כתובת, קישורים אישיים או תוכן ניהול. אין שימוש לפרסום מותאם. אפשר לסרב או לבטל הסכמה דרך הגדרות הפרטיות; סירוב לא פוגע בשימוש באתר. השרת רושם נתוני גישה טכניים בסיסיים, כמו כתובת IP ומועד הבקשה, לצורכי אבטחה ותפעול בלבד.",
       },
       {
         title: "כמה זמן המידע נשמר",
@@ -1063,7 +1063,7 @@ const en: SiteContent = {
     back: "Back to the site",
     kicker: "Privacy",
     title: "Privacy policy",
-    updated: "Last updated: 12 August 2026",
+    updated: "Last updated: 15 October 2026",
     intro:
       "This page explains what personal data the site collects, what it is used for, who it is passed to, how long it is kept and the rights you hold under the Israeli Protection of Privacy Law, 5741-1981 and its regulations.",
     sections: [
@@ -1073,7 +1073,7 @@ const en: SiteContent = {
       },
       {
         title: "What is collected",
-        body: "Only what you volunteer in the contact form: full name, business name, phone, email address, the type of service you are asking about and the content of your message, together with the time it was sent. You are under no legal obligation to provide any of it and doing so is entirely voluntary, but without a name and a phone number there is no way to get back to you. The site collects nothing else about you and buys no data from anyone.",
+        body: "Only what you volunteer in the contact form: full name, business name, phone, email address, the type of service you are asking about and the content of your message, together with the time it was sent. You are under no legal obligation to provide any of it and doing so is entirely voluntary, but without a name and a phone number there is no way to get back to you. Technical usage measurement on public pages runs only with consent, as described in the cookies section. We buy no data from anyone.",
       },
       {
         title: "What it is used for",
@@ -1089,7 +1089,7 @@ const en: SiteContent = {
       },
       {
         title: "Cookies and tracking",
-        body: "The site sets no tracking cookies, runs no third-party analytics and shares nothing with advertising or social networks. The server keeps basic technical access records, such as IP address and request time, for security and operations only.",
+        body: "Google Analytics 4 runs only on public pages after explicit consent. It may use cookie identifiers and browser, device and visit data processed by Google. We do not send form contents, information entered by visitors, URL parameters, personal links or management content. We do not enable personalized advertising. You can decline or withdraw consent through Privacy settings without affecting your use of the site. The server keeps basic technical access records, such as IP address and request time, for security and operations only.",
       },
       {
         title: "How long it is kept",
