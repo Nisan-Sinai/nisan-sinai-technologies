@@ -1,5 +1,28 @@
 import { contact, getContent } from "./content";
 import { locales, localePath, type Locale } from "./i18n";
+import type { BlogPost } from "./blog";
+
+/** Article facts come from the same published record rendered on the page. */
+export function buildArticleStructuredData(locale: Locale, siteUrl: string, post: BlogPost) {
+  const t = getContent(locale);
+  const url = new URL(localePath(locale, `/blog/${post.slug}`), siteUrl).toString();
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "@id": `${url}#article`,
+    url,
+    mainEntityOfPage: url,
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.date,
+    inLanguage: locale,
+    author: {
+      "@type": "Person",
+      name: t.brand.name,
+      url: "https://www.linkedin.com/in/nisansinai",
+    },
+  };
+}
 
 type Offer = {
   "@type": "Offer";

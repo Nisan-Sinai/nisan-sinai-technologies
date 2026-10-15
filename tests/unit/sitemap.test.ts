@@ -81,12 +81,11 @@ describe("sitemap.xml", () => {
     expect(priorityOf("https://example.com/accessibility")).toBe(0.3);
   });
 
-  it("dates every entry", async () => {
+  it("omits modification dates until they come from actual content changes", async () => {
     const sitemap = await load({ NEXT_PUBLIC_SITE_URL: "https://example.com" });
 
     for (const entry of sitemap()) {
-      expect(entry.lastModified).toBeInstanceOf(Date);
-      expect(Number.isNaN(Number(entry.lastModified))).toBe(false);
+      expect(entry.lastModified).toBeUndefined();
     }
   });
 

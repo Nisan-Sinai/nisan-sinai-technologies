@@ -5,6 +5,8 @@ import SiteFooter from "./site-footer";
 import { getContent } from "@/lib/content";
 import { formatPostDate, getPost } from "@/lib/blog";
 import { forwardArrow, localePath, type Locale } from "@/lib/i18n";
+import { buildArticleStructuredData } from "@/lib/structured-data";
+import { resolveSiteUrl } from "@/lib/site-url";
 
 const ARTICLE_CONTEXT: Record<Locale, string> = {
   he: "הדוגמאות במדריך נועדו לעזור לכם לשאול שאלות מדויקות יותר ולהשוות חלופות לפי הצורך העסקי, העלות והתחזוקה לאורך זמן.",
@@ -66,6 +68,13 @@ export default function BlogPost({
       </main>
 
       <SiteFooter locale={locale} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(buildArticleStructuredData(locale, resolveSiteUrl(), post))
+            .replace(/</g, "\\u003c"),
+        }}
+      />
     </>
   );
 }
