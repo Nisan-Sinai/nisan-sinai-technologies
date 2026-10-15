@@ -5,6 +5,8 @@ import { getContent } from "@/lib/content";
 import { directionOf, localePath, type Locale } from "@/lib/i18n";
 import { resolveSiteUrl } from "@/lib/site-url";
 import { AccessibilityMenu } from "./accessibility-menu";
+import { AnalyticsConsent } from "./analytics-consent";
+import { analyticsConfig } from "@/lib/analytics-config";
 import "./globals.css";
 
 export const siteUrl = new URL(resolveSiteUrl());
@@ -121,6 +123,7 @@ export function SiteShell({
       <body className={GeistSans.className}>
         {children}
         <AccessibilityMenu locale={locale} />
+        <AnalyticsConsent locale={locale} config={analyticsConfig} />
         {/* Keep the page-specific graph first in document order. Existing crawler QA
             intentionally validates that richer homepage graph, while this shared
             identity still gives secondary pages a WebSite entity. */}

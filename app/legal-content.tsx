@@ -69,6 +69,7 @@ export default function LegalContent({
               ) : null}
             </section>
           ))}
+          {document === "privacy" ? <p><a href="https://policies.google.com/technologies/partner-sites" rel="noreferrer">{locale === "he" ? "כיצד Google משתמשת במידע מאתרים המשתמשים בשירותיה" : "How Google uses information from sites that use its services"}</a></p> : null}
         </article>
       </main>
 
