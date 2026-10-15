@@ -343,6 +343,15 @@ test("the share cards and installable app icons are served", async ({ request })
   );
 });
 
+
+test("the browser and search favicon use the NS brand", async ({ page, request }) => {
+  await page.goto("/");
+  await expect(page.locator('link[rel="icon"]')).toHaveAttribute("href", "/app-icon-192.png");
+  const legacySvg = await (await request.get("/favicon.svg")).text();
+  expect(legacySvg).toContain("data:image/png;base64,");
+  expect(legacySvg).not.toContain("#68C4FF");
+});
+
 test("robots.txt invites crawlers and names the sitemap", async ({ request }) => {
   const robots = await (await request.get("/robots.txt")).text();
   expect(robots).toContain("Allow: /");
