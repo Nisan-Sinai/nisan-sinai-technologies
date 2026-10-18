@@ -49,6 +49,7 @@ export type BusinessNode = {
 
 export type WebSiteNode = {
   "@type": "WebSite";
+  alternateName: string[];
   "@id": string;
   url: string;
   name: string;
@@ -121,7 +122,11 @@ export function buildStructuredData(
       {
         "@type": "WebSite",
         "@id": absolute("/#website"),
-        url: absolute(localePath(locale, "/")),
+        alternateName: [
+          locale === "he" ? "Nisan Sinai Technologies" : "ניסן סיני טכנולוגיות",
+          "NS.",
+        ],
+        url: absolute("/"),
         name: `${t.brand.name} ${t.brand.suffix}`,
         inLanguage: locale,
         publisher: { "@id": businessId },

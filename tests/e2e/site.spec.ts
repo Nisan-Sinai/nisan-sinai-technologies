@@ -327,6 +327,7 @@ test("the share cards and installable app icons are served", async ({ request })
     "/app-icon-maskable-512.png",
     "/apple-touch-icon.png",
     "/favicon.svg",
+    "/favicon.ico",
   ]) {
     const response = await request.get(asset);
     expect(response.status(), asset).toBe(200);
@@ -347,6 +348,10 @@ test("the share cards and installable app icons are served", async ({ request })
 test("the browser and search favicon use the NS brand", async ({ page, request }) => {
   await page.goto("/");
   await expect(page.locator('link[rel="icon"]')).toHaveAttribute("href", "/app-icon-192.png");
+  await expect(page.locator('link[rel="shortcut icon"]')).toHaveAttribute("href", "/favicon.ico");
+  const ico = await request.get("/favicon.ico");
+  expect(ico.ok()).toBe(true);
+  expect((await ico.body()).subarray(0, 4)).toEqual(Buffer.from([0, 0, 1, 0]));
   const legacySvg = await (await request.get("/favicon.svg")).text();
   expect(legacySvg).toContain("data:image/png;base64,");
   expect(legacySvg).not.toContain("#68C4FF");
