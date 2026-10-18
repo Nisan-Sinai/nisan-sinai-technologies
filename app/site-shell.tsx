@@ -86,7 +86,7 @@ export function buildMetadata(locale: Locale, path = "/"): Metadata {
       // A single stable PNG favicon for browsers and Google Search.
       // Larger icons are provided separately by the installable PWA manifest.
       icon: [{ url: "/app-icon-192.png", sizes: "192x192", type: "image/png" }],
-      shortcut: "/app-icon-192.png",
+      shortcut: "/favicon.ico",
       apple: "/apple-touch-icon.png",
     },
   };
@@ -109,7 +109,11 @@ export function SiteShell({
     "@type": "WebSite",
     "@id": new URL("/#website", siteUrl).toString(),
     name: `${t.brand.name} ${t.brand.suffix}`,
-    url: new URL(localePath(locale, "/"), siteUrl).toString(),
+    alternateName: [
+      locale === "he" ? "Nisan Sinai Technologies" : "ניסן סיני טכנולוגיות",
+      "NS.",
+    ],
+    url: new URL("/", siteUrl).toString(),
     inLanguage: locale === "he" ? "he-IL" : "en",
   };
 

@@ -17,6 +17,17 @@ describe("buildStructuredData", () => {
     }
   });
 
+  it("uses one root website identity with both brand names across locales", () => {
+    for (const locale of locales) {
+      const site = buildStructuredData(locale, SITE)["@graph"][1];
+      expect(site.url).toBe(`${SITE}/`);
+      expect(site["@id"]).toBe(`${SITE}/#website`);
+      expect([site.name, ...site.alternateName]).toEqual(
+        expect.arrayContaining(["ניסן סיני טכנולוגיות", "Nisan Sinai Technologies", "NS."]),
+      );
+    }
+  });
+
   it("publishes every answer the page shows, and no others", () => {
     // A rich result that answers something the page does not is the kind of
     // mismatch search engines penalise, so the two lists are built from one
