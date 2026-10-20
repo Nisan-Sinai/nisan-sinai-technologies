@@ -1,0 +1,62 @@
+name: Centrally managed CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+
+permissions:
+  contents: read
+  statuses: read
+
+concurrency:
+  group: managed-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  core:
+    uses: Nisan-Sinai/github-workflows/.github/workflows/node-ci.yml@f37a3af29cf6a97bc12d7d17e8781db2a9968729
+    with:
+      node-version: '24'
+      package-manager: npm
+      install-command: npm ci
+      lint-command: npm run lint
+      typecheck-command: npm run type-check
+      test-command: npm run test:coverage
+      build-command: npm run build:vercel && npm run build:sites && npm run test:rendered
+
+  security:
+    uses: Nisan-Sinai/github-workflows/.github/workflows/security-ci.yml@f37a3af29cf6a97bc12d7d17e8781db2a9968729
+    with:
+      ecosystem: node
+      package-manager: npm
+      audit-command: npm run audit:prod
+
+  browser:
+    uses: Nisan-Sinai/github-workflows/.github/workflows/browser-qa.yml@f37a3af29cf6a97bc12d7d17e8781db2a9968729
+    with:
+      node-version: '24'
+      package-manager: npm
+      install-command: npm ci
+      browser-install-command: npx playwright install --with-deps chromium
+      build-command: npm run build:vercel
+      e2e-command: npm run test:e2e
+
+  supabase-cloud:
+    if: github.actor != 'dependabot[bot]'
+    uses: Nisan-Sinai/github-workflows/.github/workflows/supabase-cloud-qa.yml@f37a3af29cf6a97bc12d7d17e8781db2a9968729
+    with:
+      project-ref: wgkzxhonjnjqxoofipmm
+      node-version: '24'
+      package-manager: npm
+      install-command: npm ci
+      verify-command: npm run check:data-api
+    secrets:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+
+  vercel:
+    if: github.event_name == 'pull_request'
+    uses: Nisan-Sinai/github-workflows/.github/workflows/vercel-gate.yml@f37a3af29cf6a97bc12d7d17e8781db2a9968729
+    with:
+      contexts-json: '["Vercel"]'
