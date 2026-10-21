@@ -73,7 +73,7 @@ export default function SitePage({ locale }: { locale: Locale }) {
       </a>
 
       <header className="site-header">
-        <a className="brand" href="#top" aria-label={t.brand.homeAria}>
+        <a className="brand" href="#top" title={t.brand.homeAria}>
           <Brand locale={locale} />
         </a>
 

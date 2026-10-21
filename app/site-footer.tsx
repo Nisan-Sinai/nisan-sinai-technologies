@@ -15,7 +15,7 @@ export default function SiteFooter({ locale }: { locale: Locale }) {
       <a
         className="brand footer-brand"
         href={localePath(locale, "/")}
-        aria-label={t.brand.topAria}
+        title={t.brand.topAria}
       >
         <Brand locale={locale} />
       </a>

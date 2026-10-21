@@ -7,7 +7,7 @@ export default function Brand({ locale }: { locale: Locale }) {
 
   return (
     <>
-      <span className="brand-mark" aria-hidden="true">
+      <span className="brand-mark">
         NS<span>.</span>
       </span>
       <span className="brand-copy">
