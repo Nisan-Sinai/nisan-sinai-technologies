@@ -15,25 +15,25 @@ concurrency:
 
 jobs:
   core:
-    uses: Nisan-Sinai/github-workflows/.github/workflows/node-ci.yml@f37a3af29cf6a97bc12d7d17e8781db2a9968729
+    uses: Nisan-Sinai/github-workflows/.github/workflows/node-ci.yml@4785c2f8c13f9b81fc3507069e94aa2f9c22d752 # main
     with:
       node-version: '24'
       package-manager: npm
       install-command: npm ci
-      lint-command: npm run lint
+      lint-command: npm run scan:secrets && npm run lint
       typecheck-command: npm run type-check
-      test-command: npm run test:coverage
+      test-command: npm run test:audit-policy && npm run test:coverage
       build-command: npm run build:vercel && npm run build:sites && npm run test:rendered
 
   security:
-    uses: Nisan-Sinai/github-workflows/.github/workflows/security-ci.yml@f37a3af29cf6a97bc12d7d17e8781db2a9968729
+    uses: Nisan-Sinai/github-workflows/.github/workflows/security-ci.yml@4785c2f8c13f9b81fc3507069e94aa2f9c22d752 # main
     with:
       ecosystem: node
       package-manager: npm
-      audit-command: npm run audit:prod
+      audit-command: npm run audit:ci
 
   browser:
-    uses: Nisan-Sinai/github-workflows/.github/workflows/browser-qa.yml@f37a3af29cf6a97bc12d7d17e8781db2a9968729
+    uses: Nisan-Sinai/github-workflows/.github/workflows/browser-qa.yml@4785c2f8c13f9b81fc3507069e94aa2f9c22d752 # main
     with:
       node-version: '24'
       package-manager: npm
@@ -44,7 +44,7 @@ jobs:
 
   supabase-cloud:
     if: github.actor != 'dependabot[bot]'
-    uses: Nisan-Sinai/github-workflows/.github/workflows/supabase-cloud-qa.yml@f37a3af29cf6a97bc12d7d17e8781db2a9968729
+    uses: Nisan-Sinai/github-workflows/.github/workflows/supabase-cloud-qa.yml@4785c2f8c13f9b81fc3507069e94aa2f9c22d752 # main
     with:
       project-ref: wgkzxhonjnjqxoofipmm
       node-version: '24'
@@ -57,6 +57,6 @@ jobs:
 
   vercel:
     if: github.event_name == 'pull_request'
-    uses: Nisan-Sinai/github-workflows/.github/workflows/vercel-gate.yml@f37a3af29cf6a97bc12d7d17e8781db2a9968729
+    uses: Nisan-Sinai/github-workflows/.github/workflows/vercel-gate.yml@4785c2f8c13f9b81fc3507069e94aa2f9c22d752 # main
     with:
       contexts-json: '["Vercel"]'
