@@ -41,9 +41,9 @@
     "react-dom": "19.3.1"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "1.63.2",
-    "@cloudflare/workers-types": "5.20261013.1",
-    "@playwright/test": "1.64.0",
+    "@cloudflare/vite-plugin": "1.64.0",
+    "@cloudflare/workers-types": "5.20261014.1",
+    "@playwright/test": "1.64.1",
     "@tailwindcss/postcss": "4.3.3",
     "@types/node": "26.6.5",
     "@types/react": "19.3.0",
@@ -54,14 +54,14 @@
     "axe-core": "4.14.0",
     "drizzle-kit": "0.31.11",
     "eslint": "9.39.5",
-    "eslint-config-next": "16.4.0",
-    "react-server-dom-webpack": "19.3.0",
+    "eslint-config-next": "16.4.1",
+    "react-server-dom-webpack": "19.3.1",
     "tailwindcss": "4.3.3",
     "typescript": "5.9.3",
     "vinext": "0.2.1",
     "vite": "8.3.4",
     "vitest": "4.1.12",
-    "wrangler": "4.150.0"
+    "wrangler": "4.151.0"
   },
   "overrides": {
     "@esbuild-kit/core-utils": {
