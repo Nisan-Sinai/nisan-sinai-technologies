@@ -227,7 +227,7 @@ const he: SiteContent = {
     name: "ניסן סיני",
     suffix: "טכנולוגיות",
     homeAria: "ניסן סיני טכנולוגיות - דף הבית",
-    topAria: "חזרה לראש העמוד",
+    topAria: "ניסן סיני טכנולוגיות - חזרה לראש העמוד",
   },
   skipLink: "דילוג לתוכן המרכזי",
   newTabHint: "(נפתח בכרטיסייה חדשה)",
@@ -245,7 +245,7 @@ const he: SiteContent = {
     menu: "תפריט",
     menuAria: "פתיחת תפריט הניווט",
   },
-  languageSwitch: { label: "EN", toName: "English", aria: "Switch to English" },
+  languageSwitch: { label: "EN", toName: "English", aria: "EN - Switch to English" },
   hero: {
     eyebrow: "פיתוח דיגיטלי מקצה לקצה לעסקים",
     titleLead: "אני בונה את",
@@ -262,7 +262,7 @@ const he: SiteContent = {
     coreStatus: "מערכת פעילה",
     signalLabel: "ביצועים",
     scrollCue: "גלו עוד",
-    scrollCueAria: "המשך לשירותים",
+    scrollCueAria: "גלו עוד - המשך לשירותים",
     capabilities: [
       { label: "אתרים", value: "Web" },
       { label: "מערכות ניהול", value: "CRM" },
@@ -709,7 +709,7 @@ const en: SiteContent = {
     name: "Nisan Sinai",
     suffix: "Technologies",
     homeAria: "Nisan Sinai Technologies - home",
-    topAria: "Back to top",
+    topAria: "Nisan Sinai Technologies - back to top",
   },
   skipLink: "Skip to main content",
   newTabHint: "(opens in a new tab)",
@@ -727,7 +727,7 @@ const en: SiteContent = {
     menu: "Menu",
     menuAria: "Open the navigation menu",
   },
-  languageSwitch: { label: "עב", toName: "עברית", aria: "מעבר לעברית" },
+  languageSwitch: { label: "עב", toName: "עברית", aria: "עב - מעבר לעברית" },
   hero: {
     eyebrow: "End-to-end digital development for business",
     titleLead: "I build the",
@@ -744,7 +744,7 @@ const en: SiteContent = {
     coreStatus: "System live",
     signalLabel: "Performance",
     scrollCue: "Explore",
-    scrollCueAria: "Continue to services",
+    scrollCueAria: "Explore - continue to services",
     capabilities: [
       { label: "Websites", value: "Web" },
       { label: "Management", value: "CRM" },

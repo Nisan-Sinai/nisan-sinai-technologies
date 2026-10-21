@@ -11,7 +11,7 @@ export default function Brand({ locale }: { locale: Locale }) {
         NS<span>.</span>
       </span>
       <span className="brand-copy">
-        <strong>{brand.name}</strong>
+        <strong>{brand.name}</strong>{" "}
         <small>{brand.suffix}</small>
       </span>
     </>
