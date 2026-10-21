@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   core:
-    uses: Nisan-Sinai/github-workflows/.github/workflows/node-ci.yml@4785c2f8c13f9b81fc3507069e94aa2f9c22d752 # main
+    uses: Nisan-Sinai/github-workflows/.github/workflows/node-ci.yml@c1c2dd6f344e7bb9626d4a57885bfd0d277cd0eb # main
     with:
       node-version: '24'
       package-manager: npm
@@ -26,14 +26,14 @@ jobs:
       build-command: npm run build:vercel && npm run build:sites && npm run test:rendered
 
   security:
-    uses: Nisan-Sinai/github-workflows/.github/workflows/security-ci.yml@4785c2f8c13f9b81fc3507069e94aa2f9c22d752 # main
+    uses: Nisan-Sinai/github-workflows/.github/workflows/security-ci.yml@c1c2dd6f344e7bb9626d4a57885bfd0d277cd0eb # main
     with:
       ecosystem: node
       package-manager: npm
       audit-command: npm run audit:ci
 
   browser:
-    uses: Nisan-Sinai/github-workflows/.github/workflows/browser-qa.yml@4785c2f8c13f9b81fc3507069e94aa2f9c22d752 # main
+    uses: Nisan-Sinai/github-workflows/.github/workflows/browser-qa.yml@c1c2dd6f344e7bb9626d4a57885bfd0d277cd0eb # main
     with:
       node-version: '24'
       package-manager: npm
@@ -44,7 +44,7 @@ jobs:
 
   supabase-cloud:
     if: github.actor != 'dependabot[bot]'
-    uses: Nisan-Sinai/github-workflows/.github/workflows/supabase-cloud-qa.yml@4785c2f8c13f9b81fc3507069e94aa2f9c22d752 # main
+    uses: Nisan-Sinai/github-workflows/.github/workflows/supabase-cloud-qa.yml@c1c2dd6f344e7bb9626d4a57885bfd0d277cd0eb # main
     with:
       project-ref: wgkzxhonjnjqxoofipmm
       node-version: '24'
@@ -57,6 +57,6 @@ jobs:
 
   vercel:
     if: github.event_name == 'pull_request'
-    uses: Nisan-Sinai/github-workflows/.github/workflows/vercel-gate.yml@4785c2f8c13f9b81fc3507069e94aa2f9c22d752 # main
+    uses: Nisan-Sinai/github-workflows/.github/workflows/vercel-gate.yml@c1c2dd6f344e7bb9626d4a57885bfd0d277cd0eb # main
     with:
       contexts-json: '["Vercel"]'
