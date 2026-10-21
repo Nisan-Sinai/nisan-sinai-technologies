@@ -66,6 +66,8 @@
       "esbuild": "0.25.12"
     },
     "baseline-browser-mapping": "2.11.28",
+    "browserslist": "4.29.3",
+    "fast-uri": "3.1.8",
     "image-size": "2.0.4",
     "sharp": "0.35.5",
     "source-map-js": "1.2.2"
