@@ -1,4 +1,4 @@
-name: Smoke
+name: Centrally managed deployment smoke
 
 # CI proves the code builds. This proves the deployment users actually reach is
 # serving, and that the credentials it runs on are still accepted.
@@ -17,21 +17,23 @@ permissions:
 
 jobs:
   deployment:
-    name: Deployed site · Data API
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
+    uses: Nisan-Sinai/github-workflows/.github/workflows/deployment-smoke.yml@4785c2f8c13f9b81fc3507069e94aa2f9c22d752 # main
+    with:
+      node-version: '24'
+      deployment-url: ${{ inputs.site_url || vars.SITE_URL || 'https://nisan-sinai-technologies.vercel.app' }}
+      verify-command: npm run smoke
 
-      - name: Check the deployed site
-        env:
-          SITE_URL: ${{ inputs.site_url || vars.SITE_URL || 'https://nisan-sinai-technologies.vercel.app' }}
-        run: npm run smoke
-
-      # Optional: add SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY as repository
-      # secrets to catch a rotated or mistyped key before the form starts
-      # dropping leads. Without them this step reports a skip and passes.
-      - name: Check the Supabase Data API key
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
-        run: npm run check:data-api
+  # Required target/key validation runs centrally before the repository script;
+  # missing credentials can no longer silently skip the Data API check.
+  data-api:
+    needs: deployment
+    uses: Nisan-Sinai/github-workflows/.github/workflows/supabase-cloud-qa.yml@4785c2f8c13f9b81fc3507069e94aa2f9c22d752 # main
+    with:
+      project-ref: wgkzxhonjnjqxoofipmm
+      node-version: '24'
+      package-manager: npm
+      install-command: npm ci
+      verify-command: npm run check:data-api
+    secrets:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}

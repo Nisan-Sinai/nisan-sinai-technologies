@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   migrations:
-    uses: Nisan-Sinai/github-workflows/.github/workflows/postgres-contract.yml@d51a5eff9e53db9ad1cf6dfc06e9d8e24e09bb03 # main
+    uses: Nisan-Sinai/github-workflows/.github/workflows/postgres-contract.yml@4785c2f8c13f9b81fc3507069e94aa2f9c22d752 # main
     with:
       node-version: '24'
       verify-command: npm run test:migrations
