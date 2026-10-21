@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   deployment:
-    uses: Nisan-Sinai/github-workflows/.github/workflows/deployment-smoke.yml@4785c2f8c13f9b81fc3507069e94aa2f9c22d752 # main
+    uses: Nisan-Sinai/github-workflows/.github/workflows/deployment-smoke.yml@c1c2dd6f344e7bb9626d4a57885bfd0d277cd0eb # main
     with:
       node-version: '24'
       deployment-url: ${{ inputs.site_url || vars.SITE_URL || 'https://nisan-sinai-technologies.vercel.app' }}
@@ -27,7 +27,7 @@ jobs:
   # missing credentials can no longer silently skip the Data API check.
   data-api:
     needs: deployment
-    uses: Nisan-Sinai/github-workflows/.github/workflows/supabase-cloud-qa.yml@4785c2f8c13f9b81fc3507069e94aa2f9c22d752 # main
+    uses: Nisan-Sinai/github-workflows/.github/workflows/supabase-cloud-qa.yml@c1c2dd6f344e7bb9626d4a57885bfd0d277cd0eb # main
     with:
       project-ref: wgkzxhonjnjqxoofipmm
       node-version: '24'
