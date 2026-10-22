@@ -166,11 +166,20 @@ describe("site content", () => {
       const pricing = getContent(locale).pricing;
       expect(pricing.tiers).toHaveLength(4);
       expect(pricing.lead.trim()).not.toBe("");
-      expect(pricing.estimateLabel.trim()).not.toBe("");
+      expect(pricing.stepsTitle.trim()).not.toBe("");
+      expect(pricing.ctaLabel.trim()).not.toBe("");
+      expect(pricing.steps).toHaveLength(3);
       expect(pricing.ongoing.trim()).not.toBe("");
       expect(pricing.note.trim()).not.toBe("");
+      for (const step of pricing.steps) {
+        expect(step.title.trim()).not.toBe("");
+        expect(step.detail.trim()).not.toBe("");
+      }
+      const benefits = pricing.tiers.map((tier) => tier.benefit.trim());
+      expect(new Set(benefits).size).toBe(4);
       for (const tier of pricing.tiers) {
         expect(tier.name.trim()).not.toBe("");
+        expect(tier.benefit.trim()).not.toBe("");
         expect(tier.note.trim()).not.toBe("");
       }
       const publicPricingCopy = collectStrings(pricing).join(" ");
