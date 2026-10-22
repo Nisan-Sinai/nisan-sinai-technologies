@@ -721,7 +721,7 @@ test("the wide layout keeps its nav and hides the button", async ({
     "שירותים",
     "פרויקטים",
     "איך זה עובד",
-    "מחירים",
+    "תמחור מותאם",
     "שאלות נפוצות",
     "בלוג",
     "אודות",
