@@ -522,20 +522,19 @@ test("marks Latin words inside the Hebrew page with their own language", async (
   expect(unmarked).toEqual([]);
 });
 
-test("answers the price question in both languages", async ({ page }) => {
-  // The one thing every visitor wants to know before they fill in a form.
-  for (const [path, heading] of [
-    ["/", "כמה זה עולה?"],
-    ["/en", "What does it cost?"],
+test("offers tailored pricing without publishing amounts in both languages", async ({ page }) => {
+  for (const [path, heading, quoteLabel] of [
+    ["/", "תמחור שמותאם לעסק שלכם", "הצעת מחיר לאחר אפיון"],
+    ["/en", "Pricing tailored to your business", "Personal quote after discovery"],
   ] as const) {
     await page.goto(path);
     await expect(page.getByRole("heading", { level: 2, name: heading })).toBeVisible();
     const cards = page.locator(".pricing-card");
     await expect(cards, path).toHaveCount(4);
     for (let index = 0; index < 4; index += 1) {
-      await expect(cards.nth(index).locator(".pricing-figure strong")).toContainText("₪");
+      await expect(cards.nth(index).locator(".pricing-figure strong")).toHaveText(quoteLabel);
     }
-    await expect(page.locator(".pricing-footnote")).toContainText("₪");
+    await expect(page.locator(".pricing-section")).not.toContainText("₪");
   }
 });
 
