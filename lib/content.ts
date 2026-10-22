@@ -19,7 +19,8 @@ export type Project = {
   previewLabel: string;
 };
 export type AboutValue = { number: string; title: string; text: string };
-export type PriceTier = { name: string; note: string };
+export type PriceTier = { name: string; benefit: string; note: string };
+export type PricingStep = { title: string; detail: string };
 export type ServiceOption = { value: string; label: string };
 /** A quote from a real client. Nothing here is written on their behalf. */
 export type Testimonial = { quote: string; name: string; role: string };
@@ -153,8 +154,10 @@ export type SiteContent = {
     kicker: string;
     title: string;
     lead: string;
-    estimateLabel: string;
     tiers: [PriceTier, PriceTier, PriceTier, PriceTier];
+    stepsTitle: string;
+    steps: [PricingStep, PricingStep, PricingStep];
+    ctaLabel: string;
     ongoing: string;
     note: string;
   };
@@ -475,28 +478,38 @@ const he: SiteContent = {
   },
   pricing: {
     kicker: "השקעה חכמה",
-    title: "תמחור שמותאם לעסק שלכם",
-    lead: "כל עסק הוא ייחודי, וכך גם הפתרון שהוא צריך. עלות הפרויקט נקבעת לאחר שיחת אפיון והבנת הצרכים, המטרות, מורכבות הפיתוח, האינטגרציות והיקף העבודה. לאחר האפיון תקבלו הצעת מחיר אישית, ברורה ושקופה, המותאמת לצרכים ולתקציב שלכם.",
-    estimateLabel: "הצעת מחיר לאחר אפיון",
+    title: "פתרון שמתאים לעסק. הצעה שמתאימה לפרויקט.",
+    lead: "אין שני עסקים זהים, ולכן אין מחירון אחיד. ההצעה נבנית סביב המטרות שלכם, היקף העבודה והמורכבות הטכנולוגית — בשקיפות מלאה, לאחר שיחת אפיון קצרה.",
     tiers: [
       {
         name: "אתר תדמית",
-        note: "עיצוב מותאם, שתי שפות, נגישות לפי ת״י 5568 ומוכנות לגוגל.",
+        benefit: "נוכחות דיגיטלית שבונה אמון.",
+        note: "עיצוב מותאם לעסק, חוויית משתמש מדויקת, נגישות ומוכנות למנועי חיפוש.",
       },
       {
         name: "חנות או מערכת הזמנות",
-        note: "קטלוג, סל, תשלומים, אזור לקוח וממשק ניהול.",
+        benefit: "מההתעניינות ועד להזמנה — בקלות.",
+        note: "קטלוג, תהליך רכישה נוח, תשלומים וממשק ניהול שמתאים לצוות.",
       },
       {
         name: "מערכת ניהול בהתאמה אישית",
-        note: "CRM או ERP שנבנה סביב התהליך שלכם, לא להפך.",
+        benefit: "המערכת מתאימה את עצמה לעסק.",
+        note: "CRM, ERP וכלי ניהול שנבנים סביב תהליכי העבודה האמיתיים שלכם.",
       },
       {
         name: "אוטומציה ואינטגרציה",
-        note: "חיבור בין מערכות קיימות וביטול עבודה ידנית חוזרת.",
+        benefit: "פחות פעולות ידניות. יותר זמן לצמוח.",
+        note: "חיבור בין מערכות, צמצום פעולות חוזרות ושיפור זרימת המידע.",
       },
     ],
-    ongoing: "גם שינויים, שיפורים ותחזוקה מתומחרים בהתאמה לצורך ולהיקף השירות.",
+    stepsTitle: "כך מקבלים הצעה",
+    steps: [
+      { title: "מדברים", detail: "שיחת היכרות קצרה" },
+      { title: "מאפיינים", detail: "מגדירים צרכים והיקף" },
+      { title: "מקבלים הצעה", detail: "תמחור אישי וברור" },
+    ],
+    ctaLabel: "בואו נדבר על הפרויקט שלכם",
+    ongoing: "גם שינויים, שיפורים ותחזוקה מתומחרים בהתאם לאופי השירות ולהיקף העבודה.",
     note: "שיחת הייעוץ והאפיון הראשונית ללא עלות וללא התחייבות.",
   },
   testimonials: {
@@ -952,29 +965,39 @@ const en: SiteContent = {
   },
   pricing: {
     kicker: "Smart investment",
-    title: "Pricing tailored to your business",
-    lead: "Every business is unique, and so is the solution it needs. Project pricing is determined after an initial discovery call, based on your goals, requirements, development complexity, integrations and scope. You will then receive a clear, transparent proposal tailored to your needs and budget.",
-    estimateLabel: "Personal quote after discovery",
+    title: "A solution for your business. A quote for your project.",
+    lead: "No two businesses are identical, so there is no one-size-fits-all price list. Your quote reflects your goals, project scope and technical complexity — with clear, transparent pricing after a short discovery call.",
     tiers: [
       {
         name: "Marketing website",
-        note: "Custom design, two languages, accessibility to IS 5568, ready for search.",
+        benefit: "A digital presence that builds trust.",
+        note: "A tailored design, intuitive experience, accessibility and search-ready structure.",
       },
       {
         name: "Store or ordering system",
-        note: "Catalogue, cart, payments, customer area and an admin interface.",
+        benefit: "From discovery to checkout, made easy.",
+        note: "Catalogue, smooth purchase flow, payments and practical management tools.",
       },
       {
         name: "Custom management system",
-        note: "A CRM or ERP built around your process rather than the other way round.",
+        benefit: "Software that fits how you work.",
+        note: "CRM, ERP and internal tools built around your real business processes.",
       },
       {
         name: "Automation and integration",
-        note: "Connecting the systems you already run, and retiring repeated manual work.",
+        benefit: "Less repetitive work. More room to grow.",
+        note: "Connecting systems, reducing manual tasks and improving data flow.",
       },
     ],
-    ongoing: "Changes, enhancements and maintenance are also quoted according to your needs and service scope.",
-    note: "The initial consultation and discovery call are free, with no obligation.",
+    stepsTitle: "How to get a quote",
+    steps: [
+      { title: "Let's talk", detail: "A short introduction" },
+      { title: "Define the scope", detail: "Goals, needs and complexity" },
+      { title: "Get your quote", detail: "A clear, tailored proposal" },
+    ],
+    ctaLabel: "Let's talk about your project",
+    ongoing: "Changes, improvements and maintenance are also quoted based on service type and scope.",
+    note: "Your first consultation and discovery call are free, with no obligation.",
   },
   testimonials: {
     kicker: "Clients",
