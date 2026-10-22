@@ -356,21 +356,43 @@ export default function SitePage({ locale }: { locale: Locale }) {
         </div>
 
         <div className="pricing-grid">
-          {t.pricing.tiers.map((tier) => (
+          {t.pricing.tiers.map((tier, index) => (
             <article className="pricing-card" key={tier.name}>
+              <span className="pricing-card-number" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </span>
               <h3>{tier.name}</h3>
-              <p className="pricing-figure">
-                <span>{t.pricing.fromLabel}</span>
-                <strong>{tier.from}</strong>
-              </p>
+              <p className="pricing-benefit">{tier.benefit}</p>
               <p className="pricing-note">{tier.note}</p>
             </article>
           ))}
         </div>
 
-        <p className="pricing-footnote">
-          {t.pricing.hourly} {t.pricing.note}
-        </p>
+        <div className="pricing-next">
+          <div className="pricing-next-steps">
+            <h3>{t.pricing.stepsTitle}</h3>
+            <ol className="pricing-steps">
+              {t.pricing.steps.map((step, index) => (
+                <li key={step.title}>
+                  <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                  <div>
+                    <strong>{step.title}</strong>
+                    <small>{step.detail}</small>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+          <div className="pricing-action">
+            <p>{t.pricing.note}</p>
+            <a className="button button-primary pricing-cta" href="#contact">
+              {t.pricing.ctaLabel}
+              <span aria-hidden="true">{arrow}</span>
+            </a>
+          </div>
+        </div>
+
+        <p className="pricing-footnote">{t.pricing.ongoing}</p>
       </section>
 
       <section

@@ -19,7 +19,8 @@ export type Project = {
   previewLabel: string;
 };
 export type AboutValue = { number: string; title: string; text: string };
-export type PriceTier = { name: string; from: string; note: string };
+export type PriceTier = { name: string; benefit: string; note: string };
+export type PricingStep = { title: string; detail: string };
 export type ServiceOption = { value: string; label: string };
 /** A quote from a real client. Nothing here is written on their behalf. */
 export type Testimonial = { quote: string; name: string; role: string };
@@ -153,9 +154,11 @@ export type SiteContent = {
     kicker: string;
     title: string;
     lead: string;
-    fromLabel: string;
     tiers: [PriceTier, PriceTier, PriceTier, PriceTier];
-    hourly: string;
+    stepsTitle: string;
+    steps: [PricingStep, PricingStep, PricingStep];
+    ctaLabel: string;
+    ongoing: string;
     note: string;
   };
   testimonials: {
@@ -236,7 +239,7 @@ const he: SiteContent = {
     services: "שירותים",
     projects: "פרויקטים",
     process: "איך זה עובד",
-    pricing: "מחירים",
+    pricing: "תמחור מותאם",
     testimonials: "המלצות",
     blog: "בלוג",
     faq: "שאלות נפוצות",
@@ -474,35 +477,40 @@ const he: SiteContent = {
     errorAfter: ".",
   },
   pricing: {
-    kicker: "השקעה",
-    title: "כמה זה עולה?",
-    lead: "כל פרויקט נסגר במחיר קבוע מראש, אחרי שיחת אפיון קצרה — בלי שעון פתוח ובלי הפתעות באמצע. המספרים כאן הם נקודת פתיחה אמיתית, לא כותרת שיווקית.",
-    fromLabel: "החל מ־",
+    kicker: "השקעה חכמה",
+    title: "פתרון שמתאים לעסק. הצעה שמתאימה לפרויקט.",
+    lead: "אין שני עסקים זהים, ולכן אין מחירון אחיד. ההצעה נבנית סביב המטרות שלכם, היקף העבודה והמורכבות הטכנולוגית — בשקיפות מלאה, לאחר שיחת אפיון קצרה.",
     tiers: [
       {
         name: "אתר תדמית",
-        from: "9,500 ₪",
-        note: "עיצוב מותאם, שתי שפות, נגישות לפי ת״י 5568 ומוכנות לגוגל.",
+        benefit: "נוכחות דיגיטלית שבונה אמון.",
+        note: "עיצוב מותאם לעסק, חוויית משתמש מדויקת, נגישות ומוכנות למנועי חיפוש.",
       },
       {
         name: "חנות או מערכת הזמנות",
-        from: "20,000 ₪",
-        note: "קטלוג, סל, תשלומים, אזור לקוח וממשק ניהול.",
+        benefit: "מההתעניינות ועד להזמנה — בקלות.",
+        note: "קטלוג, תהליך רכישה נוח, תשלומים וממשק ניהול שמתאים לצוות.",
       },
       {
         name: "מערכת ניהול בהתאמה אישית",
-        from: "35,000 ₪",
-        note: "CRM או ERP שנבנה סביב התהליך שלכם, לא להפך.",
+        benefit: "המערכת מתאימה את עצמה לעסק.",
+        note: "CRM, ERP וכלי ניהול שנבנים סביב תהליכי העבודה האמיתיים שלכם.",
       },
       {
         name: "אוטומציה ואינטגרציה",
-        from: "3,500 ₪",
-        note: "חיבור בין מערכות קיימות וביטול עבודה ידנית חוזרת.",
+        benefit: "פחות פעולות ידניות. יותר זמן לצמוח.",
+        note: "חיבור בין מערכות, צמצום פעולות חוזרות ושיפור זרימת המידע.",
       },
     ],
-    hourly:
-      "עבודות שוטפות ושינויים: 350 ₪ לשעה. אחסון, עדכונים ותחזוקה: מ־250 ₪ לחודש.",
-    note: "שיחת האפיון הראשונה היא ללא עלות וללא התחייבות.",
+    stepsTitle: "כך מקבלים הצעה",
+    steps: [
+      { title: "מדברים", detail: "שיחת היכרות קצרה" },
+      { title: "מאפיינים", detail: "מגדירים צרכים והיקף" },
+      { title: "מקבלים הצעה", detail: "תמחור אישי וברור" },
+    ],
+    ctaLabel: "בואו נדבר על הפרויקט שלכם",
+    ongoing: "גם שינויים, שיפורים ותחזוקה מתומחרים בהתאם לאופי השירות ולהיקף העבודה.",
+    note: "שיחת הייעוץ והאפיון הראשונית ללא עלות וללא התחייבות.",
   },
   testimonials: {
     kicker: "לקוחות",
@@ -518,7 +526,7 @@ const he: SiteContent = {
       {
         question: "כמה עולה פרויקט?",
         answer:
-          "המספרים בסקשן המחירים הם נקודת פתיחה אמיתית ולא כותרת שיווקית. המחיר הסופי נסגר כהצעה קבועה מראש אחרי שיחת אפיון קצרה, כך שאין שעון פתוח ואין הפתעות באמצע הדרך.",
+          "כל פרויקט מתומחר לאחר שיחת אפיון שבה נבין את היעדים, הפיצ׳רים, המורכבות והיקף העבודה. לאחר מכן תקבלו הצעת מחיר מסודרת ושקופה, ללא התחייבות בשיחה הראשונית.",
       },
       {
         question: "כמה זמן לוקח לבנות?",
@@ -543,7 +551,7 @@ const he: SiteContent = {
       {
         question: "מה קורה אחרי שהאתר עולה?",
         answer:
-          "אפשר לקחת חבילת תחזוקה שכוללת אחסון, עדכונים, גיבויים ומעקב, או לעבוד לפי שעות על שינויים נקודתיים. שתי האפשרויות מתומחרות בסקשן המחירים.",
+          "אפשר לבחור חבילת תחזוקה הכוללת אחסון, עדכונים, גיבויים ומעקב, או להזמין שינויים נקודתיים. המחיר מותאם לאופי השירות ולהיקף העבודה.",
       },
       {
         question: "למי שייך הקוד בסוף?",
@@ -718,7 +726,7 @@ const en: SiteContent = {
     services: "Services",
     projects: "Projects",
     process: "How it works",
-    pricing: "Pricing",
+    pricing: "Tailored pricing",
     testimonials: "Clients",
     blog: "Blog",
     faq: "FAQ",
@@ -956,35 +964,40 @@ const en: SiteContent = {
     errorAfter: ".",
   },
   pricing: {
-    kicker: "Investment",
-    title: "What does it cost?",
-    lead: "Every project is quoted at a fixed price agreed before any work starts, after a short scoping call — no open-ended clock, no surprises halfway through. These are real starting points, not a headline.",
-    fromLabel: "From ",
+    kicker: "Smart investment",
+    title: "A solution for your business. A quote for your project.",
+    lead: "No two businesses are identical, so there is no one-size-fits-all price list. Your quote reflects your goals, project scope and technical complexity — with clear, transparent pricing after a short discovery call.",
     tiers: [
       {
         name: "Marketing website",
-        from: "₪9,500",
-        note: "Custom design, two languages, accessibility to IS 5568, ready for search.",
+        benefit: "A digital presence that builds trust.",
+        note: "A tailored design, intuitive experience, accessibility and search-ready structure.",
       },
       {
         name: "Store or ordering system",
-        from: "₪20,000",
-        note: "Catalogue, cart, payments, customer area and an admin interface.",
+        benefit: "From discovery to checkout, made easy.",
+        note: "Catalogue, smooth purchase flow, payments and practical management tools.",
       },
       {
         name: "Custom management system",
-        from: "₪35,000",
-        note: "A CRM or ERP built around your process rather than the other way round.",
+        benefit: "Software that fits how you work.",
+        note: "CRM, ERP and internal tools built around your real business processes.",
       },
       {
         name: "Automation and integration",
-        from: "₪3,500",
-        note: "Connecting the systems you already run, and retiring repeated manual work.",
+        benefit: "Less repetitive work. More room to grow.",
+        note: "Connecting systems, reducing manual tasks and improving data flow.",
       },
     ],
-    hourly:
-      "Ongoing work and changes: ₪350 per hour. Hosting, updates and maintenance: from ₪250 a month.",
-    note: "The first scoping call is free and carries no obligation.",
+    stepsTitle: "How to get a quote",
+    steps: [
+      { title: "Let's talk", detail: "A short introduction" },
+      { title: "Define the scope", detail: "Goals, needs and complexity" },
+      { title: "Get your quote", detail: "A clear, tailored proposal" },
+    ],
+    ctaLabel: "Let's talk about your project",
+    ongoing: "Changes, improvements and maintenance are also quoted based on service type and scope.",
+    note: "Your first consultation and discovery call are free, with no obligation.",
   },
   testimonials: {
     kicker: "Clients",
@@ -1000,7 +1013,7 @@ const en: SiteContent = {
       {
         question: "What does a project cost?",
         answer:
-          "The figures in the pricing section are real starting points rather than a headline. The final number is a fixed quote agreed after a short scoping call, so there is no open-ended clock and no surprise halfway through.",
+          "Each project is priced after an initial discovery call, where we review your goals, features, complexity and scope. You then receive a clear, transparent proposal, with no obligation from the initial call.",
       },
       {
         question: "How long does it take?",
@@ -1025,7 +1038,7 @@ const en: SiteContent = {
       {
         question: "What happens after launch?",
         answer:
-          "You can take a maintenance package covering hosting, updates, backups and monitoring, or work by the hour on individual changes. Both are priced in the pricing section.",
+          "You can choose a maintenance package covering hosting, updates, backups and monitoring, or request individual changes. Pricing depends on the service and scope of work.",
       },
       {
         question: "Who owns the code at the end?",

@@ -1457,74 +1457,177 @@ a.case-study-label:focus-visible {
   width: fit-content;
 }
 
-/* Pricing. The numbers are the point, so the card gives them the weight and
-   keeps everything else quiet around them. */
+/* A refined service showcase instead of a public price list. */
 .pricing-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   max-width: 1450px;
   margin: 0 auto;
   border-top: 1px solid var(--line);
-  border-right: 1px solid var(--line);
+  border-inline-start: 1px solid var(--line);
 }
 
 .pricing-card {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
-  min-height: 230px;
-  padding: clamp(1.6rem, 3vw, 2.4rem);
+  align-items: flex-start;
+  gap: 0.8rem;
+  min-width: 0;
+  min-height: 264px;
+  padding: clamp(1.5rem, 2.8vw, 2.35rem);
   border-bottom: 1px solid var(--line);
-  border-left: 1px solid var(--line);
+  border-inline-end: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.012);
-  transition: background 240ms ease;
+  transition: background 240ms ease, box-shadow 240ms ease;
+}
+
+.pricing-card::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: clamp(1.5rem, 2.8vw, 2.35rem);
+  width: 38px;
+  height: 2px;
+  background: var(--accent);
+  opacity: 0.65;
+  transition: width 240ms ease, background 240ms ease;
 }
 
 .pricing-card:hover {
-  background: rgba(215, 196, 160, 0.03);
+  background: linear-gradient(165deg, rgba(83, 228, 255, 0.045), rgba(215, 196, 160, 0.018));
+  box-shadow: inset 0 0 42px rgba(83, 228, 255, 0.018);
+}
+
+.pricing-card:hover::before {
+  width: 58px;
+  background: var(--cyan);
+}
+
+.pricing-card-number {
+  color: var(--accent-dim);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .pricing-card h3 {
-  margin: 0;
-  font-size: 1.02rem;
-  line-height: 1.4;
+  margin: 0.5rem 0 0;
+  font-size: clamp(1.04rem, 1.35vw, 1.22rem);
+  line-height: 1.45;
   text-wrap: balance;
 }
 
-.pricing-figure {
-  display: flex;
-  align-items: baseline;
-  gap: 0.45rem;
+.pricing-benefit {
   margin: 0;
-}
-
-.pricing-figure span {
-  color: var(--muted);
-  font-size: 0.72rem;
-}
-
-.pricing-figure strong {
-  color: var(--accent);
-  font-family: var(--font-geist-mono), monospace;
-  font-size: clamp(1.5rem, 2.4vw, 1.95rem);
+  color: var(--cyan-soft);
+  font-size: 0.9rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  line-height: 1.6;
+  text-wrap: pretty;
 }
 
 .pricing-note {
   margin: 0;
   color: var(--muted);
   font-size: 0.8rem;
-  line-height: 1.75;
+  line-height: 1.8;
   text-wrap: pretty;
+}
+
+.pricing-next {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) minmax(260px, 0.8fr);
+  max-width: 1450px;
+  margin: 1.25rem auto 0;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at 0 100%, rgba(83, 228, 255, 0.055), transparent 50%),
+    rgba(255, 255, 255, 0.012);
+}
+
+.pricing-next-steps {
+  min-width: 0;
+  padding: clamp(1.25rem, 2.4vw, 2rem);
+}
+
+.pricing-next-steps h3 {
+  margin: 0 0 1.4rem;
+  color: var(--accent);
+  font-size: 0.92rem;
+}
+
+.pricing-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pricing-steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.pricing-steps li > span {
+  flex: none;
+  color: var(--cyan);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.pricing-steps li > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.pricing-steps strong {
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.pricing-steps small {
+  color: var(--muted);
+  font-size: 0.73rem;
+  line-height: 1.6;
+}
+
+.pricing-action {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1.2rem;
+  padding: clamp(1.25rem, 2.4vw, 2rem);
+  border-inline-start: 1px solid var(--line);
+}
+
+.pricing-action p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.75;
+}
+
+.pricing-cta {
+  width: 100%;
+  text-align: center;
 }
 
 .pricing-footnote {
   max-width: 1450px;
-  margin: 2.2rem auto 0;
+  margin: 1.3rem auto 0;
   color: var(--muted);
-  font-size: 0.82rem;
-  line-height: 1.85;
+  font-size: 0.8rem;
+  line-height: 1.8;
   text-wrap: pretty;
 }
 
@@ -1532,15 +1635,44 @@ a.case-study-label:focus-visible {
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .pricing-next {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pricing-action {
+    border-inline-start: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .pricing-cta {
+    width: auto;
+  }
 }
 
 @media (max-width: 680px) {
-  .pricing-grid {
+  .pricing-grid,
+  .pricing-steps {
     grid-template-columns: 1fr;
   }
 
   .pricing-card {
     min-height: 0;
+  }
+
+  .pricing-steps {
+    gap: 1.1rem;
+  }
+
+  .pricing-cta {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pricing-card,
+  .pricing-card::before {
+    transition: none;
   }
 }
 

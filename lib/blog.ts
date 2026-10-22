@@ -22,9 +22,9 @@ export type BlogPost = {
 const he: BlogPost[] = [
   {
     slug: "website-cost-israel",
-    title: "כמה באמת עולה אתר לעסק בישראל",
+    title: "מה משפיע על עלות אתר לעסק בישראל",
     excerpt:
-      "למה אותה בקשה מקבלת הצעות של 3,000 ושל 30,000 שקל, ואיך לקרוא את ההפרש הזה בלי לנחש.",
+      "למה אותה בקשה יכולה להוביל להצעות מחיר שונות מאוד, ואיך להשוות ביניהן בצורה חכמה.",
     date: "2026-08-13",
     readingTime: "6 דקות קריאה",
     intro:
@@ -33,7 +33,7 @@ const he: BlogPost[] = [
       {
         title: "שלוש שכבות מחיר, לא אחת",
         body: [
-          "בשוק הישראלי ב-2026 יש שלוש שכבות ברורות. תבנית מוכנה שמותאמת מעט נעה בין 1,500 ל-5,000 שקל. אתר מקצועי עם עיצוב שנבנה לעסק נע בין 8,000 ל-15,000. אתר שנכתב בקוד, עם אינטגרציות למערכות שכבר קיימות אצלכם, נע בין 15,000 ל-30,000 ומעלה.",
+          "השוואה מתחילה בסוג הפתרון: אתר שמבוסס על תבנית עם התאמות קלות, אתר בעיצוב ייעודי לעסק, או מערכת שנכתבת בקוד ומשתלבת עם מערכות קיימות. לכל אפשרות רמת מורכבות אחרת, ולכן המחיר נקבע לפי האפיון ולא לפי שם השירות בלבד.",
           "כשמשווים הצעה מהשכבה הראשונה להצעה מהשכבה השלישית ומתייחסים אליהן כאל אותו דבר, ההפרש נראה שרירותי. הוא לא. הוא בדיוק מה שההפרש בין המוצרים.",
         ],
       },
@@ -47,7 +47,7 @@ const he: BlogPost[] = [
       {
         title: "העלות שאף אחד לא מציג בהצעה",
         body: [
-          "אתר הוא לא הוצאה חד-פעמית. אחסון, דומיין, גיבויים ותעודת אבטחה מסתכמים ב-100 עד 500 שקל לחודש. חבילת תחזוקה מנוהלת נעה בין 200 ל-450 לחודש.",
+          "אתר הוא לא הוצאה חד-פעמית. חשוב להביא בחשבון גם אחסון, דומיין, גיבויים, אבטחה ותחזוקה שוטפת. העלויות משתנות לפי המערכת, היקף השימוש ורמת השירות הנדרשת.",
           "כאן יש הבדל אמיתי בין הטכנולוגיות: אתר תבנית דורש עדכוני תוספים תכופים, ולכן תחזוקה יקרה יותר לאורך זמן. אתר שנכתב בקוד לא סוחב תוספים של אחרים, ולכן התחזוקה שלו זולה יותר. חלק מההפרש בעלות ההקמה חוזר בשנים שאחריה.",
         ],
       },
@@ -146,9 +146,9 @@ const he: BlogPost[] = [
 const en: BlogPost[] = [
   {
     slug: "website-cost-israel",
-    title: "What a business website actually costs in Israel",
+    title: "What shapes the cost of a business website in Israel",
     excerpt:
-      "Why the same brief comes back quoted at ₪3,000 and at ₪30,000, and how to read that gap without guessing.",
+      "Why the same brief can attract very different quotes, and how to compare them with confidence.",
     date: "2026-08-13",
     readingTime: "6 min read",
     intro:
@@ -157,7 +157,7 @@ const en: BlogPost[] = [
       {
         title: "Three price tiers, not one",
         body: [
-          "The Israeli market in 2026 has three clear tiers. A ready template with light customisation runs ₪1,500 to ₪5,000. A professional site with a design built for the business runs ₪8,000 to ₪15,000. A site written in code, with integrations into systems you already run, runs ₪15,000 to ₪30,000 and up.",
+          "Start by comparing the type of solution: a template with light customisation, a bespoke design for your business, or a coded system integrated with your existing tools. Each involves a different level of complexity, so pricing follows discovery rather than a service label alone.",
           "Compare a quote from the first tier against one from the third as though they were the same thing and the gap looks arbitrary. It is not. It is exactly the difference between the products.",
         ],
       },
@@ -171,7 +171,7 @@ const en: BlogPost[] = [
       {
         title: "The cost nobody puts in the quote",
         body: [
-          "A website is not a one-off expense. Hosting, domain, backups and a certificate come to ₪100–₪500 a month. A managed maintenance package runs ₪200–₪450 a month.",
+          "A website is not a one-off expense. Hosting, domain registration, backups, security and ongoing maintenance should also be considered. Costs vary with the system, usage and service level required.",
           "There is a real difference between technologies here. A template site needs frequent plugin updates, so it costs more to maintain over time. A site written in code carries nobody else's plugins, so maintenance is cheaper. Some of the higher build cost comes back in the years after launch.",
         ],
       },
@@ -253,7 +253,7 @@ const en: BlogPost[] = [
         title: "The option in the middle",
         body: [
           "Usually you do not have to choose. Leave the off-the-shelf system where it is good, and write an automation layer that connects it to whatever is missing.",
-          "That costs a few thousand shekels rather than tens of thousands, and solves most of the actual pain. For a good share of the businesses who come to me asking for a new system, this is the right answer.",
+          "This is often a smaller commitment than replacing the entire system, while solving much of the actual problem. For many businesses considering a new system, this is the right answer.",
         ],
       },
       {

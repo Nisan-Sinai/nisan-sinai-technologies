@@ -522,20 +522,23 @@ test("marks Latin words inside the Hebrew page with their own language", async (
   expect(unmarked).toEqual([]);
 });
 
-test("answers the price question in both languages", async ({ page }) => {
-  // The one thing every visitor wants to know before they fill in a form.
-  for (const [path, heading] of [
-    ["/", "כמה זה עולה?"],
-    ["/en", "What does it cost?"],
+test("offers a tailored quote journey without public prices in both languages", async ({ page }) => {
+  for (const [path, heading, ctaLabel] of [
+    ["/", "פתרון שמתאים לעסק. הצעה שמתאימה לפרויקט.", "בואו נדבר על הפרויקט שלכם"],
+    ["/en", "A solution for your business. A quote for your project.", "Let's talk about your project"],
   ] as const) {
     await page.goto(path);
+    const pricing = page.locator(".pricing-section");
     await expect(page.getByRole("heading", { level: 2, name: heading })).toBeVisible();
-    const cards = page.locator(".pricing-card");
+    const cards = pricing.locator(".pricing-card");
     await expect(cards, path).toHaveCount(4);
     for (let index = 0; index < 4; index += 1) {
-      await expect(cards.nth(index).locator(".pricing-figure strong")).toContainText("₪");
+      await expect(cards.nth(index).locator(".pricing-benefit")).not.toBeEmpty();
+      await expect(cards.nth(index).locator(".pricing-note")).not.toBeEmpty();
     }
-    await expect(page.locator(".pricing-footnote")).toContainText("₪");
+    await expect(pricing.locator(".pricing-steps li")).toHaveCount(3);
+    await expect(pricing.getByRole("link", { name: ctaLabel })).toHaveAttribute("href", "#contact");
+    await expect(pricing).not.toContainText("₪");
   }
 });
 
@@ -722,7 +725,7 @@ test("the wide layout keeps its nav and hides the button", async ({
     "שירותים",
     "פרויקטים",
     "איך זה עובד",
-    "מחירים",
+    "תמחור מותאם",
     "שאלות נפוצות",
     "בלוג",
     "אודות",
