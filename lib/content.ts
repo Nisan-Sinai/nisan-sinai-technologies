@@ -19,7 +19,7 @@ export type Project = {
   previewLabel: string;
 };
 export type AboutValue = { number: string; title: string; text: string };
-export type PriceTier = { name: string; from: string; note: string };
+export type PriceTier = { name: string; note: string };
 export type ServiceOption = { value: string; label: string };
 /** A quote from a real client. Nothing here is written on their behalf. */
 export type Testimonial = { quote: string; name: string; role: string };
@@ -153,9 +153,9 @@ export type SiteContent = {
     kicker: string;
     title: string;
     lead: string;
-    fromLabel: string;
+    estimateLabel: string;
     tiers: [PriceTier, PriceTier, PriceTier, PriceTier];
-    hourly: string;
+    ongoing: string;
     note: string;
   };
   testimonials: {
@@ -236,7 +236,7 @@ const he: SiteContent = {
     services: "שירותים",
     projects: "פרויקטים",
     process: "איך זה עובד",
-    pricing: "מחירים",
+    pricing: "תמחור מותאם",
     testimonials: "המלצות",
     blog: "בלוג",
     faq: "שאלות נפוצות",
@@ -474,35 +474,30 @@ const he: SiteContent = {
     errorAfter: ".",
   },
   pricing: {
-    kicker: "השקעה",
-    title: "כמה זה עולה?",
-    lead: "כל פרויקט נסגר במחיר קבוע מראש, אחרי שיחת אפיון קצרה — בלי שעון פתוח ובלי הפתעות באמצע. המספרים כאן הם נקודת פתיחה אמיתית, לא כותרת שיווקית.",
-    fromLabel: "החל מ־",
+    kicker: "השקעה חכמה",
+    title: "תמחור שמותאם לעסק שלכם",
+    lead: "כל עסק הוא ייחודי, וכך גם הפתרון שהוא צריך. עלות הפרויקט נקבעת לאחר שיחת אפיון והבנת הצרכים, המטרות, מורכבות הפיתוח, האינטגרציות והיקף העבודה. לאחר האפיון תקבלו הצעת מחיר אישית, ברורה ושקופה, המותאמת לצרכים ולתקציב שלכם.",
+    estimateLabel: "הצעת מחיר לאחר אפיון",
     tiers: [
       {
         name: "אתר תדמית",
-        from: "9,500 ₪",
         note: "עיצוב מותאם, שתי שפות, נגישות לפי ת״י 5568 ומוכנות לגוגל.",
       },
       {
         name: "חנות או מערכת הזמנות",
-        from: "20,000 ₪",
         note: "קטלוג, סל, תשלומים, אזור לקוח וממשק ניהול.",
       },
       {
         name: "מערכת ניהול בהתאמה אישית",
-        from: "35,000 ₪",
         note: "CRM או ERP שנבנה סביב התהליך שלכם, לא להפך.",
       },
       {
         name: "אוטומציה ואינטגרציה",
-        from: "3,500 ₪",
         note: "חיבור בין מערכות קיימות וביטול עבודה ידנית חוזרת.",
       },
     ],
-    hourly:
-      "עבודות שוטפות ושינויים: 350 ₪ לשעה. אחסון, עדכונים ותחזוקה: מ־250 ₪ לחודש.",
-    note: "שיחת האפיון הראשונה היא ללא עלות וללא התחייבות.",
+    ongoing: "גם שינויים, שיפורים ותחזוקה מתומחרים בהתאמה לצורך ולהיקף השירות.",
+    note: "שיחת הייעוץ והאפיון הראשונית ללא עלות וללא התחייבות.",
   },
   testimonials: {
     kicker: "לקוחות",
@@ -518,7 +513,7 @@ const he: SiteContent = {
       {
         question: "כמה עולה פרויקט?",
         answer:
-          "המספרים בסקשן המחירים הם נקודת פתיחה אמיתית ולא כותרת שיווקית. המחיר הסופי נסגר כהצעה קבועה מראש אחרי שיחת אפיון קצרה, כך שאין שעון פתוח ואין הפתעות באמצע הדרך.",
+          "כל פרויקט מתומחר לאחר שיחת אפיון שבה נבין את היעדים, הפיצ׳רים, המורכבות והיקף העבודה. לאחר מכן תקבלו הצעת מחיר מסודרת ושקופה, ללא התחייבות בשיחה הראשונית.",
       },
       {
         question: "כמה זמן לוקח לבנות?",
@@ -543,7 +538,7 @@ const he: SiteContent = {
       {
         question: "מה קורה אחרי שהאתר עולה?",
         answer:
-          "אפשר לקחת חבילת תחזוקה שכוללת אחסון, עדכונים, גיבויים ומעקב, או לעבוד לפי שעות על שינויים נקודתיים. שתי האפשרויות מתומחרות בסקשן המחירים.",
+          "אפשר לבחור חבילת תחזוקה הכוללת אחסון, עדכונים, גיבויים ומעקב, או להזמין שינויים נקודתיים. המחיר מותאם לאופי השירות ולהיקף העבודה.",
       },
       {
         question: "למי שייך הקוד בסוף?",
@@ -718,7 +713,7 @@ const en: SiteContent = {
     services: "Services",
     projects: "Projects",
     process: "How it works",
-    pricing: "Pricing",
+    pricing: "Tailored pricing",
     testimonials: "Clients",
     blog: "Blog",
     faq: "FAQ",
@@ -956,35 +951,30 @@ const en: SiteContent = {
     errorAfter: ".",
   },
   pricing: {
-    kicker: "Investment",
-    title: "What does it cost?",
-    lead: "Every project is quoted at a fixed price agreed before any work starts, after a short scoping call — no open-ended clock, no surprises halfway through. These are real starting points, not a headline.",
-    fromLabel: "From ",
+    kicker: "Smart investment",
+    title: "Pricing tailored to your business",
+    lead: "Every business is unique, and so is the solution it needs. Project pricing is determined after an initial discovery call, based on your goals, requirements, development complexity, integrations and scope. You will then receive a clear, transparent proposal tailored to your needs and budget.",
+    estimateLabel: "Personal quote after discovery",
     tiers: [
       {
         name: "Marketing website",
-        from: "₪9,500",
         note: "Custom design, two languages, accessibility to IS 5568, ready for search.",
       },
       {
         name: "Store or ordering system",
-        from: "₪20,000",
         note: "Catalogue, cart, payments, customer area and an admin interface.",
       },
       {
         name: "Custom management system",
-        from: "₪35,000",
         note: "A CRM or ERP built around your process rather than the other way round.",
       },
       {
         name: "Automation and integration",
-        from: "₪3,500",
         note: "Connecting the systems you already run, and retiring repeated manual work.",
       },
     ],
-    hourly:
-      "Ongoing work and changes: ₪350 per hour. Hosting, updates and maintenance: from ₪250 a month.",
-    note: "The first scoping call is free and carries no obligation.",
+    ongoing: "Changes, enhancements and maintenance are also quoted according to your needs and service scope.",
+    note: "The initial consultation and discovery call are free, with no obligation.",
   },
   testimonials: {
     kicker: "Clients",
@@ -1000,7 +990,7 @@ const en: SiteContent = {
       {
         question: "What does a project cost?",
         answer:
-          "The figures in the pricing section are real starting points rather than a headline. The final number is a fixed quote agreed after a short scoping call, so there is no open-ended clock and no surprise halfway through.",
+          "Each project is priced after an initial discovery call, where we review your goals, features, complexity and scope. You then receive a clear, transparent proposal, with no obligation from the initial call.",
       },
       {
         question: "How long does it take?",
@@ -1025,7 +1015,7 @@ const en: SiteContent = {
       {
         question: "What happens after launch?",
         answer:
-          "You can take a maintenance package covering hosting, updates, backups and monitoring, or work by the hour on individual changes. Both are priced in the pricing section.",
+          "You can choose a maintenance package covering hosting, updates, backups and monitoring, or request individual changes. Pricing depends on the service and scope of work.",
       },
       {
         question: "Who owns the code at the end?",
