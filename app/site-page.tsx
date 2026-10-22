@@ -360,8 +360,7 @@ export default function SitePage({ locale }: { locale: Locale }) {
             <article className="pricing-card" key={tier.name}>
               <h3>{tier.name}</h3>
               <p className="pricing-figure">
-                <span>{t.pricing.fromLabel}</span>
-                <strong>{tier.from}</strong>
+                <strong>{t.pricing.estimateLabel}</strong>
               </p>
               <p className="pricing-note">{tier.note}</p>
             </article>
@@ -369,7 +368,7 @@ export default function SitePage({ locale }: { locale: Locale }) {
         </div>
 
         <p className="pricing-footnote">
-          {t.pricing.hourly} {t.pricing.note}
+          {t.pricing.ongoing} {t.pricing.note}
         </p>
       </section>
 
