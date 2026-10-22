@@ -1457,8 +1457,7 @@ a.case-study-label:focus-visible {
   width: fit-content;
 }
 
-/* Pricing. The numbers are the point, so the card gives them the weight and
-   keeps everything else quiet around them. */
+/* Pricing cards emphasize the tailored offer rather than a public price list. */
 .pricing-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1505,10 +1504,10 @@ a.case-study-label:focus-visible {
 
 .pricing-figure strong {
   color: var(--accent);
-  font-family: var(--font-geist-mono), monospace;
-  font-size: clamp(1.5rem, 2.4vw, 1.95rem);
+  font-family: inherit;
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: normal;
 }
 
 .pricing-note {
