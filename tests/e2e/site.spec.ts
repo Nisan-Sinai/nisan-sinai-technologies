@@ -522,19 +522,23 @@ test("marks Latin words inside the Hebrew page with their own language", async (
   expect(unmarked).toEqual([]);
 });
 
-test("offers tailored pricing without publishing amounts in both languages", async ({ page }) => {
-  for (const [path, heading, quoteLabel] of [
-    ["/", "תמחור שמותאם לעסק שלכם", "הצעת מחיר לאחר אפיון"],
-    ["/en", "Pricing tailored to your business", "Personal quote after discovery"],
+test("offers a tailored quote journey without public prices in both languages", async ({ page }) => {
+  for (const [path, heading, ctaLabel] of [
+    ["/", "פתרון שמתאים לעסק. הצעה שמתאימה לפרויקט.", "בואו נדבר על הפרויקט שלכם"],
+    ["/en", "A solution for your business. A quote for your project.", "Let's talk about your project"],
   ] as const) {
     await page.goto(path);
+    const pricing = page.locator(".pricing-section");
     await expect(page.getByRole("heading", { level: 2, name: heading })).toBeVisible();
-    const cards = page.locator(".pricing-card");
+    const cards = pricing.locator(".pricing-card");
     await expect(cards, path).toHaveCount(4);
     for (let index = 0; index < 4; index += 1) {
-      await expect(cards.nth(index).locator(".pricing-figure strong")).toHaveText(quoteLabel);
+      await expect(cards.nth(index).locator(".pricing-benefit")).not.toBeEmpty();
+      await expect(cards.nth(index).locator(".pricing-note")).not.toBeEmpty();
     }
-    await expect(page.locator(".pricing-section")).not.toContainText("₪");
+    await expect(pricing.locator(".pricing-steps li")).toHaveCount(3);
+    await expect(pricing.getByRole("link", { name: ctaLabel })).toHaveAttribute("href", "#contact");
+    await expect(pricing).not.toContainText("₪");
   }
 });
 
