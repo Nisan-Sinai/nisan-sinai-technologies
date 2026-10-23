@@ -29,6 +29,12 @@ export default function SiteFooter({ locale }: { locale: Locale }) {
         <ExternalLink href="https://www.linkedin.com/in/nisansinai" hint={t.newTabHint}>
           <span lang="en">LinkedIn</span>
         </ExternalLink>
+        <ExternalLink href="https://www.facebook.com/NisanSinaiAI" hint={t.newTabHint}>
+          <span lang="en">Facebook</span>
+        </ExternalLink>
+        <ExternalLink href="https://www.instagram.com/nisansinaiai/" hint={t.newTabHint}>
+          <span lang="en">Instagram</span>
+        </ExternalLink>
         <a href={localePath(locale, "/privacy")}>{t.footer.privacy}</a>
         <a href={localePath(locale, "/accessibility")}>{t.footer.accessibility}</a>
         <a className="admin-entry-link" href="/admin">
