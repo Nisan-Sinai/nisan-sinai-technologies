@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getContent } from "@/lib/content";
 import type { Locale } from "@/lib/i18n";
 
@@ -7,10 +8,15 @@ export default function Brand({ locale }: { locale: Locale }) {
 
   return (
     <>
-      <span className="brand-mark">
-        NS<span>.</span>
-      </span>
-      <span className="brand-copy">
+      <Image
+        className="brand-mark"
+        src="/app-icon-192.png"
+        alt={`${brand.name} ${brand.suffix}`}
+        width={48}
+        height={48}
+        unoptimized
+      />
+      <span className="brand-copy" aria-hidden="true">
         <strong>{brand.name}</strong>{" "}
         <small>{brand.suffix}</small>
       </span>
