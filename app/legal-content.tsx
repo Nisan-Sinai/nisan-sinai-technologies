@@ -1,3 +1,5 @@
+import LanguageSwitch from "./language-switch";
+import Breadcrumbs from "./breadcrumbs";
 import Link from "next/link";
 import LatinText from "./latin-text";
 import SiteFooter from "./site-footer";
@@ -48,6 +50,11 @@ export default function LegalContent({
           {page.back} <span aria-hidden="true">{forwardArrow(locale)}</span>
         </Link>
 
+        <div className="article-tools"><LanguageSwitch locale={locale} path={`/${document}`} /></div>
+        <Breadcrumbs locale={locale} items={[
+          { name: `${t.brand.name} ${t.brand.suffix}`, path: localePath(locale, "/") },
+          { name: page.title, path: localePath(locale, `/${document}`) },
+        ]} />
         <article>
           <span className="section-kicker">{page.kicker}</span>
           <h1>{page.title}</h1>

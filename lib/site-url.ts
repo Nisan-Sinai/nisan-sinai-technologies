@@ -6,7 +6,7 @@
 
 /** The host used when nothing is configured, e.g. a local checkout. */
 export const DEFAULT_SITE_URL =
-  "https://nisan-sinai-tech.nisan-sinai.chatgpt.site";
+  "https://nisan-sinai-technologies.vercel.app";
 
 /**
  * A variable created in a dashboard and left blank arrives as an empty string,

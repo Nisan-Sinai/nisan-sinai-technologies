@@ -20,7 +20,7 @@ describe("article structured data", () => {
         expect(data.author["@type"]).toBe("Person");
         expect(data.author.name).toBeTruthy();
         expect(data.author.url).toBe("https://www.linkedin.com/in/nisansinai");
-        expect(data).not.toHaveProperty("dateModified");
+        expect(data.dateModified).toBe(post.modified);
       }
     }
   });

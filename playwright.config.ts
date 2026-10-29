@@ -33,7 +33,7 @@ export default defineConfig({
   ],
   webServer: {
     command:
-      "NEXT_TELEMETRY_DISABLED=1 npm run build:vercel && npm run start:vercel -- -p 3100",
+      "NEXT_TELEMETRY_DISABLED=1 npm run build:vercel && npm run start:vercel -- -p 3100 -H 127.0.0.1",
     url: "http://127.0.0.1:3100",
     reuseExistingServer: !process.env.CI,
     timeout: 240_000,

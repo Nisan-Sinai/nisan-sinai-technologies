@@ -301,7 +301,7 @@ test("every page carries what a crawler needs", async ({ page }) => {
     expect(head.canonical).toBeTruthy();
     expect(head.description).toBeTruthy();
     expect(head.title).toBeTruthy();
-    expect(head.alternates?.sort()).toEqual(["en", "he"]);
+    expect(head.alternates?.sort()).toEqual(["en", "he", "x-default"]);
     expect(head.robots).toContain("index");
     expect(head.robots).not.toContain("noindex");
     expect(head.googleBot).toContain("max-image-preview:large");
@@ -393,6 +393,12 @@ const ALL_PAGES = [
   "/en/blog",
   "/blog/website-cost-israel",
   "/en/blog/website-cost-israel",
+  "/blog/business-search-ai-visibility",
+  "/en/blog/business-search-ai-visibility",
+  "/blog/website-accessibility-israel",
+  "/en/blog/website-accessibility-israel",
+  "/blog/custom-system-or-off-the-shelf",
+  "/en/blog/custom-system-or-off-the-shelf",
 ] as const;
 
 test("has no serious or critical automated accessibility violations", async ({
@@ -782,7 +788,8 @@ test("every blog card reaches a post that renders", async ({ page }) => {
   for (const href of hrefs) {
     await page.goto(href ?? "/");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    await expect(page.locator("time")).toHaveCount(1);
+    await expect(page.locator(".post-meta time")).toHaveCount(1);
+    await expect(page.locator(".article-byline time")).toHaveCount(1);
   }
 });
 

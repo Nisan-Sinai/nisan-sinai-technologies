@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import BlogPost from "../../../blog-post";
-import { buildMetadata } from "../../../site-shell";
+import { buildArticleMetadata } from "@/lib/seo-metadata";
+import { notFound } from "next/navigation";
 import { getPost, getSlugs } from "@/lib/blog";
 
 export function generateStaticParams() {
@@ -14,21 +15,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const post = getPost("he", slug);
-  const base = buildMetadata("he", `/blog/${slug}`);
-  if (!post) return base;
-
-  return {
-    ...base,
-    title: { absolute: post.title },
-    description: post.excerpt,
-    openGraph: {
-      ...base.openGraph,
-      title: post.title,
-      description: post.excerpt,
-      type: "article",
-      publishedTime: post.date,
-    },
-  };
+  if (!post) notFound();
+  return buildArticleMetadata("he", post);
 }
 
 export default async function Page({
