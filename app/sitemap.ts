@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getSlugs } from "@/lib/blog";
+import { getPosts } from "@/lib/blog";
 import { resolveSiteUrl } from "@/lib/site-url";
 import { locales, localePath } from "@/lib/i18n";
 
@@ -13,8 +13,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/privacy", changeFrequency: "yearly" as const, priority: 0.3 },
     { path: "/accessibility", changeFrequency: "yearly" as const, priority: 0.3 },
     // The slugs are shared across languages, so one list covers both sides.
-    ...getSlugs("he").map((slug) => ({
-      path: `/blog/${slug}`,
+    ...getPosts("he").map((post) => ({
+      path: `/blog/${post.slug}`,
+      lastModified: post.modified,
       changeFrequency: "yearly" as const,
       priority: 0.5,
     })),
@@ -25,12 +26,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: new URL(localePath(locale, page.path), siteUrl).toString(),
       changeFrequency: page.changeFrequency,
       priority: page.priority,
+      ...("lastModified" in page ? { lastModified: page.lastModified } : {}),
       alternates: {
         languages: Object.fromEntries(
-          locales.map((alternate) => [
+          [["x-default", new URL(localePath("he", page.path), siteUrl).toString()], ...locales.map((alternate) => [
             alternate,
             new URL(localePath(alternate, page.path), siteUrl).toString(),
-          ]),
+          ])],
         ),
       },
     })),

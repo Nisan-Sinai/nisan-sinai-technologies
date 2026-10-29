@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getSlugs } from "@/lib/blog";
+import { getSlugs, getPosts } from "@/lib/blog";
 import { locales } from "@/lib/i18n";
 
 /** siteUrl is resolved at module scope, so each case needs a fresh import. */
@@ -62,7 +62,7 @@ describe("sitemap.xml", () => {
 
     for (const entry of sitemap()) {
       const languages = entry.alternates?.languages ?? {};
-      expect(Object.keys(languages).sort()).toEqual([...locales].sort());
+      expect(Object.keys(languages).sort()).toEqual([...locales, "x-default"].sort());
       for (const url of Object.values(languages)) {
         expect(String(url)).toMatch(/^https:\/\/example\.com/);
       }
@@ -81,11 +81,12 @@ describe("sitemap.xml", () => {
     expect(priorityOf("https://example.com/accessibility")).toBe(0.3);
   });
 
-  it("omits modification dates until they come from actual content changes", async () => {
+  it("only publishes modification dates recorded on revised articles", async () => {
     const sitemap = await load({ NEXT_PUBLIC_SITE_URL: "https://example.com" });
 
     for (const entry of sitemap()) {
-      expect(entry.lastModified).toBeUndefined();
+      const post = getPosts("he").find((post) => entry.url.endsWith(`/blog/${post.slug}`));
+      expect(entry.lastModified).toBe(post?.modified);
     }
   });
 

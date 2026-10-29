@@ -211,7 +211,7 @@ const he: SiteContent = {
   meta: {
     title: "ניסן סיני טכנולוגיות | אתרים ומערכות לעסקים",
     description:
-      "פיתוח אתרים, מערכות CRM ו-ERP, אוטומציות ופתרונות תוכנה בהתאמה אישית לעסקים.",
+      "ניסן סיני מפתח אתרים, חנויות אונליין, מערכות CRM ו־ERP, אוטומציות ופתרונות AI לעסקים בכל הארץ. שירות אישי בעברית ובאנגלית, מאפיון ועד השקה.",
     ogTitle: "ניסן סיני טכנולוגיות | אתרים ומערכות לעסקים",
     ogDescription:
       "אתרים, CRM, ERP, אוטומציות ומערכות Web בהתאמה אישית לעסקים קטנים ובינוניים.",
@@ -250,7 +250,7 @@ const he: SiteContent = {
   },
   languageSwitch: { label: "EN", toName: "English", aria: "EN - Switch to English" },
   hero: {
-    eyebrow: "פיתוח דיגיטלי מקצה לקצה לעסקים",
+    eyebrow: "אתרים, חנויות ומערכות לעסקים בכל הארץ",
     titleLead: "אני בונה את",
     titleAccent: "הטכנולוגיה",
     titleTail: "שהעסק שלך צריך.",
@@ -354,7 +354,7 @@ const he: SiteContent = {
         year: "2026",
         title: "Shel‑Yah",
         description:
-          "סטודיו ליצירות אפוקסי בעבודת יד — שעוני קיר, שלטי כניסה ומתנות. חנות מלאה עם קטלוג, סל, חשבון לקוח והזמנות בהתאמה אישית.",
+          "פרויקט הדגמה לחנות של יצירות אפוקסי בעבודת יד — שעוני קיר, שלטי כניסה ומתנות, עם קטלוג, סל, חשבון לקוח והזמנות בהתאמה אישית.",
         points: [
           "קטלוג וסל קנייה מלאים",
           "הזמנות בהתאמה אישית",
@@ -369,7 +369,7 @@ const he: SiteContent = {
         year: "2026",
         title: "מערכת אישורי הגעה",
         description:
-          "פלטפורמה לניהול אירועים, מוזמנים ואישורי הגעה — כולל קישורים אישיים, דשבורד, סינון וסידורי הושבה.",
+          "פלטפורמה לניהול אירועים, מוזמנים ואישורי הגעה — כולל קישורים אישיים, דשבורד וסינון.",
         points: [
           "ניהול אירועים ומוזמנים",
           "קישורי RSVP אישיים",
@@ -411,7 +411,7 @@ const he: SiteContent = {
   about: {
     kicker: "מי עומד מאחורי המוצר",
     title: "נעים להכיר, אני ניסן סיני.",
-    text: "מפתח Full‑Stack שאוהב לקחת רעיון, להבין את הבעיה שמאחוריו ולהפוך אותו למוצר דיגיטלי מדויק. אני משלב חשיבה עסקית, חוויית משתמש ופיתוח מקצה לקצה — כדי שהתוצאה לא רק תיראה טוב, אלא באמת תעבוד.",
+    text: "אני ניסן סיני, מייסד ניסן סיני טכנולוגיות ומפתח Full‑Stack. אני מפתח אתרים, חנויות אונליין ומערכות עסקיות, ומשלב אוטומציות ופתרונות AI לפי הצורך. השירות ניתן לעסקים בכל הארץ, בעברית ובאנגלית, עם קשר ישיר איתי לאורך האפיון, הפיתוח וההשקה.",
     badge: "FULL‑STACK DEVELOPER",
     values: [
       {
@@ -524,6 +524,18 @@ const he: SiteContent = {
     lead: "התשובות הקצרות. כל השאר נסגר בשיחת האפיון.",
     items: [
       {
+        question: "מי עומד מאחורי ניסן סיני טכנולוגיות ואיפה ניתן השירות?",
+        answer: "ניסן סיני הוא המייסד והמפתח שמלווה את הפרויקט באופן אישי. השירות ניתן לעסקים בכל הארץ, בעברית ובאנגלית, באמצעות קשר ישיר לאורך האפיון והפיתוח.",
+      },
+      {
+        question: "אילו פתרונות אפשר לפתח לעסק?",
+        answer: "אתרי תדמית וחנויות אונליין, מערכות CRM לניהול לקוחות, מערכות ERP ותפעול, פורטלים ודשבורדים, חיבורים בין מערכות ואוטומציות, ושילוב AI לפי צורך עסקי מוגדר.",
+      },
+      {
+        question: "האם אפשר לשפר אתר קיים ולהכין אותו לחיפוש ולמנועי AI?",
+        answer: "אפשר לבדוק את המבנה, התוכן, הנגישות, הביצועים ויכולת הסריקה, ולתעדף תיקונים לפי הממצאים. הגדרות SEO תקינות ותוכן מועיל עוזרים למנועים להבין את האתר; אין אפשרות להבטיח דירוג או המלצה בתשובות AI.",
+      },
+      {
         question: "כמה עולה פרויקט?",
         answer:
           "כל פרויקט מתומחר לאחר שיחת אפיון שבה נבין את היעדים, הפיצ׳רים, המורכבות והיקף העבודה. לאחר מכן תקבלו הצעת מחיר מסודרת ושקופה, ללא התחייבות בשיחה הראשונית.",
@@ -536,7 +548,7 @@ const he: SiteContent = {
       {
         question: "האם האתר יעמוד בדרישות הנגישות?",
         answer:
-          "כן. אני בונה לפי התקן הישראלי ת״י 5568 ברמה AA ומצרף הצהרת נגישות לאתר. זו דרישה של תקנות שוויון זכויות לאנשים עם מוגבלות (התאמות נגישות לשירות), התשע״ג-2013, והיא חלה כמעט על כל אתר שפונה לציבור בישראל.",
+          "נגישות היא חלק מהפיתוח: מבנה כותרות, מקלדת, ניגודיות, תוויות לטפסים ובדיקות אוטומטיות וידניות. יעד הבדיקה והצהרת הנגישות נקבעים באפיון בהתאם לדרישות הרלוונטיות. תחולת החובה והפטורים תלויה בעסק ובשירות, ולא בציון של כלי בדיקה בלבד.",
       },
       {
         question: "אפשר אתר בעברית ובאנגלית?",
@@ -546,7 +558,7 @@ const he: SiteContent = {
       {
         question: "אתה עובד עם וורדפרס או בונה מאפס?",
         answer:
-          "אני בונה בקוד. זה עולה יותר בהתחלה מתבנית מוכנה, ובתמורה אין תוספים שצריך לעדכן, אין פרצות אבטחה שמגיעות מקוד של אחרים, והביצועים לא תלויים במה שהתבנית הכניסה פנימה.",
+          "אני מתמחה בפיתוח בקוד עם React, Next.js ו־TypeScript. הבחירה נעשית לפי הצורך העסקי, התקציב והתחזוקה הנדרשת. גם קוד מותאם משתמש בספריות חיצוניות ודורש עדכוני אבטחה, בדיקות ותחזוקה שוטפת.",
       },
       {
         question: "מה קורה אחרי שהאתר עולה?",
@@ -567,7 +579,7 @@ const he: SiteContent = {
     readMore: "לקריאה",
     all: "לכל הפוסטים",
     back: "חזרה לבלוג",
-    indexTitle: "בלוג",
+    indexTitle: "מדריכים לאתרים, אוטומציות ומערכות לעסקים",
     indexDescription:
       "מדריכים על מחירי פיתוח בישראל, נגישות אתרים לפי ת״י 5568, ומתי כדאי מערכת מותאמת אישית.",
     empty: "עוד לא פורסמו פוסטים.",
@@ -698,7 +710,7 @@ const en: SiteContent = {
   meta: {
     title: "Nisan Sinai Technologies | Websites and business systems",
     description:
-      "Website development, CRM and ERP systems, automations and custom software for growing businesses.",
+      "Websites, online stores, CRM/ERP systems, automation and AI solutions by Nisan Sinai. Personal service across Israel, in Hebrew and English, from discovery to launch.",
     ogTitle: "Nisan Sinai Technologies | Websites and business systems",
     ogDescription:
       "Websites, CRM, ERP, automations and custom web systems for small and mid-sized businesses.",
@@ -737,7 +749,7 @@ const en: SiteContent = {
   },
   languageSwitch: { label: "עב", toName: "עברית", aria: "עב - מעבר לעברית" },
   hero: {
-    eyebrow: "End-to-end digital development for business",
+    eyebrow: "Websites, stores and business systems across Israel",
     titleLead: "I build the",
     titleAccent: "technology",
     titleTail: "your business needs.",
@@ -841,7 +853,7 @@ const en: SiteContent = {
         year: "2026",
         title: "Shel‑Yah",
         description:
-          "A studio for handmade epoxy art — wall clocks, entrance signs and gifts. A full storefront with catalogue, cart, customer accounts and made-to-order commissions.",
+          "A demonstration storefront for handmade epoxy art — wall clocks, entrance signs and gifts, with a catalogue, cart, customer accounts and made-to-order commissions.",
         points: [
           "Full catalogue and cart",
           "Made-to-order commissions",
@@ -856,7 +868,7 @@ const en: SiteContent = {
         year: "2026",
         title: "RSVP platform",
         description:
-          "A platform for managing events, guests and arrival confirmations — including personal links, a dashboard, filtering and seating.",
+          "A platform for managing events, guests and arrival confirmations — including personal links, a dashboard and filtering.",
         points: [
           "Event and guest management",
           "Personal RSVP links",
@@ -898,7 +910,7 @@ const en: SiteContent = {
   about: {
     kicker: "Who is behind the product",
     title: "Good to meet you, I'm Nisan Sinai.",
-    text: "A full-stack developer who likes taking an idea, understanding the problem behind it and turning it into a precise digital product. I combine business thinking, user experience and end-to-end development — so the result does not just look good, it genuinely works.",
+    text: "I'm Nisan Sinai, founder of Nisan Sinai Technologies and a full-stack developer. I build websites, online stores and business systems, integrating automation and AI where they solve a practical need. I work directly with businesses across Israel, in Hebrew and English, from discovery through development and launch.",
     badge: "FULL‑STACK DEVELOPER",
     values: [
       {
@@ -1011,6 +1023,18 @@ const en: SiteContent = {
     lead: "The short answers. Everything else gets settled on the scoping call.",
     items: [
       {
+        question: "Who runs Nisan Sinai Technologies and where is the service available?",
+        answer: "Nisan Sinai is the founder and developer who personally handles the project. Service is available to businesses across Israel, in Hebrew and English, with direct communication throughout discovery and development.",
+      },
+      {
+        question: "What can you build for a business?",
+        answer: "Business websites and online stores, CRM for customer management, ERP and operational systems, portals and dashboards, integrations and automation, and AI features scoped to a defined business need.",
+      },
+      {
+        question: "Can you improve an existing website for search and AI discovery?",
+        answer: "The structure, content, accessibility, performance and crawlability can be reviewed, with fixes prioritised by the findings. Sound SEO and useful content help engines understand a site; rankings and recommendations in AI answers cannot be guaranteed.",
+      },
+      {
         question: "What does a project cost?",
         answer:
           "Each project is priced after an initial discovery call, where we review your goals, features, complexity and scope. You then receive a clear, transparent proposal, with no obligation from the initial call.",
@@ -1023,7 +1047,7 @@ const en: SiteContent = {
       {
         question: "Will the site meet accessibility requirements?",
         answer:
-          "Yes. I build to the Israeli standard IS 5568 at level AA and ship an accessibility statement with the site. That is what the Equal Rights for Persons with Disabilities (Service Accessibility Adjustments) Regulations, 5773-2013 require, and they apply to almost every site serving the Israeli public.",
+          "Accessibility is part of development: heading structure, keyboard access, contrast, form labels, automated checks and manual testing. The testing target and accessibility statement are scoped against the relevant requirements. Legal duties and exemptions depend on the business and service; an automated score alone does not establish compliance.",
       },
       {
         question: "Can the site work in two languages?",
@@ -1033,7 +1057,7 @@ const en: SiteContent = {
       {
         question: "Do you use WordPress or build from scratch?",
         answer:
-          "I write the code. That costs more up front than a ready-made template, and in return there are no plugins to keep updating, no security holes arriving from somebody else's code, and performance that does not depend on what a template dragged in with it.",
+          "I specialise in custom development with React, Next.js and TypeScript. The choice depends on your business needs, budget and maintenance requirements. Custom code also uses external libraries and needs security updates, testing and ongoing maintenance.",
       },
       {
         question: "What happens after launch?",
@@ -1054,7 +1078,7 @@ const en: SiteContent = {
     readMore: "Read",
     all: "All posts",
     back: "Back to the blog",
-    indexTitle: "Blog",
+    indexTitle: "Guides to websites, automation and business systems",
     indexDescription:
       "Guides on development pricing in Israel, website accessibility under IS 5568, and when a custom system is worth building.",
     empty: "No posts published yet.",

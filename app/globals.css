@@ -3221,3 +3221,12 @@ h2 {
 .analytics-consent-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 .analytics-consent-actions button { flex: 1; min-width: 130px; min-height: 44px; padding: 10px 14px; border: 1px solid #aabacf; border-radius: 6px; background: #f4f7fb; color: #142033; font: inherit; cursor: pointer; }
 .analytics-privacy button:focus-visible, .analytics-consent a:focus-visible { outline: 3px solid #4dc6ff; outline-offset: 3px; }
+
+/* Server-rendered article navigation; logical properties preserve RTL/LTR. */
+.article-tools { display: flex; justify-content: flex-end; margin-block: 1rem; }
+.breadcrumbs { margin-block: 1rem 2rem; font-size: .875rem; }
+.breadcrumbs ol { display: flex; flex-wrap: wrap; gap: .5rem 1rem; list-style: none; padding: 0; }
+.breadcrumbs li { min-width: 0; overflow-wrap: anywhere; }
+.breadcrumbs li + li::before { content: "/"; margin-inline-end: 1rem; opacity: .6; }
+.article-byline { margin-block: 1rem; }
+.article-related { margin-block-start: 3rem; padding-block-start: 1.5rem; border-block-start: 1px solid var(--line, #303944); }

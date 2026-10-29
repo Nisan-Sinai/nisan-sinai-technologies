@@ -16,7 +16,7 @@ describe("robots.txt", () => {
     const robots = await load();
     const result = robots();
 
-    expect(result.rules).toEqual({ userAgent: "*", allow: "/" });
+    expect(result.rules).toEqual({ userAgent: "*", allow: "/", disallow: ["/api/"] });
     expect(result.sitemap).toBe("https://example.com/sitemap.xml");
   });
 

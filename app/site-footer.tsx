@@ -1,4 +1,5 @@
 import Brand from "./brand";
+import { businessProfiles, founderProfile } from "@/lib/business";
 import ExternalLink from "./external-link";
 import { contact, getContent } from "@/lib/content";
 import { localePath, type Locale } from "@/lib/i18n";
@@ -26,15 +27,14 @@ export default function SiteFooter({ locale }: { locale: Locale }) {
         <ExternalLink href={contact.whatsappHref} hint={t.newTabHint}>
           {t.contact.whatsappLabel}
         </ExternalLink>
-        <ExternalLink href="https://www.linkedin.com/in/nisansinai" hint={t.newTabHint}>
+        <ExternalLink href={founderProfile} hint={t.newTabHint}>
           <span lang="en">LinkedIn</span>
         </ExternalLink>
-        <ExternalLink href="https://www.facebook.com/NisanSinaiAI" hint={t.newTabHint}>
-          <span lang="en">Facebook</span>
-        </ExternalLink>
-        <ExternalLink href="https://www.instagram.com/nisansinaiai/" hint={t.newTabHint}>
-          <span lang="en">Instagram</span>
-        </ExternalLink>
+        {businessProfiles.map((profile) => (
+          <ExternalLink key={profile.name} href={profile.url} hint={t.newTabHint}>
+            <span lang="en">{profile.name}</span>
+          </ExternalLink>
+        ))}
         <a href={localePath(locale, "/privacy")}>{t.footer.privacy}</a>
         <a href={localePath(locale, "/accessibility")}>{t.footer.accessibility}</a>
         <a className="admin-entry-link" href="/admin">

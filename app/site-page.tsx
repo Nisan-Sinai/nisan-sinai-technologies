@@ -203,7 +203,7 @@ export default function SitePage({ locale }: { locale: Locale }) {
 
         <div className="services-grid">
           {t.services.items.map((service) => (
-            <article className="service-card" key={service.number}>
+            <article className="service-card" id={`service-${service.number}`} key={service.number}>
               <div className="service-card-top">
                 <span>{service.number}</span>
                 <i aria-hidden="true">{arrow}</i>

@@ -8,7 +8,7 @@ export default function StructuredData({ locale }: { locale: Locale }) {
       type="application/ld+json"
       // The payload is built from our own dictionary, never from user input.
       dangerouslySetInnerHTML={{
-        __html: JSON.stringify(buildStructuredData(locale, siteUrl.toString())),
+        __html: JSON.stringify(buildStructuredData(locale, siteUrl.toString())).replace(/</g, "\\u003c"),
       }}
     />
   );

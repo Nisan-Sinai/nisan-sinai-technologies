@@ -1,3 +1,5 @@
+import LanguageSwitch from "./language-switch";
+import Breadcrumbs from "./breadcrumbs";
 import Link from "next/link";
 import LatinText from "./latin-text";
 import SiteFooter from "./site-footer";
@@ -33,6 +35,11 @@ export default function BlogIndex({ locale }: { locale: Locale }) {
           {t.privacy.back} <span aria-hidden="true">{arrow}</span>
         </Link>
 
+        <div className="article-tools"><LanguageSwitch locale={locale} path="/blog" /></div>
+        <Breadcrumbs locale={locale} items={[
+          { name: `${t.brand.name} ${t.brand.suffix}`, path: localePath(locale, "/") },
+          { name: t.blog.kicker, path: localePath(locale, "/blog") },
+        ]} />
         <span className="section-kicker">{t.blog.kicker}</span>
         <h1>{t.blog.indexTitle}</h1>
         <p className="legal-intro">{t.blog.lead}</p>

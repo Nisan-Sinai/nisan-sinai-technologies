@@ -1,10 +1,10 @@
 import { contact, getContent } from "./content";
 import { locales, localePath, type Locale } from "./i18n";
 import type { BlogPost } from "./blog";
+import { businessProfiles, founderProfile, serviceArea } from "./business";
 
 /** Article facts come from the same published record rendered on the page. */
 export function buildArticleStructuredData(locale: Locale, siteUrl: string, post: BlogPost) {
-  const t = getContent(locale);
   const url = new URL(localePath(locale, `/blog/${post.slug}`), siteUrl).toString();
   return {
     "@context": "https://schema.org",
@@ -15,24 +15,26 @@ export function buildArticleStructuredData(locale: Locale, siteUrl: string, post
     headline: post.title,
     description: post.excerpt,
     datePublished: post.date,
+    dateModified: post.modified,
+    image: new URL(locale === "he" ? "/og.png" : "/og-en.png", siteUrl).toString(),
+    publisher: { "@id": new URL("/#business", siteUrl).toString() },
+    isPartOf: { "@id": new URL("/#website", siteUrl).toString() },
+    citation: post.sources.map((source) => source.url),
     inLanguage: locale,
-    author: {
-      "@type": "Person",
-      name: t.brand.name,
-      url: "https://www.linkedin.com/in/nisansinai",
-    },
+    author: buildFounder(locale, siteUrl),
   };
 }
 
 type Offer = {
   "@type": "Offer";
-  itemOffered: { "@type": "Service"; name: string; description: string };
+  itemOffered: { "@type": "Service"; "@id": string; name: string; description: string; url: string; provider: { "@id": string }; areaServed: typeof serviceArea };
 };
 
 export type BusinessNode = {
   "@type": "ProfessionalService";
   "@id": string;
   name: string;
+  alternateName: string;
   description: string;
   url: string;
   image: string;
@@ -40,10 +42,10 @@ export type BusinessNode = {
   email: string;
   telephone: string;
   areaServed: { "@type": "Country"; name: string };
-  availableLanguage: { "@type": "Language"; alternateName: Locale }[];
+  contactPoint: { "@type": "ContactPoint"; contactType: string; telephone: string; email: string; availableLanguage: readonly Locale[] };
   knowsAbout: string[];
   sameAs: string[];
-  founder: { "@type": "Person"; name: string; url: string };
+  founder: ReturnType<typeof buildFounder>;
   makesOffer: Offer[];
 };
 
@@ -53,7 +55,7 @@ export type WebSiteNode = {
   "@id": string;
   url: string;
   name: string;
-  inLanguage: Locale;
+  inLanguage: readonly Locale[];
   publisher: { "@id": string };
 };
 
@@ -92,28 +94,32 @@ export function buildStructuredData(
         "@type": "ProfessionalService",
         "@id": businessId,
         name: `${t.brand.name} ${t.brand.suffix}`,
+        alternateName: locale === "he" ? "Nisan Sinai Technologies" : "ניסן סיני טכנולוגיות",
         description: t.meta.description,
-        url: absolute(localePath(locale, "/")),
+        url: absolute("/"),
         image: absolute(locale === "he" ? "/og.png" : "/og-en.png"),
         logo: absolute("/app-icon-512.png"),
         email: contact.email,
         telephone: contact.phoneHref,
-        areaServed: { "@type": "Country", name: "Israel" },
-        availableLanguage: locales.map((code) => ({
-          "@type": "Language",
-          alternateName: code,
-        })),
-        knowsAbout: t.meta.keywords,
-        sameAs: ["https://www.linkedin.com/in/nisansinai"],
-        founder: {
-          "@type": "Person",
-          name: t.brand.name,
-          url: "https://www.linkedin.com/in/nisansinai",
+        areaServed: serviceArea,
+        contactPoint: {
+          "@type": "ContactPoint",
+          contactType: "customer enquiries",
+          telephone: contact.phoneHref,
+          email: contact.email,
+          availableLanguage: locales,
         },
+        knowsAbout: t.meta.keywords,
+        sameAs: businessProfiles.map((profile) => profile.url),
+        founder: buildFounder(locale, siteUrl),
         makesOffer: t.services.items.map((service) => ({
           "@type": "Offer",
           itemOffered: {
             "@type": "Service",
+            "@id": absolute(`${localePath(locale, "/")}#service-${service.number}`),
+            url: absolute(`${localePath(locale, "/")}#service-${service.number}`),
+            provider: { "@id": businessId },
+            areaServed: serviceArea,
             name: service.title,
             description: service.description,
           },
@@ -128,7 +134,7 @@ export function buildStructuredData(
         ],
         url: absolute("/"),
         name: `${t.brand.name} ${t.brand.suffix}`,
-        inLanguage: locale,
+        inLanguage: locales,
         publisher: { "@id": businessId },
       },
       // The same questions the page answers, in the form search engines read.
@@ -142,5 +148,42 @@ export function buildStructuredData(
         })),
       },
     ],
+  };
+}
+
+/** The same person identity is used for the founder and article authors. */
+export function buildFounder(locale: Locale, siteUrl: string) {
+  return {
+    "@type": "Person" as const,
+    "@id": new URL("/#founder", siteUrl).toString(),
+    name: getContent(locale).brand.name,
+    alternateName: locale === "he" ? "Nisan Sinai" : "ניסן סיני",
+    url: founderProfile,
+    jobTitle: "Founder & Full-stack Developer",
+    worksFor: { "@id": new URL("/#business", siteUrl).toString() },
+  };
+}
+
+/** Shared identity on secondary pages, without claiming an invisible FAQ. */
+export function buildIdentityStructuredData(locale: Locale, siteUrl: string) {
+  return {
+    "@context": "https://schema.org",
+    "@graph": buildStructuredData(locale, siteUrl)["@graph"].slice(0, 2),
+  };
+}
+
+export function buildBreadcrumbStructuredData(
+  siteUrl: string,
+  items: { name: string; path: string }[],
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: new URL(item.path, siteUrl).toString(),
+    })),
   };
 }

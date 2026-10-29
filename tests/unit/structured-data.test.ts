@@ -53,12 +53,12 @@ describe("buildStructuredData", () => {
     }
   });
 
-  it("points each locale at its own page and share card", () => {
+  it("uses one business URL while localising share cards", () => {
     const he = buildStructuredData("he", SITE)["@graph"][0];
     const en = buildStructuredData("en", SITE)["@graph"][0];
 
     expect(he.url).toBe("https://example.com/");
-    expect(en.url).toBe("https://example.com/en");
+    expect(en.url).toBe("https://example.com/");
     expect(he.image).toBe("https://example.com/og.png");
     expect(en.image).toBe("https://example.com/og-en.png");
   });
@@ -66,7 +66,7 @@ describe("buildStructuredData", () => {
   it("declares the language of each document", () => {
     for (const locale of locales) {
       const site = buildStructuredData(locale, SITE)["@graph"][1];
-      expect(site.inLanguage).toBe(locale);
+      expect(site.inLanguage).toEqual(locales);
     }
   });
 
@@ -95,7 +95,7 @@ describe("buildStructuredData", () => {
 
   it("survives a site URL given without a trailing slash", () => {
     const business = buildStructuredData("en", "https://example.com")["@graph"][0];
-    expect(business.url).toBe("https://example.com/en");
+    expect(business.url).toBe("https://example.com/");
   });
 
   it("serialises to JSON, since it ships inside a script tag", () => {
