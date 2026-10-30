@@ -50,12 +50,12 @@ Use the free official consoles below for those measurements.
 
 ## External actions
 
-1. In free Google Search Console, verify the exact production URL-prefix property,
-   submit `/sitemap.xml`, inspect the home pages and new article, and monitor
-   indexing, selected canonicals, impressions and enquiries. A verification token
-   already exists in the code; that does not establish current property access.
-2. In free Bing Webmaster Tools, verify/import the property and submit the same
-   sitemap. Consider IndexNow only after ownership is established.
+1. Google Search Console ownership was verified and `/sitemap.xml` accepted in the
+   authenticated console. Continue monitoring selected canonicals, indexing and
+   enquiries. The manual indexing quota was exhausted; no request was bypassed.
+2. Bing ownership is verified using `/BingSiteAuth.xml`. On 2026-10-30 the sitemap
+   submission was accepted and displayed as Processing with zero errors/warnings.
+   Processing is not confirmation that any particular URL is indexed.
 3. Review Google Business Profile eligibility. If eligible, use the real service
    area and business details; publish a physical address only when appropriate.
 4. Ensure official social profiles link back to this exact website and use the same
@@ -79,3 +79,42 @@ that this business is eligible for Google's restricted FAQ rich results.
 - Bing Webmaster Tools: https://www.bing.com/webmasters/about
 - Israeli accessibility guidance: https://www.gov.il/he/pages/website_accessibility
 - W3C WAI: https://www.w3.org/WAI/fundamentals/accessibility-intro/
+
+
+## IndexNow setup — 2026-10-30
+
+The public root ownership file named in `config/indexnow.json` is intentionally
+public. It is separate from account passwords, API credentials and database keys.
+The notification script uses built-in Node APIs and the official IndexNow endpoint;
+no subscription, added dependency, private token or paid connector is needed.
+
+The `Notify public search updates` workflow waits for successful main-branch push
+CI in this repository. It checks out the exact release with read-only permissions
+and no persisted credentials, checks public-only safeguards, waits for that exact
+SHA on `/api/health`, and runs the public production smoke checks before notifying.
+The release endpoint exposes only the public Git commit, with no-store/noindex.
+
+Only content-related changes trigger a notification. Private admin, API and
+database-only changes send nothing. URLs come from the public generated sitemap,
+with an additional strict production host and public route allowlist. Queries,
+fragments, user information, noncanonical encodings, foreign hosts and private
+paths fail closed. The current sitemap has 16 Hebrew/English pages. The script
+limits a batch to 100 entries so site growth beyond this needs deliberate review.
+The key file must match exactly before the single POST; timeouts/redirects/errors
+and HTTP 429 fail without automatic POST retries.
+
+HTTP 200 means key validated and request received; HTTP 202 means accepted pending
+key validation. Neither proves crawling, indexing, rankings or AI recommendations.
+The workflow logs the exact result. Keep the public proof reachable; use Bing's
+IndexNow/indexing reports to monitor later processing. Do not repeatedly submit
+the same batch merely to change a pending status.
+
+Validation: `npm run test:indexnow` covers off-host/private input rejection,
+production SHA mismatch, missing ownership, unavailable sitemap, 200/202 outcomes,
+rejections and no retries. These tests run in default `npm test`, `npm run qa` and
+the mandatory core CI job. Browser tests check ownership resources and the safe
+release response on every configured viewport.
+
+References:
+- https://www.indexnow.org/documentation
+- https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflow_run
