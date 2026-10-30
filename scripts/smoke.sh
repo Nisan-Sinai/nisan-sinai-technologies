@@ -68,6 +68,12 @@ check "english blog post renders"  200 "$(get_code "${SITE_URL}/en/blog/website-
 check "unknown post is a 404"      404 "$(get_code "${SITE_URL}/blog/no-such-post")"
 check "robots.txt"                 200 "$(get_code "${SITE_URL}/robots.txt")"
 check "sitemap.xml"                200 "$(get_code "${SITE_URL}/sitemap.xml")"
+check "Bing ownership proof"        200 "$(get_code "${SITE_URL}/BingSiteAuth.xml")"
+check "AI discovery summary"        200 "$(get_code "${SITE_URL}/llms.txt")"
+check "AI discovery full text"      200 "$(get_code "${SITE_URL}/llms-full.txt")"
+indexnow_file="$(node --input-type=module -e 'import { readFileSync } from "node:fs"; console.log(JSON.parse(readFileSync("config/indexnow.json")).ownershipFile)')"
+body_has "IndexNow public ownership proof matches" \
+  "${SITE_URL}${indexnow_file}" "${indexnow_file:1:-4}"
 
 # The two documents a regulator or a claimant would ask for. A deploy that
 # serves the pages but loses their substance passes an HTTP check and fails

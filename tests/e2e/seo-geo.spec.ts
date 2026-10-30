@@ -1,8 +1,23 @@
 import { expect, test } from "@playwright/test";
 import { getPosts } from "../../lib/blog";
 import { businessProfiles } from "../../lib/business";
+import { readFileSync } from "node:fs";
 
 const canonicalOrigin = "https://nisan-sinai-technologies.vercel.app";
+const indexNow = JSON.parse(readFileSync(new URL("../../config/indexnow.json", import.meta.url), "utf8"));
+
+test("search ownership files and release endpoint are public and safe", async ({ request }) => {
+  const proof = await request.get(indexNow.ownershipFile);
+  expect(proof.status()).toBe(200);
+  expect((await proof.text()).trim()).toBe(indexNow.ownershipFile.slice(1, -4));
+  const bing = await request.get("/BingSiteAuth.xml");
+  expect(bing.status()).toBe(200);
+  expect(await bing.text()).toContain("<users>");
+  const health = await request.get("/api/health");
+  expect(health.status()).toBe(200);
+  expect(health.headers()["x-robots-tag"]).toContain("noindex");
+  expect(Object.keys(await health.json())).toEqual(["release"]);
+});
 
 test("discovery files are public UTF-8 text with no private routes", async ({ request }) => {
   for (const path of ["/llms.txt", "/llms-full.txt"]) {

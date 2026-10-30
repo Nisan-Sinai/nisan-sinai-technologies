@@ -28,6 +28,7 @@ export default defineConfig({
         "app/llms.txt/route.ts",
         "app/llms-full.txt/route.ts",
         "app/api/leads/route.ts",
+        "app/api/health/route.ts",
         "app/sitemap.ts",
         "app/robots.ts",
       ],

@@ -22,7 +22,7 @@ jobs:
       install-command: npm ci
       lint-command: npm run scan:secrets && npm run lint
       typecheck-command: npm run type-check
-      test-command: npm run test:audit-policy && npm run test:coverage
+      test-command: npm run test:audit-policy && npm run test:indexnow && npm run test:coverage
       build-command: npm run build:vercel && npm run build:sites && npm run test:rendered
 
   security:
