@@ -271,6 +271,11 @@
   text-align: start;
 }
 
+.admin-inbox-status-action {
+  border-color: rgba(83, 228, 255, 0.35);
+  color: var(--cyan-soft);
+}
+
 .admin-inbox-contacts bdi {
   min-width: 0;
   overflow-wrap: anywhere;

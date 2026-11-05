@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Applies Supabase migrations to a throwaway database and asserts the contact
-# form's security model: anyone may submit a valid lead, nobody may change or
-# delete one, and only the authenticated admin email may read leads.
+# form's security model: anyone may submit a valid lead. Only admins may
+# read leads or mark them through the dedicated status function.
 set -euo pipefail
 
 : "${DATABASE_URL:?set DATABASE_URL to a throwaway Postgres database}"
@@ -149,5 +149,30 @@ expect_reject "a lead that skips the queue" \
 expect_reject "a message below the minimum length" \
   "set role anon; insert into public.contact_leads (name, phone, message)
    values ('קצר מדי', '0500000000', 'קצר');"
+
+echo "==> Exercising lead status changes"
+lead_id="$(psql_q -c "select id from public.contact_leads;")"
+admin_claims="set role authenticated; set request.jwt.claims = '{\"email\":\"nisan.sinai5@gmail.com\"}';"
+expect_reject "anonymous marking a lead" \
+  "set role anon; select public.set_contact_lead_status('${lead_id}', 'new', 'contacted');"
+expect_reject "non-admin marking a lead" \
+  "set role authenticated; set request.jwt.claims = '{\"email\":\"someone@example.com\"}';
+   select public.set_contact_lead_status('${lead_id}', 'new', 'contacted');"
+expect_reject "admin updating a lead directly" \
+  "${admin_claims} update public.contact_leads set status = 'contacted' where id = '${lead_id}';"
+expect_reject "admin requesting an unsupported transition" \
+  "${admin_claims} select public.set_contact_lead_status('${lead_id}', 'new', 'closed');"
+expect_reject "admin requesting a null status" \
+  "${admin_claims} select public.set_contact_lead_status('${lead_id}', 'new', null);"
+expect_value "admin marking a lead" "t" \
+  "${admin_claims} select public.set_contact_lead_status('${lead_id}', 'new', 'contacted');"
+expect_value "stored lead status" "contacted" \
+  "${admin_claims} select status from public.contact_leads where id = '${lead_id}';"
+expect_value "a stale status change" "f" \
+  "${admin_claims} select public.set_contact_lead_status('${lead_id}', 'new', 'contacted');"
+expect_value "admin reopening a lead" "t" \
+  "${admin_claims} select public.set_contact_lead_status('${lead_id}', 'contacted', 'new');"
+expect_value "stored reopened status" "new" \
+  "${admin_claims} select status from public.contact_leads where id = '${lead_id}';"
 
 echo "==> Migration checks passed"
