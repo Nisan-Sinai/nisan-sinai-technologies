@@ -113,8 +113,8 @@ export default function SitePage({ locale }: { locale: Locale }) {
           </div>
 
           <h1>
-            {t.hero.titleLead}
-            <span>{t.hero.titleAccent}</span>
+            {t.hero.titleLead}{" "}
+            <span>{t.hero.titleAccent}</span>{" "}
             {t.hero.titleTail}
           </h1>
 

@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { getContent } from "../../lib/content";
 import { getPosts } from "../../lib/blog";
 import { businessProfiles } from "../../lib/business";
 import { readFileSync } from "node:fs";
@@ -89,5 +90,13 @@ test("official business profiles in JSON-LD match the visible footer", async ({ 
   for (const service of business.makesOffer) {
     const id = new URL(service.itemOffered.url).hash.slice(1);
     await expect(page.locator(`[id="${id}"]`)).toHaveCount(1);
+  }
+});
+
+test("the homepage heading stays readable as plain text in both languages", async ({ page }) => {
+  for (const locale of ["he", "en"] as const) {
+    await page.goto(locale === "he" ? "/" : "/en");
+    const { titleLead, titleAccent, titleTail } = getContent(locale).hero;
+    expect(await page.locator("h1").textContent()).toBe(`${titleLead} ${titleAccent} ${titleTail}`);
   }
 });
