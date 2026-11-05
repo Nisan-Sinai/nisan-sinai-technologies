@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { servicePath, serviceSlugs } from "@/lib/services";
 import { getPosts } from "@/lib/blog";
 import { resolveSiteUrl } from "@/lib/site-url";
 import { locales, localePath } from "@/lib/i18n";
@@ -12,6 +13,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/blog", changeFrequency: "weekly" as const, priority: 0.6 },
     { path: "/privacy", changeFrequency: "yearly" as const, priority: 0.3 },
     { path: "/accessibility", changeFrequency: "yearly" as const, priority: 0.3 },
+    ...serviceSlugs.map((slug) => ({
+      path: servicePath(slug), changeFrequency: "monthly" as const, priority: 0.8,
+    })),
     // The slugs are shared across languages, so one list covers both sides.
     ...getPosts("he").map((post) => ({
       path: `/blog/${post.slug}`,

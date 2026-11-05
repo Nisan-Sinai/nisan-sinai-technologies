@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import type { SiteContent } from "@/lib/content";
+import { trackPublicConversion, type AnalyticsConfig } from "@/lib/analytics-runtime";
 import { contact } from "@/lib/content";
 
 type FormStatus = "idle" | "submitting" | "success" | "error";
@@ -10,10 +11,12 @@ export default function ContactForm({
   copy,
   arrow,
   privacyHref,
+  analytics,
 }: {
   copy: SiteContent["form"];
   arrow: string;
   privacyHref: string;
+  analytics: AnalyticsConfig;
 }) {
   const [status, setStatus] = useState<FormStatus>("idle");
 
@@ -40,7 +43,9 @@ export default function ContactForm({
       setStatus("success");
     } catch {
       setStatus("error");
+      return;
     }
+    trackPublicConversion(analytics);
   }
 
   return (

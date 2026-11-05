@@ -6,7 +6,7 @@ import { pathToFileURL } from "node:url";
 const settings = JSON.parse(readFileSync(new URL("../config/indexnow.json", import.meta.url)));
 const productionOrigin = "https://nisan-sinai-technologies.vercel.app";
 const endpoint = "https://api.indexnow.org/indexnow";
-const publicPath = /^\/(?:en(?:\/|$))?(?:(?:privacy|accessibility)|blog(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)?)?$/;
+const publicPath = /^\/(?:en(?:\/|$))?(?:(?:privacy|accessibility)|services\/(?:website-development|custom-business-software)|blog(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)?)?$/;
 
 /** Read only the generated public sitemap, never application or customer records. */
 export function publicIndexNowUrls(xml, config = settings) {
@@ -27,7 +27,7 @@ export function publicIndexNowUrls(xml, config = settings) {
 /** Private admin, database and API-only updates never notify search engines. */
 export function hasPublicChanges(files, allPublic = false) {
   return allPublic || files.some((file) =>
-    /^lib\/(?:blog|content|business|structured-data|seo-metadata|site-url|i18n|llms)\.ts$/.test(file) ||
+    /^lib\/(?:blog|content|business|structured-data|seo-metadata|services|site-url|i18n|llms)\.ts$/.test(file) ||
     /^app\/\((?:he|en)\)\//.test(file) ||
     /^app\/[^/]+\.(?:tsx|css)$/.test(file) ||
     /^app\/(?:sitemap|robots)\.ts$/.test(file) ||

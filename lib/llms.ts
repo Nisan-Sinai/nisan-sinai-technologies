@@ -1,4 +1,5 @@
 import { contact, getContent } from "./content";
+import { servicePath, serviceSlugs, services } from "./services";
 import { getPosts } from "./blog";
 import { businessProfiles, founderProfile } from "./business";
 import { locales, localePath } from "./i18n";
@@ -42,6 +43,14 @@ export function buildLlmsText(siteUrl: string, full = false): string {
     lines.push("", `### ${locale === "he" ? "עברית" : "English"}`, t.about.text, "");
     for (const service of t.services.items) {
       lines.push(`- ${service.title}: ${service.description}`);
+    }
+    lines.push("");
+    for (const slug of serviceSlugs) {
+      const service = services[slug][locale];
+      lines.push(`- [${service.title}](${absolute(localePath(locale, servicePath(slug)))}): ${service.description}`);
+      if (full) {
+        for (const section of service.sections) lines.push("", `#### ${section.heading}`, section.text);
+      }
     }
     lines.push("");
     for (const project of t.projects.items) {

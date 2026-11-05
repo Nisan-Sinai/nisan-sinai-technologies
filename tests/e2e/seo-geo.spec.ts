@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { getContent } from "../../lib/content";
 import { getPosts } from "../../lib/blog";
 import { businessProfiles } from "../../lib/business";
 import { readFileSync } from "node:fs";
@@ -38,7 +39,7 @@ test("discovery files are public UTF-8 text with no private routes", async ({ re
 test("every public page has self canonical, reciprocal languages and matching social metadata in server HTML", async ({ request }) => {
   const sitemap = await (await request.get("/sitemap.xml")).text();
   const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => new URL(match[1]));
-  expect(urls.length).toBe(16);
+  expect(urls.length).toBe(20);
   for (const url of urls) {
     expect(url.origin).toBe(canonicalOrigin);
     const response = await request.get(url.pathname);
@@ -52,6 +53,11 @@ test("every public page has self canonical, reciprocal languages and matching so
     expect(html.match(/<h1[ >]/g)).toHaveLength(1);
     const description = html.match(/<meta name="description" content="([^"]+)"/)?.[1];
     expect(description?.length).toBeGreaterThan(25);
+    if (url.pathname.includes("/services/")) {
+      expect(html).toContain('"@type":"Service"');
+      expect(html).toContain('"@type":"BreadcrumbList"');
+      expect(html).toContain('href="' + (url.pathname.startsWith('/en/') ? '/en' : '/') + '#contact"');
+    }
     if (url.pathname.includes("/blog/")) {
       expect(html).toContain(`name="twitter:description" content="${description}"`);
       expect(html).toContain('"@type":"BlogPosting"');
@@ -84,5 +90,13 @@ test("official business profiles in JSON-LD match the visible footer", async ({ 
   for (const service of business.makesOffer) {
     const id = new URL(service.itemOffered.url).hash.slice(1);
     await expect(page.locator(`[id="${id}"]`)).toHaveCount(1);
+  }
+});
+
+test("the homepage heading stays readable as plain text in both languages", async ({ page }) => {
+  for (const locale of ["he", "en"] as const) {
+    await page.goto(locale === "he" ? "/" : "/en");
+    const { titleLead, titleAccent, titleTail } = getContent(locale).hero;
+    expect(await page.locator("h1").textContent()).toBe(`${titleLead} ${titleAccent} ${titleTail}`);
   }
 });

@@ -6,7 +6,7 @@ import { hasPublicChanges, publicIndexNowUrls, submitIndexNow, verifyProduction 
 const config = JSON.parse(readFileSync(new URL("../config/indexnow.json", import.meta.url)));
 const proof = config.ownershipFile.slice(1, -4);
 const sha = "a".repeat(40);
-const urls = ["/", "/en", "/blog", "/en/blog", "/blog/business-search-ai-visibility", "/en/blog/business-search-ai-visibility", "/privacy", "/en/accessibility"].map((path) => config.origin + path);
+const urls = ["/", "/en", "/blog", "/en/blog", "/blog/business-search-ai-visibility", "/en/blog/business-search-ai-visibility", "/privacy", "/en/accessibility", "/services/website-development", "/en/services/custom-business-software"].map((path) => config.origin + path);
 const xml = (list = urls) => `<urlset>${list.map((url) => `<url><loc>${url}</loc></url>`).join("")}</urlset>`;
 function server({ status = 200, release = sha, keyFile = proof, sitemap = xml(), healthStatus = 200, sitemapStatus = 200, keyStatus = 200 } = {}) {
   const calls = [];
@@ -25,7 +25,7 @@ test("uses public sitemap URLs in both languages and a matching published owners
   assert.equal(readFileSync(new URL(`../public${config.ownershipFile}`, import.meta.url), "utf8").trim(), proof);
 });
 test("rejects a poisoned sitemap before any submission", () => {
-  for (const path of ["/admin", "/en/admin", "/api/leads", "/invite/private", "/share/private", "/en/", "/blog/a?token=private", "/blog/a#contact", "/%62log/a", "/blog/a/../admin"])
+  for (const path of ["/admin", "/en/admin", "/api/leads", "/invite/private", "/share/private", "/en/", "/blog/a?token=private", "/blog/a#contact", "/%62log/a", "/blog/a/../admin", "/services/internal"])
     assert.throws(() => publicIndexNowUrls(xml([config.origin + path])));
   for (const url of ["https://other.test/blog/a", "http://nisan-sinai-technologies.vercel.app/blog", "https://user:password@nisan-sinai-technologies.vercel.app/blog"])
     assert.throws(() => publicIndexNowUrls(xml([url])));

@@ -1,5 +1,6 @@
 import { getSlugs } from './blog';
 import { locales, localePath } from './i18n';
+import { servicePath, serviceSlugs } from './services';
 import type { AnalyticsConfig } from './analytics-runtime';
 
 export const analyticsConfig: AnalyticsConfig = {
@@ -7,6 +8,7 @@ export const analyticsConfig: AnalyticsConfig = {
   origin: 'https://nisan-sinai-technologies.vercel.app',
   name: 'Nisan Sinai Technologies',
   paths: locales.flatMap((locale) => ['/', '/blog', '/privacy', '/accessibility',
+    ...serviceSlugs.map(servicePath),
     ...getSlugs(locale).map((slug) => `/blog/${slug}`),
   ].map((path) => localePath(locale, path))),
 };

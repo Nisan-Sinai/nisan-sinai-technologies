@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { getSlugs, getPosts } from "@/lib/blog";
+import { servicePath, serviceSlugs } from "@/lib/services";
 import { locales } from "@/lib/i18n";
 
 /** siteUrl is resolved at module scope, so each case needs a fresh import. */
@@ -22,7 +23,7 @@ describe("sitemap.xml", () => {
     const sitemap = await load({ NEXT_PUBLIC_SITE_URL: "https://example.com" });
     const entries = sitemap();
 
-    const expectedPages = 4 + getSlugs("he").length;
+    const expectedPages = 4 + serviceSlugs.length + getSlugs("he").length;
     expect(entries).toHaveLength(expectedPages * locales.length);
     expect(new Set(entries.map((entry) => entry.url)).size).toBe(entries.length);
   });
@@ -40,6 +41,7 @@ describe("sitemap.xml", () => {
       "/en/privacy",
       "/accessibility",
       "/en/accessibility",
+      ...serviceSlugs.flatMap((slug) => [servicePath(slug), `/en${servicePath(slug)}`]),
     ]) {
       expect(urls, path).toContain(`https://example.com${path}`);
     }
