@@ -8,6 +8,8 @@ import MarqueeStrip from "./marquee-strip";
 import MobileMenu, { type MenuItem } from "./mobile-menu";
 import SiteFooter from "./site-footer";
 import StructuredData from "./structured-data";
+import { analyticsConfig } from "@/lib/analytics-config";
+import { serviceForCard, servicePath, services } from "@/lib/services";
 import { contact, getContent } from "@/lib/content";
 import { formatPostDate, getPosts } from "@/lib/blog";
 import { forwardArrow, localePath, type Locale } from "@/lib/i18n";
@@ -202,23 +204,31 @@ export default function SitePage({ locale }: { locale: Locale }) {
         </div>
 
         <div className="services-grid">
-          {t.services.items.map((service) => (
-            <article className="service-card" id={`service-${service.number}`} key={service.number}>
-              <div className="service-card-top">
-                <span>{service.number}</span>
-                <i aria-hidden="true">{arrow}</i>
-              </div>
-              <h3>{service.title}</h3>
-              <p>{service.description}</p>
-              <ul aria-label={t.services.tagsAria(service.title)}>
-                {service.tags.map((tag) => (
-                  <li key={tag}>
-                    <LatinText text={tag} />
-                  </li>
-                ))}
-              </ul>
-            </article>
-          ))}
+          {t.services.items.map((service) => {
+            const slug = serviceForCard(service.number);
+            return (
+              <article className="service-card" id={`service-${service.number}`} key={service.number}>
+                <div className="service-card-top">
+                  <span>{service.number}</span>
+                  <i aria-hidden="true">{arrow}</i>
+                </div>
+                <h3>{service.title}</h3>
+                <p>{service.description}</p>
+                <ul aria-label={t.services.tagsAria(service.title)}>
+                  {service.tags.map((tag) => (
+                    <li key={tag}>
+                      <LatinText text={tag} />
+                    </li>
+                  ))}
+                </ul>
+                {slug && (
+                  <Link className="service-detail-link" href={localePath(locale, servicePath(slug))}>
+                    {services[slug][locale].title} <span aria-hidden="true">{arrow}</span>
+                  </Link>
+                )}
+              </article>
+            );
+          })}
         </div>
       </section>
 
@@ -274,15 +284,22 @@ export default function SitePage({ locale }: { locale: Locale }) {
                       <i />
                       <span>{PROJECT_SITES[index].host}</span>
                     </div>
-                    <img
-                      className="mock-shot"
-                      src={`/projects/${PROJECT_SITES[index].slug}${shotSuffix}.jpg`}
-                      alt={project.previewLabel}
-                      width={PROJECT_SITES[index].shot.width}
-                      height={PROJECT_SITES[index].shot.height}
-                      loading="lazy"
-                      decoding="async"
-                    />
+                    <picture>
+                      <source
+                        type="image/webp"
+                        srcSet={`/projects/${PROJECT_SITES[index].slug}${shotSuffix}.webp`}
+                      />
+                      {/* Static WebP avoids a runtime image optimizer; JPEG is the fallback. */}
+                      <img
+                        className="mock-shot"
+                        src={`/projects/${PROJECT_SITES[index].slug}${shotSuffix}.jpg`}
+                        alt={project.previewLabel}
+                        width={PROJECT_SITES[index].shot.width}
+                        height={PROJECT_SITES[index].shot.height}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </picture>
                   </div>
                 </div>
               </article>
@@ -542,7 +559,7 @@ return makeItWork(solution);`}</code>
             </ExternalLink>
           </div>
         </div>
-        <ContactForm copy={t.form} arrow={arrow} privacyHref={privacyHref} />
+        <ContactForm copy={t.form} arrow={arrow} privacyHref={privacyHref} analytics={analyticsConfig} />
       </section>
 
       <SiteFooter locale={locale} />

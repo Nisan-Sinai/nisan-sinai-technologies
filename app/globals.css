@@ -3230,3 +3230,13 @@ h2 {
 .breadcrumbs li + li::before { content: "/"; margin-inline-end: 1rem; opacity: .6; }
 .article-byline { margin-block: 1rem; }
 .article-related { margin-block-start: 3rem; padding-block-start: 1.5rem; border-block-start: 1px solid var(--line, #303944); }
+
+.service-card .service-detail-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-block-size: 44px;
+  margin-block-start: 0.75rem;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}

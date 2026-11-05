@@ -9,6 +9,7 @@ import { getContent } from "@/lib/content";
 import { formatPostDate, getPost, getPosts } from "@/lib/blog";
 import { forwardArrow, localePath, type Locale } from "@/lib/i18n";
 import { buildArticleStructuredData } from "@/lib/structured-data";
+import { servicePath, serviceSlugs, services } from "@/lib/services";
 import { resolveSiteUrl } from "@/lib/site-url";
 
 const ARTICLE_CONTEXT: Record<Locale, string> = {
@@ -26,6 +27,7 @@ export default function BlogPost({
   const t = getContent(locale);
   const post = getPost(locale, slug);
   if (!post) notFound();
+  const relatedService = serviceSlugs.find((service) => services[service].guide === slug);
 
   return (
     <>
@@ -96,6 +98,9 @@ export default function BlogPost({
               <li key={related.slug}><Link href={localePath(locale, `/blog/${related.slug}`)}><LatinText text={related.title} /></Link></li>
             ))}
           </ul>
+          {relatedService && (
+            <p><Link href={localePath(locale, servicePath(relatedService))}>{services[relatedService][locale].title}</Link></p>
+          )}
           <Link href={`${localePath(locale, "/")}#contact`}>{t.nav.cta}</Link>
         </aside>
       </main>

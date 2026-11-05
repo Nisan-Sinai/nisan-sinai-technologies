@@ -14,6 +14,7 @@
 // real screenshot beats a blank or half-painted one. The same goes for a
 // language that cannot be reached or cannot be confirmed.
 import { chromium } from "@playwright/test";
+import sharp from "sharp";
 import { writeFileSync } from "node:fs";
 
 // `height` is how much of the page each shot keeps. It defaults to the 16:10
@@ -85,7 +86,8 @@ async function shoot(page, site) {
   });
 }
 
-function save(name, image) {
+async function save(name, image) {
+  await sharp(image).resize(1200, null, { withoutEnlargement: true }).webp({ quality: 82 }).toFile(`public/projects/${name}.webp`);
   writeFileSync(`public/projects/${name}.jpg`, image);
   console.log(`captured ${name} (${Math.round(image.length / 1024)}KB)`);
 }
@@ -108,7 +110,7 @@ for (const site of SITES) {
     if (!response || !response.ok()) {
       throw new Error(`responded ${response ? response.status() : "nothing"}`);
     }
-    save(site.slug, await shoot(page, site));
+    await save(site.slug, await shoot(page, site));
   } catch (error) {
     hebrewFailures += 1;
     console.error(`skipped ${site.slug}: ${error.message}`);
@@ -118,7 +120,7 @@ for (const site of SITES) {
 
   try {
     if (await switchToEnglish(page, site.url)) {
-      save(`${site.slug}-en`, await shoot(page, site));
+      await save(`${site.slug}-en`, await shoot(page, site));
     } else {
       // Deliberately not fatal: the Hebrew shot stands in until this works.
       console.error(`skipped ${site.slug}-en: could not confirm an English page`);

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { chooseConsent, CONSENT_KEY, readConsent, stopAnalytics, subscribeConsent, trackPublicPage } from '@/lib/analytics-runtime';
+import { chooseConsent, CONSENT_KEY, readConsent, stopAnalytics, subscribeConsent, trackPublicConversion, trackPublicPage } from '@/lib/analytics-runtime';
 
 const config = { id: 'G-TEST123', origin: 'https://site.example', name: 'Public site', paths: ['/', '/en', '/pricing'] };
 let win: EventTarget & Record<string, unknown>;
@@ -10,7 +10,7 @@ let cookieWrites: string[];
 beforeEach(() => {
   stored = new Map(); scripts = []; cookieWrites = [];
   win = Object.assign(new EventTarget(), {
-    location: { origin: config.origin, hostname: 'site.example', search: '?email=secret@example.com', hash: '#token-secret', reload: vi.fn() },
+    location: { origin: config.origin, pathname: '/', hostname: 'site.example', search: '?email=secret@example.com', hash: '#token-secret', reload: vi.fn() },
     localStorage: { getItem: (key: string) => stored.get(key) ?? null, setItem: (key: string, value: string) => stored.set(key, value) },
   }) as unknown as EventTarget & Record<string, unknown>;
   const doc = { title: 'PRIVATE PERSON', referrer: 'https://private.example/?token=secret', head: { appendChild: (script: Record<string, unknown>) => scripts.push(script) }, createElement: () => ({}) };
@@ -23,6 +23,27 @@ const commands = () => (win.dataLayer as IArguments[]).map((args) => Array.from(
 const views = () => commands().filter((args) => args[0] === 'event' && args[1] === 'page_view');
 
 describe('public analytics privacy boundary', () => {
+  it('queues the conversion only with consent on the active production page', () => {
+    trackPublicConversion(config);
+    expect(scripts).toHaveLength(0);
+    chooseConsent('granted');
+    trackPublicPage(config, '/');
+    trackPublicConversion(config);
+    const location = win.location as { pathname: string };
+    location.pathname = '/dashboard';
+    trackPublicConversion(config);
+    location.pathname = '/';
+    chooseConsent('denied');
+    trackPublicConversion(config);
+    expect(commands().filter((args) => args[0] === 'event' && args[1] === 'generate_lead')).toEqual([
+      ['event', 'generate_lead', {
+        page_location: 'https://site.example/',
+        page_referrer: '',
+        page_title: 'Public site /',
+        send_to: config.id,
+      }],
+    ]);
+  });
   it('does not load Google before consent or after declining', () => {
     trackPublicPage(config, '/'); expect(scripts).toHaveLength(0);
     chooseConsent('denied'); trackPublicPage(config, '/');
