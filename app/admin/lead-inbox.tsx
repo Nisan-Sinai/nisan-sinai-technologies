@@ -14,10 +14,12 @@ export type Lead = {
   created_at: string;
 };
 
+export type StatusUpdate = { leadId: string; error?: string };
+
 const services = new Map(getContent("he").form.serviceOptions.map(({ value, label }) => [value, label]));
 const statuses = new Map([
   ["new", "חדש"],
-  ["contacted", "נוצר קשר"],
+  ["contacted", "בטיפול"],
   ["qualified", "מתאים"],
   ["closed", "סגור"],
 ]);
@@ -52,6 +54,8 @@ export default function LeadInbox({
   loading,
   message,
   error,
+  statusUpdate,
+  onChangeStatus,
   onRefresh,
   onSignOut,
 }: {
@@ -59,9 +63,12 @@ export default function LeadInbox({
   loading: boolean;
   message: string;
   error: string;
+  statusUpdate: StatusUpdate | null;
+  onChangeStatus: (lead: Lead) => void;
   onRefresh: () => void;
   onSignOut: () => void;
 }) {
+  const saving = Boolean(statusUpdate && !statusUpdate.error);
   const [query, setQuery] = useState("");
   const [newOnly, setNewOnly] = useState(false);
   const term = query.trim().toLocaleLowerCase("he");
@@ -84,7 +91,7 @@ export default function LeadInbox({
             <span className="admin-inbox-mark"><Icon name="inbox" /></span>
             <Link href="/">ניסן סיני טכנולוגיות</Link>
           </div>
-          <button className="admin-inbox-button admin-inbox-logout" type="button" onClick={onSignOut} disabled={loading}>
+          <button className="admin-inbox-button admin-inbox-logout" type="button" onClick={onSignOut} disabled={loading || saving}>
             יציאה
           </button>
         </header>
@@ -95,7 +102,7 @@ export default function LeadInbox({
               <span className="admin-inbox-kicker">אזור ניהול</span>
               <h1 id="admin-title">פניות מהאתר</h1>
             </div>
-            <button className="admin-inbox-button" type="button" onClick={onRefresh} disabled={loading}>
+            <button className="admin-inbox-button" type="button" onClick={onRefresh} disabled={loading || saving}>
               <Icon name="refresh" /> {loading ? "מרענן…" : "רענון"}
             </button>
           </div>
@@ -137,7 +144,7 @@ export default function LeadInbox({
               {visibleLeads.map((lead) => (
                 <article className="admin-lead-card" key={lead.id} data-status={lead.status}>
                   <div className="admin-inbox-card-meta">
-                    <span className="admin-inbox-status">{statuses.get(lead.status) ?? lead.status}</span>
+                    <span className="admin-inbox-status" aria-live="polite">{statuses.get(lead.status) ?? lead.status}</span>
                     <time dateTime={lead.created_at}>{leadDate.format(new Date(lead.created_at))}</time>
                   </div>
                   <h3><bdi>{lead.name}</bdi></h3>
@@ -157,7 +164,22 @@ export default function LeadInbox({
                         <Icon name="mail" /> <bdi dir="ltr">{lead.email}</bdi>
                       </a>
                     )}
+                    {(lead.status === "new" || lead.status === "contacted") && (
+                      <button
+                        className="admin-inbox-button admin-inbox-status-action"
+                        type="button"
+                        onClick={() => onChangeStatus(lead)}
+                        disabled={loading || saving}
+                      >
+                        {saving && statusUpdate?.leadId === lead.id
+                          ? "שומר…"
+                          : lead.status === "new" ? "סימון בטיפול" : "החזרה לחדש"}
+                      </button>
+                    )}
                   </div>
+                  {statusUpdate?.leadId === lead.id && statusUpdate.error && (
+                    <p className="admin-notice admin-notice-error" role="alert">{statusUpdate.error}</p>
+                  )}
                 </article>
               ))}
             </div>

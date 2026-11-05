@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 
-import LeadInbox, { type Lead } from "./lead-inbox";
+import LeadInbox, { type Lead, type StatusUpdate } from "./lead-inbox";
 
 type Session = {
   access_token: string;
@@ -29,6 +29,7 @@ export default function AdminDashboard({
   const configured = Boolean(supabaseUrl && publishableKey);
   const [session, setSession] = useState<Session | null>(null);
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [statusUpdate, setStatusUpdate] = useState<StatusUpdate | null>(null);
   const [loading, setLoading] = useState(configured);
   const [busy, setBusy] = useState<BusyAction>(null);
   const [message, setMessage] = useState("");
@@ -100,6 +101,7 @@ export default function AdminDashboard({
 
   async function loadLeads(current: Session) {
     setLoading(true);
+    setStatusUpdate(null);
     setError("");
 
     try {
@@ -396,11 +398,55 @@ export default function AdminDashboard({
     }
   }
 
+  async function changeLeadStatus(current: Session, { id: leadId, status: currentStatus }: Lead) {
+    if (currentStatus !== "new" && currentStatus !== "contacted") return;
+
+    const nextStatus = currentStatus === "new" ? "contacted" : "new";
+    setStatusUpdate({ leadId });
+
+    function save(accessToken: string) {
+      return fetch(new URL("/rest/v1/rpc/set_contact_lead_status", supabaseUrl), {
+        method: "POST",
+        headers: { ...authHeaders(accessToken), "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lead_id: leadId,
+          expected_status: currentStatus,
+          next_status: nextStatus,
+        }),
+        cache: "no-store",
+      });
+    }
+
+    try {
+      let response = await save(current.access_token);
+      if (response.status === 401) {
+        const refreshed = await refreshSession(current);
+        if (!refreshed) {
+          await loadLeads(current);
+          return;
+        }
+        setSession(refreshed);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(refreshed));
+        response = await save(refreshed.access_token);
+      }
+      if (!response.ok) throw new Error("status_update_failed");
+      if ((await response.json()) !== true) {
+        setStatusUpdate({ leadId, error: "הפנייה השתנתה מאז שהוצגה. רעננו את הרשימה ונסו שוב." });
+        return;
+      }
+      setLeads((rows) => rows.map((lead) => lead.id === leadId ? { ...lead, status: nextStatus } : lead));
+      setStatusUpdate(null);
+    } catch {
+      setStatusUpdate({ leadId, error: "לא הצלחנו לשמור את הסטטוס. נסו שוב." });
+    }
+  }
+
   async function signOut() {
     const accessToken = session?.access_token;
     localStorage.removeItem(STORAGE_KEY);
     setSession(null);
     setLeads([]);
+    setStatusUpdate(null);
     setEmail("");
     setPassword("");
     setMessage("");
@@ -532,6 +578,8 @@ export default function AdminDashboard({
       loading={loading}
       message={message}
       error={error}
+      statusUpdate={statusUpdate}
+      onChangeStatus={(lead) => void changeLeadStatus(session, lead)}
       onRefresh={() => void loadLeads(session)}
       onSignOut={() => void signOut()}
     />
