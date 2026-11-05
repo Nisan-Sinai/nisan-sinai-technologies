@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SiteShell } from "../site-shell";
 import "./admin-auth.css";
+import "./lead-inbox.css";
 
 export const metadata: Metadata = {
   title: "ניהול פניות",

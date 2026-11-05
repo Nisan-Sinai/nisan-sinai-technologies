@@ -1,0 +1,298 @@
+.admin-shell.admin-inbox-shell {
+  padding: clamp(0.75rem, 3vw, 2rem) clamp(0.75rem, 3vw, 2rem) 6rem;
+  background:
+    radial-gradient(ellipse at 82% 0%, rgba(83, 228, 255, 0.09), transparent 34rem),
+    var(--background);
+}
+
+.admin-inbox {
+  width: min(100%, 1120px);
+  margin-inline: auto;
+}
+
+.admin-inbox-header,
+.admin-inbox-brand,
+.admin-inbox-heading,
+.admin-inbox-list-heading,
+.admin-inbox-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+}
+
+.admin-inbox-header {
+  padding: 0.35rem 0 0.8rem;
+}
+
+.admin-inbox-brand {
+  justify-content: start;
+  min-width: 0;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.admin-inbox-brand a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.admin-inbox-mark {
+  display: grid;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid rgba(83, 228, 255, 0.24);
+  border-radius: 0.65rem;
+  background: rgba(83, 228, 255, 0.08);
+  color: var(--cyan-soft);
+}
+
+.admin-inbox svg {
+  flex: none;
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.admin-inbox-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 0.55rem;
+  background: var(--surface);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-inbox-button:hover:not(:disabled),
+.admin-inbox-button[aria-pressed="true"] {
+  border-color: rgba(83, 228, 255, 0.42);
+  background: #112630;
+  color: var(--cyan-soft);
+}
+
+.admin-inbox-button:disabled {
+  opacity: 0.62;
+  cursor: wait;
+}
+
+.admin-inbox-logout {
+  background: transparent;
+  color: var(--muted);
+}
+
+.admin-inbox-overview {
+  padding: clamp(0.9rem, 3vw, 1.6rem);
+  border: 1px solid var(--line);
+  border-radius: 1.05rem;
+  background: linear-gradient(125deg, #101d29, #0b111a 72%);
+}
+
+.admin-inbox-kicker {
+  color: var(--accent);
+  font-size: 0.83rem;
+  font-weight: 700;
+}
+
+.admin-inbox-heading h1 {
+  margin: 0.25rem 0 0;
+  font-size: clamp(1.72rem, 5vw, 3.05rem);
+  line-height: 1.15;
+}
+
+.admin-inbox-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.5rem, 2vw, 0.9rem);
+  margin: clamp(0.85rem, 3vw, 1.4rem) 0 0;
+}
+
+.admin-inbox-stats > div {
+  padding: 0.65rem clamp(0.6rem, 2vw, 1rem);
+  border: 1px solid var(--line);
+  border-radius: 0.7rem;
+  background: rgba(5, 7, 11, 0.32);
+}
+
+.admin-inbox-stats dt,
+.admin-inbox-list-heading span,
+.admin-inbox-card-meta time {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.admin-inbox-stats dd {
+  margin: 0;
+  font-size: clamp(1.55rem, 4vw, 2.25rem);
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.admin-inbox-stats > div:last-child dd {
+  color: var(--cyan);
+}
+
+.admin-inbox-list {
+  margin-top: clamp(1.15rem, 4vw, 2rem);
+}
+
+.admin-inbox-list-heading h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.admin-inbox-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 0.65rem 0 0.8rem;
+}
+
+.admin-inbox-search {
+  display: flex;
+  flex: 1 1 15rem;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+  padding-inline: 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 0.55rem;
+  background: var(--surface);
+  color: var(--muted);
+}
+
+.admin-inbox-search:focus-within {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+.admin-inbox-search input {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+}
+
+.admin-inbox-search input::placeholder {
+  color: var(--muted);
+}
+
+.admin-inbox-filters,
+.admin-inbox-contacts,
+.admin-inbox-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.admin-inbox-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: 0.75rem;
+}
+
+.admin-inbox .admin-lead-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: clamp(0.8rem, 2vw, 1.15rem);
+  border: 1px solid var(--line);
+  border-inline-start: 3px solid var(--line);
+  border-radius: 0.8rem;
+  background: var(--surface-strong);
+  overflow-wrap: anywhere;
+}
+
+.admin-inbox .admin-lead-card[data-status="new"] {
+  border-inline-start-color: var(--cyan);
+}
+
+.admin-inbox-status {
+  padding: 0.17rem 0.55rem;
+  border-radius: 999px;
+  background: #233040;
+  color: #dce6f2;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.admin-lead-card[data-status="new"] .admin-inbox-status {
+  background: #103541;
+  color: var(--cyan-soft);
+}
+
+.admin-lead-card h3 {
+  margin: 0.55rem 0 0;
+  font-size: 1.17rem;
+}
+
+.admin-inbox-tags {
+  margin-top: 0.25rem;
+  color: var(--accent);
+  font-size: 0.83rem;
+}
+
+.admin-inbox-tags > * + *::before {
+  margin-inline-end: 0.45rem;
+  content: "·";
+}
+
+.admin-inbox-message {
+  margin: 0.65rem 0;
+  color: #d1dbe6;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.admin-inbox-contacts {
+  margin-top: auto;
+  padding-top: 0.25rem;
+}
+
+.admin-inbox-contacts a {
+  min-width: 0;
+  max-width: 100%;
+  font-weight: 500;
+  text-align: start;
+}
+
+.admin-inbox-contacts bdi {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-inbox-empty {
+  display: grid;
+  justify-items: center;
+  gap: 0.55rem;
+  padding: 1.2rem;
+  border: 1px dashed var(--line);
+  border-radius: 0.8rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.admin-inbox-empty p {
+  margin: 0;
+}
+
+@media (max-width: 520px) {
+  .admin-inbox-search {
+    flex-basis: 100%;
+  }
+}

@@ -1,19 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
-type Lead = {
-  id: string;
-  name: string;
-  business_name: string | null;
-  phone: string;
-  email: string | null;
-  service: string | null;
-  message: string;
-  status: string;
-  created_at: string;
-};
+import LeadInbox, { type Lead } from "./lead-inbox";
 
 type Session = {
   access_token: string;
@@ -28,13 +18,6 @@ type AuthMode = "login" | "reset";
 type BusyAction = "password" | "google" | "recovery" | "update-password" | null;
 
 const STORAGE_KEY = "nisan-admin-session";
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("he-IL", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
-}
 
 export default function AdminDashboard({
   supabaseUrl,
@@ -432,14 +415,6 @@ export default function AdminDashboard({
     }).catch(() => undefined);
   }
 
-  const stats = useMemo(
-    () => ({
-      total: leads.length,
-      newCount: leads.filter((lead) => lead.status === "new").length,
-    }),
-    [leads],
-  );
-
   if (authMode === "reset" && session) {
     return (
       <main className="admin-shell">
@@ -552,99 +527,13 @@ export default function AdminDashboard({
   }
 
   return (
-    <main className="admin-shell">
-      <section className="admin-dashboard-card" aria-labelledby="admin-title">
-        <header className="admin-dashboard-header">
-          <div>
-            <span className="section-kicker">ADMIN</span>
-            <h1 id="admin-title">לקוחות ופניות מהאתר</h1>
-            <p>גישה לחשבון מנהל מורשה</p>
-          </div>
-          <div className="admin-header-actions">
-            <button
-              className="button button-secondary"
-              type="button"
-              onClick={() => void loadLeads(session)}
-              disabled={loading}
-            >
-              {loading ? "מרענן..." : "רענון"}
-            </button>
-            <button className="button button-secondary" type="button" onClick={() => void signOut()}>
-              יציאה
-            </button>
-          </div>
-        </header>
-
-        <section className="admin-stats" aria-label="סיכום פניות">
-          <article>
-            <span>סה״כ לקוחות שהתעניינו</span>
-            <strong>{stats.total}</strong>
-          </article>
-          <article>
-            <span>פניות חדשות</span>
-            <strong>{stats.newCount}</strong>
-          </article>
-        </section>
-
-        {message && <p className="admin-notice admin-notice-success">{message}</p>}
-        {error && <p className="admin-notice admin-notice-error">{error}</p>}
-
-        <section aria-labelledby="admin-leads-title">
-          <div className="admin-section-head">
-            <h2 id="admin-leads-title">כל המתעניינים וההודעות</h2>
-            <span>{leads.length} רשומות</span>
-          </div>
-
-          {leads.length === 0 && !loading ? (
-            <div className="admin-empty">עדיין אין פניות להצגה.</div>
-          ) : (
-            <div className="admin-lead-grid">
-              {leads.map((lead) => (
-                <article className="admin-lead-card" key={lead.id}>
-                  <div className="admin-lead-top">
-                    <div>
-                      <span className="admin-lead-status">
-                        {lead.status === "new" ? "חדש" : lead.status}
-                      </span>
-                      <h3>{lead.name}</h3>
-                      {lead.business_name && <p>{lead.business_name}</p>}
-                    </div>
-                    <time dateTime={lead.created_at}>{formatDate(lead.created_at)}</time>
-                  </div>
-
-                  <dl className="admin-lead-details">
-                    <div>
-                      <dt>טלפון</dt>
-                      <dd>
-                        <a href={`tel:${lead.phone}`}>{lead.phone}</a>
-                      </dd>
-                    </div>
-                    {lead.email && (
-                      <div>
-                        <dt>אימייל</dt>
-                        <dd>
-                          <a href={`mailto:${lead.email}`}>{lead.email}</a>
-                        </dd>
-                      </div>
-                    )}
-                    {lead.service && (
-                      <div>
-                        <dt>שירות</dt>
-                        <dd>{lead.service}</dd>
-                      </div>
-                    )}
-                  </dl>
-
-                  <div className="admin-lead-message">
-                    <span>הודעה</span>
-                    <p>{lead.message}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
-        </section>
-      </section>
-    </main>
+    <LeadInbox
+      leads={leads}
+      loading={loading}
+      message={message}
+      error={error}
+      onRefresh={() => void loadLeads(session)}
+      onSignOut={() => void signOut()}
+    />
   );
 }
